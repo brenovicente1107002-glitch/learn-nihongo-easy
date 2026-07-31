@@ -54,7 +54,7 @@ function Dashboard() {
           <CardHeader>
             <CardTitle>Seu progresso</CardTitle>
             <CardDescription>
-              Você está a {100 - progress}% de completar o módulo inicial.
+              Você concluiu {progress}% do módulo inicial.
             </CardDescription>
           </CardHeader>
           <CardContent>
