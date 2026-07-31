@@ -96,11 +96,11 @@ function RevisaoPage() {
             </div>
           ) : (
             <>
-              <h2 className="font-display text-xl font-semibold text-foreground">{question.question}</h2>
+              <h2 className="font-display text-xl font-semibold text-foreground">{currentQuestion.question}</h2>
               <div className="grid gap-3">
-                {question.options.map((opt, idx) => {
-                  const isCorrect = idx === question.answer;
-                  const isWrong = selected === idx && selected !== question.answer;
+                {currentQuestion.options.map((opt, idx) => {
+                  const isCorrect = idx === currentQuestion.answer;
+                  const isWrong = selected === idx && selected !== currentQuestion.answer;
                   return (
                     <button
                       key={idx}
