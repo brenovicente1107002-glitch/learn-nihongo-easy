@@ -1,54 +1,62 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { revisaoQuestions } from "@/data/japanese";
+import { LevelTabs } from "@/components/level-tabs";
+import { buildQuestions, type JlptLevel } from "@/data/japanese";
 import { CheckCircle, XCircle, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/revisao")({
   head: () => ({
     meta: [
-      { title: "Revisão — Nihongo Quest" },
-      { name: "description", content: "Teste seus conhecimentos de japonês com quizzes rápidos." },
-      { property: "og:title", content: "Revisão — Nihongo Quest" },
+      { title: "Revisão JLPT N5–N1 — Nihongo Quest" },
+      {
+        name: "description",
+        content: "Quizzes de kanji, vocabulário e gramática para todos os níveis do JLPT.",
+      },
+      { property: "og:title", content: "Revisão JLPT N5–N1 — Nihongo Quest" },
       {
         property: "og:description",
-        content: "Teste seus conhecimentos de japonês com quizzes rápidos.",
+        content: "Teste seus conhecimentos de japonês com quizzes por nível do JLPT.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: RevisaoPage,
 });
 
 function RevisaoPage() {
+  const [level, setLevel] = useState<JlptLevel>("N5");
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
 
-  const question = revisaoQuestions[current];
-  const progress = Math.round(((current + (finished ? 1 : 0)) / revisaoQuestions.length) * 100);
+  const questions = useMemo(() => buildQuestions(level, 10), [level]);
+  const question = questions[current];
+  const progress = questions.length
+    ? Math.round(((current + (finished ? 1 : 0)) / questions.length) * 100)
+    : 0;
 
-  if (!question) {
-    return (
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-muted-foreground">Nenhuma pergunta disponível.</p>
-      </div>
-    );
+  function changeLevel(l: JlptLevel) {
+    setLevel(l);
+    setCurrent(0);
+    setSelected(null);
+    setScore(0);
+    setFinished(false);
   }
 
-  const currentQuestion = question;
-
   function handleAnswer(index: number) {
-    if (selected !== null) return;
+    if (selected !== null || !question) return;
     setSelected(index);
-    if (index === currentQuestion.answer) setScore((s) => s + 1);
+    if (index === question.answer) setScore((s) => s + 1);
   }
 
   function next() {
-    if (current + 1 >= revisaoQuestions.length) {
+    if (current + 1 >= questions.length) {
       setFinished(true);
     } else {
       setCurrent((c) => c + 1);
@@ -68,87 +76,85 @@ function RevisaoPage() {
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Revisão</h1>
         <p className="mt-1 text-muted-foreground">
-          Responda ao quiz para fixar o que você aprendeu.
+          Quiz gerado a partir do conteúdo do nível escolhido.
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Quiz de fixação</CardTitle>
-            <Badge variant="accent">
-              {score} acerto{score === 1 ? "" : "s"}
-            </Badge>
-          </div>
-          <CardDescription>
-            Pergunta {finished ? revisaoQuestions.length : current + 1} de {revisaoQuestions.length}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <Progress value={progress} />
+      <LevelTabs value={level} onChange={changeLevel} />
 
-          {finished ? (
-            <div className="text-center">
-              <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-                {score >= revisaoQuestions.length / 2 ? (
-                  <CheckCircle className="h-10 w-10" />
-                ) : (
-                  <XCircle className="h-10 w-10" />
-                )}
+      {!question && !finished ? (
+        <Card>
+          <CardContent className="p-8 text-center text-muted-foreground">
+            Nenhuma pergunta disponível para este nível.
+          </CardContent>
+        </Card>
+      ) : finished ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Resultado — {level}</CardTitle>
+            <CardDescription>
+              Você acertou {score} de {questions.length} perguntas.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Progress value={Math.round((score / questions.length) * 100)} />
+            <Button onClick={restart}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Refazer quiz
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        question && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>
+                  Pergunta {current + 1} de {questions.length}
+                </CardTitle>
+                <Badge variant="outline">{level}</Badge>
               </div>
-              <h2 className="font-display text-2xl font-bold">Quiz finalizado!</h2>
-              <p className="mt-2 text-muted-foreground">
-                Você acertou {score} de {revisaoQuestions.length} perguntas.
-              </p>
-              <Button onClick={restart} className="mt-6">
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Refazer quiz
-              </Button>
-            </div>
-          ) : (
-            <>
-              <h2 className="font-display text-xl font-semibold text-foreground">
-                {currentQuestion.question}
-              </h2>
-              <div className="grid gap-3">
-                {currentQuestion.options.map((opt, idx) => {
-                  const isCorrect = idx === currentQuestion.answer;
-                  const isWrong = selected === idx && selected !== currentQuestion.answer;
+              <CardDescription>Escolha a alternativa correta.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <Progress value={progress} />
+              <p className="font-display text-xl font-semibold">{question.question}</p>
+              <div className="space-y-3">
+                {question.options.map((opt, i) => {
+                  const isAnswer = i === question.answer;
+                  const isSelected = i === selected;
+                  const show = selected !== null;
                   return (
                     <button
-                      key={idx}
-                      onClick={() => handleAnswer(idx)}
-                      disabled={selected !== null}
-                      className={`flex items-center justify-between rounded-lg border px-4 py-3 text-left transition-colors ${
-                        selected === null
-                          ? "border-border bg-card hover:bg-accent"
-                          : isCorrect
-                            ? "border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100"
-                            : isWrong
-                              ? "border-red-400 bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-100"
-                              : "border-border bg-card opacity-60"
+                      key={i}
+                      onClick={() => handleAnswer(i)}
+                      disabled={show}
+                      className={`flex w-full items-center justify-between rounded-lg border p-4 text-left transition-colors ${
+                        show && isAnswer
+                          ? "border-primary bg-primary/10"
+                          : show && isSelected
+                            ? "border-destructive bg-destructive/10"
+                            : "border-border hover:border-primary/40 hover:bg-primary/5"
                       }`}
                     >
-                      <span className="font-display text-lg">{opt}</span>
-                      {selected !== null && isCorrect && (
-                        <CheckCircle className="h-5 w-5 text-emerald-600" />
+                      <span className="font-medium">{opt}</span>
+                      {show && isAnswer && <CheckCircle className="h-5 w-5 text-primary" />}
+                      {show && isSelected && !isAnswer && (
+                        <XCircle className="h-5 w-5 text-destructive" />
                       )}
-                      {selected !== null && isWrong && <XCircle className="h-5 w-5 text-red-600" />}
                     </button>
                   );
                 })}
               </div>
               {selected !== null && (
-                <div className="flex justify-end">
-                  <Button onClick={next}>
-                    {current + 1 >= revisaoQuestions.length ? "Ver resultado" : "Próxima"}
-                  </Button>
-                </div>
+                <Button onClick={next} className="w-full">
+                  {current + 1 >= questions.length ? "Ver resultado" : "Próxima pergunta"}
+                </Button>
               )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        )
+      )}
     </div>
   );
 }
