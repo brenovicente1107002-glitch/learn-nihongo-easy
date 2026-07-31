@@ -36,10 +36,12 @@ function RevisaoPage() {
     );
   }
 
+  const currentQuestion = question;
+
   function handleAnswer(index: number) {
     if (selected !== null) return;
     setSelected(index);
-    if (index === question.answer) setScore((s) => s + 1);
+    if (index === currentQuestion.answer) setScore((s) => s + 1);
   }
 
   function next() {
