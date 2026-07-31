@@ -8,7 +8,10 @@ export const Route = createFileRoute("/hiragana")({
       { title: "Hiragana — Nihongo Quest" },
       { name: "description", content: "Aprenda o alfabeto hiragana com áudio visual e romaji." },
       { property: "og:title", content: "Hiragana — Nihongo Quest" },
-      { property: "og:description", content: "Aprenda o alfabeto hiragana com áudio visual e romaji." },
+      {
+        property: "og:description",
+        content: "Aprenda o alfabeto hiragana com áudio visual e romaji.",
+      },
     ],
   }),
   component: HiraganaPage,
@@ -21,7 +24,9 @@ function HiraganaPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Hiragana</h1>
-        <p className="mt-1 text-muted-foreground">Alfabeto silábico japonês usado para palavras nativas e gramática.</p>
+        <p className="mt-1 text-muted-foreground">
+          Alfabeto silábico japonês usado para palavras nativas e gramática.
+        </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -42,7 +47,9 @@ function HiraganaPage() {
                       key={h.char}
                       className="flex flex-col items-center justify-center rounded-lg border border-border bg-card p-2 transition-colors hover:border-primary/30 hover:bg-primary/5"
                     >
-                      <span className="font-display text-2xl font-bold text-foreground">{h.char}</span>
+                      <span className="font-display text-2xl font-bold text-foreground">
+                        {h.char}
+                      </span>
                       <span className="text-xs text-muted-foreground">{h.romaji}</span>
                     </div>
                   ))}
@@ -59,8 +66,9 @@ function HiraganaPage() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Cada hiragana representa uma sílaba. As vogais são pronunciadas de forma uniforme: a (á), i (í), u (ú), e (ê), o (ó).
-            A consoante ん não tem vogal própria e soa como um "n" nasal suave.
+            Cada hiragana representa uma sílaba. As vogais são pronunciadas de forma uniforme: a
+            (á), i (í), u (ú), e (ê), o (ó). A consoante ん não tem vogal própria e soa como um "n"
+            nasal suave.
           </p>
         </CardContent>
       </Card>

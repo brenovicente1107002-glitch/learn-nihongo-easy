@@ -13,8 +13,9 @@ export function Badge({ className, variant = "default", ...props }: BadgeProps) 
         variant === "secondary" && "bg-secondary text-secondary-foreground",
         variant === "outline" && "border border-border bg-background text-foreground",
         variant === "accent" && "bg-japan-red/10 text-japan-red",
-        variant === "success" && "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-100",
-        className
+        variant === "success" &&
+          "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-100",
+        className,
       )}
       {...props}
     />

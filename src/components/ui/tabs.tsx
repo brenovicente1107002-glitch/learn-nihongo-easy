@@ -25,9 +25,20 @@ export function Tabs({ defaultValue, children, className }: TabsProps) {
   );
 }
 
-export function TabsList({ className, children }: { className?: string; children: React.ReactNode }) {
+export function TabsList({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className={cn("inline-flex h-10 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground", className)}>
+    <div
+      className={cn(
+        "inline-flex h-10 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
+        className,
+      )}
+    >
       {children}
     </div>
   );
@@ -49,7 +60,7 @@ export function TabsTrigger({ value, children, className }: TabsTriggerProps) {
       className={cn(
         "inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium transition-all",
         active ? "bg-card text-foreground shadow-sm" : "hover:text-foreground",
-        className
+        className,
       )}
     >
       {children}

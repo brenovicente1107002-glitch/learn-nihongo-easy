@@ -7,9 +7,15 @@ export const Route = createFileRoute("/vocabulario")({
   head: () => ({
     meta: [
       { title: "Vocabulário — Nihongo Quest" },
-      { name: "description", content: "Expanda seu vocabulário japonês com palavras organizadas por categoria." },
+      {
+        name: "description",
+        content: "Expanda seu vocabulário japonês com palavras organizadas por categoria.",
+      },
       { property: "og:title", content: "Vocabulário — Nihongo Quest" },
-      { property: "og:description", content: "Expanda seu vocabulário japonês com palavras organizadas por categoria." },
+      {
+        property: "og:description",
+        content: "Expanda seu vocabulário japonês com palavras organizadas por categoria.",
+      },
     ],
   }),
   component: VocabularioPage,
@@ -22,7 +28,9 @@ function VocabularioPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Vocabulário</h1>
-        <p className="mt-1 text-muted-foreground">Palavras essenciais para construir frases do dia a dia.</p>
+        <p className="mt-1 text-muted-foreground">
+          Palavras essenciais para construir frases do dia a dia.
+        </p>
       </div>
 
       {categories.map((category) => (
@@ -39,7 +47,9 @@ function VocabularioPage() {
                     key={i}
                     className="flex flex-col rounded-lg border border-border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
                   >
-                    <span className="font-display text-2xl font-bold text-foreground">{v.word}</span>
+                    <span className="font-display text-2xl font-bold text-foreground">
+                      {v.word}
+                    </span>
                     <span className="text-sm font-medium text-primary">{v.reading}</span>
                     <span className="mt-1 text-sm text-muted-foreground">{v.meaning}</span>
                   </div>

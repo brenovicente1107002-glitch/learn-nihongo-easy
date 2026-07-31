@@ -26,19 +26,24 @@ function Dashboard() {
     <div className="space-y-8">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">Olá, estudante!</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+            Olá, estudante!
+          </h1>
           <p className="mt-1 text-muted-foreground">Vamos continuar seu caminho no japonês hoje.</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="accent" className="px-3 py-1">
-            <Flame className="mr-1 h-4 w-4" />
-            5 dias de sequência
+            <Flame className="mr-1 h-4 w-4" />5 dias de sequência
           </Badge>
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsCard icon={GraduationCap} label="Lições concluídas" value={`${completedLessons}/${totalLessons}`} />
+        <StatsCard
+          icon={GraduationCap}
+          label="Lições concluídas"
+          value={`${completedLessons}/${totalLessons}`}
+        />
         <StatsCard icon={Layers} label="Flashcards" value="120" />
         <StatsCard icon={Sparkles} label="Kanji aprendidos" value="18" />
         <StatsCard icon={Target} label="Pontos de XP" value="2.450" />
@@ -48,7 +53,9 @@ function Dashboard() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Seu progresso</CardTitle>
-            <CardDescription>Você está a {100 - progress}% de completar o módulo inicial.</CardDescription>
+            <CardDescription>
+              Você está a {100 - progress}% de completar o módulo inicial.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Progress value={progress} />
@@ -80,14 +87,23 @@ function Dashboard() {
           <CardContent>
             {(() => {
               const next = licoes.find((l) => !l.completed && !l.locked);
-              if (!next) return <p className="text-sm text-muted-foreground">Todas as lições disponíveis foram concluídas!</p>;
+              if (!next)
+                return (
+                  <p className="text-sm text-muted-foreground">
+                    Todas as lições disponíveis foram concluídas!
+                  </p>
+                );
               return (
                 <div className="space-y-4">
                   <div className="rounded-lg border border-border p-4">
-                    <Badge variant="outline" className="mb-2">{next.category}</Badge>
+                    <Badge variant="outline" className="mb-2">
+                      {next.category}
+                    </Badge>
                     <h3 className="font-display font-semibold">{next.title}</h3>
                     <p className="mt-1 text-sm text-muted-foreground">{next.description}</p>
-                    <div className="mt-3 text-xs text-muted-foreground">Duração: {next.duration}</div>
+                    <div className="mt-3 text-xs text-muted-foreground">
+                      Duração: {next.duration}
+                    </div>
                   </div>
                   <Link
                     to="/licoes"
@@ -112,7 +128,10 @@ function Dashboard() {
           <CardContent>
             <div className="space-y-3">
               {vocabulario.slice(0, 5).map((v, i) => (
-                <div key={i} className="flex items-center justify-between rounded-lg border border-border p-3">
+                <div
+                  key={i}
+                  className="flex items-center justify-between rounded-lg border border-border p-3"
+                >
                   <div>
                     <div className="font-display text-lg font-semibold">{v.word}</div>
                     <div className="text-sm text-muted-foreground">{v.reading}</div>
@@ -176,7 +195,15 @@ function Dashboard() {
   );
 }
 
-function StatsCard({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) {
+function StatsCard({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+}) {
   return (
     <Card>
       <CardContent className="flex items-center gap-4 p-6">

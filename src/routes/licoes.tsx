@@ -10,9 +10,15 @@ export const Route = createFileRoute("/licoes")({
   head: () => ({
     meta: [
       { title: "Lições — Nihongo Quest" },
-      { name: "description", content: "Caminho de lições para aprender japonês do básico ao intermediário." },
+      {
+        name: "description",
+        content: "Caminho de lições para aprender japonês do básico ao intermediário.",
+      },
       { property: "og:title", content: "Lições — Nihongo Quest" },
-      { property: "og:description", content: "Caminho de lições para aprender japonês do básico ao intermediário." },
+      {
+        property: "og:description",
+        content: "Caminho de lições para aprender japonês do básico ao intermediário.",
+      },
     ],
   }),
   component: LicoesPage,
@@ -32,7 +38,9 @@ function LicoesPage() {
       <Card>
         <CardHeader>
           <CardTitle>Progresso do curso</CardTitle>
-          <CardDescription>{completed} de {licoes.length} lições concluídas</CardDescription>
+          <CardDescription>
+            {completed} de {licoes.length} lições concluídas
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Progress value={progress} />
@@ -49,8 +57,8 @@ function LicoesPage() {
                     l.completed
                       ? "bg-primary text-primary-foreground"
                       : l.locked
-                      ? "bg-muted text-muted-foreground"
-                      : "bg-primary/10 text-primary"
+                        ? "bg-muted text-muted-foreground"
+                        : "bg-primary/10 text-primary"
                   }`}
                 >
                   {l.completed ? <Check className="h-6 w-6" /> : i + 1}

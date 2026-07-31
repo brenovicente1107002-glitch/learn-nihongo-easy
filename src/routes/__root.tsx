@@ -94,10 +94,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Nihongo Quest — Aprenda japonês" },
-      { name: "description", content: "Aprenda japonês com lições, flashcards, hiragana, katakana, kanji, vocabulário e gramática." },
+      {
+        name: "description",
+        content:
+          "Aprenda japonês com lições, flashcards, hiragana, katakana, kanji, vocabulário e gramática.",
+      },
       { name: "author", content: "Nihongo Quest" },
       { property: "og:title", content: "Nihongo Quest — Aprenda japonês" },
-      { property: "og:description", content: "Aprenda japonês com lições, flashcards, hiragana, katakana, kanji, vocabulário e gramática." },
+      {
+        property: "og:description",
+        content:
+          "Aprenda japonês com lições, flashcards, hiragana, katakana, kanji, vocabulário e gramática.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@nihongoquest" },
@@ -190,7 +198,7 @@ function AppShell({ children }: { children: ReactNode }) {
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive(item.to)
                     ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
               >
                 <Icon className="h-5 w-5" />
@@ -265,7 +273,7 @@ function AppShell({ children }: { children: ReactNode }) {
                       "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                       isActive(item.to)
                         ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground",
                     )}
                   >
                     <Icon className="h-5 w-5" />

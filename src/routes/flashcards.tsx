@@ -12,7 +12,10 @@ export const Route = createFileRoute("/flashcards")({
       { title: "Flashcards — Nihongo Quest" },
       { name: "description", content: "Revise vocabulário japonês com flashcards interativos." },
       { property: "og:title", content: "Flashcards — Nihongo Quest" },
-      { property: "og:description", content: "Revise vocabulário japonês com flashcards interativos." },
+      {
+        property: "og:description",
+        content: "Revise vocabulário japonês com flashcards interativos.",
+      },
     ],
   }),
   component: FlashcardsPage,
@@ -52,7 +55,9 @@ function FlashcardsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Cartão {index + 1} de {flashcards.length}</CardTitle>
+          <CardTitle>
+            Cartão {index + 1} de {flashcards.length}
+          </CardTitle>
           <CardDescription>Memorize a leitura e o significado.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

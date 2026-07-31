@@ -6,9 +6,15 @@ export const Route = createFileRoute("/katakana")({
   head: () => ({
     meta: [
       { title: "Katakana — Nihongo Quest" },
-      { name: "description", content: "Aprenda o alfabeto katakana usado para palavras estrangeiras e empréstimos." },
+      {
+        name: "description",
+        content: "Aprenda o alfabeto katakana usado para palavras estrangeiras e empréstimos.",
+      },
       { property: "og:title", content: "Katakana — Nihongo Quest" },
-      { property: "og:description", content: "Aprenda o alfabeto katakana usado para palavras estrangeiras e empréstimos." },
+      {
+        property: "og:description",
+        content: "Aprenda o alfabeto katakana usado para palavras estrangeiras e empréstimos.",
+      },
     ],
   }),
   component: KatakanaPage,
@@ -21,7 +27,9 @@ function KatakanaPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Katakana</h1>
-        <p className="mt-1 text-muted-foreground">Alfabeto silábico usado para palavras estrangeiras, nomes e onomatopeias.</p>
+        <p className="mt-1 text-muted-foreground">
+          Alfabeto silábico usado para palavras estrangeiras, nomes e onomatopeias.
+        </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -42,7 +50,9 @@ function KatakanaPage() {
                       key={k.char}
                       className="flex flex-col items-center justify-center rounded-lg border border-border bg-card p-2 transition-colors hover:border-primary/30 hover:bg-primary/5"
                     >
-                      <span className="font-display text-2xl font-bold text-foreground">{k.char}</span>
+                      <span className="font-display text-2xl font-bold text-foreground">
+                        {k.char}
+                      </span>
                       <span className="text-xs text-muted-foreground">{k.romaji}</span>
                     </div>
                   ))}

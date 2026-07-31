@@ -13,7 +13,10 @@ export const Route = createFileRoute("/revisao")({
       { title: "Revisão — Nihongo Quest" },
       { name: "description", content: "Teste seus conhecimentos de japonês com quizzes rápidos." },
       { property: "og:title", content: "Revisão — Nihongo Quest" },
-      { property: "og:description", content: "Teste seus conhecimentos de japonês com quizzes rápidos." },
+      {
+        property: "og:description",
+        content: "Teste seus conhecimentos de japonês com quizzes rápidos.",
+      },
     ],
   }),
   component: RevisaoPage,
@@ -64,14 +67,18 @@ function RevisaoPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Revisão</h1>
-        <p className="mt-1 text-muted-foreground">Responda ao quiz para fixar o que você aprendeu.</p>
+        <p className="mt-1 text-muted-foreground">
+          Responda ao quiz para fixar o que você aprendeu.
+        </p>
       </div>
 
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Quiz de fixação</CardTitle>
-            <Badge variant="accent">{score} acerto{score === 1 ? "" : "s"}</Badge>
+            <Badge variant="accent">
+              {score} acerto{score === 1 ? "" : "s"}
+            </Badge>
           </div>
           <CardDescription>
             Pergunta {finished ? revisaoQuestions.length : current + 1} de {revisaoQuestions.length}
@@ -83,7 +90,11 @@ function RevisaoPage() {
           {finished ? (
             <div className="text-center">
               <div className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-                {score >= revisaoQuestions.length / 2 ? <CheckCircle className="h-10 w-10" /> : <XCircle className="h-10 w-10" />}
+                {score >= revisaoQuestions.length / 2 ? (
+                  <CheckCircle className="h-10 w-10" />
+                ) : (
+                  <XCircle className="h-10 w-10" />
+                )}
               </div>
               <h2 className="font-display text-2xl font-bold">Quiz finalizado!</h2>
               <p className="mt-2 text-muted-foreground">
@@ -96,7 +107,9 @@ function RevisaoPage() {
             </div>
           ) : (
             <>
-              <h2 className="font-display text-xl font-semibold text-foreground">{currentQuestion.question}</h2>
+              <h2 className="font-display text-xl font-semibold text-foreground">
+                {currentQuestion.question}
+              </h2>
               <div className="grid gap-3">
                 {currentQuestion.options.map((opt, idx) => {
                   const isCorrect = idx === currentQuestion.answer;
@@ -110,14 +123,16 @@ function RevisaoPage() {
                         selected === null
                           ? "border-border bg-card hover:bg-accent"
                           : isCorrect
-                          ? "border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100"
-                          : isWrong
-                          ? "border-red-400 bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-100"
-                          : "border-border bg-card opacity-60"
+                            ? "border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-100"
+                            : isWrong
+                              ? "border-red-400 bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-100"
+                              : "border-border bg-card opacity-60"
                       }`}
                     >
                       <span className="font-display text-lg">{opt}</span>
-                      {selected !== null && isCorrect && <CheckCircle className="h-5 w-5 text-emerald-600" />}
+                      {selected !== null && isCorrect && (
+                        <CheckCircle className="h-5 w-5 text-emerald-600" />
+                      )}
                       {selected !== null && isWrong && <XCircle className="h-5 w-5 text-red-600" />}
                     </button>
                   );
@@ -125,7 +140,9 @@ function RevisaoPage() {
               </div>
               {selected !== null && (
                 <div className="flex justify-end">
-                  <Button onClick={next}>{current + 1 >= revisaoQuestions.length ? "Ver resultado" : "Próxima"}</Button>
+                  <Button onClick={next}>
+                    {current + 1 >= revisaoQuestions.length ? "Ver resultado" : "Próxima"}
+                  </Button>
                 </div>
               )}
             </>

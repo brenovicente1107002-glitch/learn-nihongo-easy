@@ -145,7 +145,8 @@ export const vocabulario = [
 export const gramatica = [
   {
     title: "Estrutura básica da frase",
-    explanation: "A ordem padrão em japonês é Sujeito + Objeto + Verbo. O verbo sempre fica no final.",
+    explanation:
+      "A ordem padrão em japonês é Sujeito + Objeto + Verbo. O verbo sempre fica no final.",
     pattern: "S + O + V",
     examples: [
       { jp: "私は寿司を食べます。", romaji: "Watashi wa sushi wo tabemasu.", pt: "Eu como sushi." },
@@ -167,7 +168,11 @@ export const gramatica = [
     pattern: "Objeto + を + Verbo",
     examples: [
       { jp: "水を飲みます。", romaji: "Mizu wo nomimasu.", pt: "Eu bebo água." },
-      { jp: "日本語を勉強します。", romaji: "Nihongo wo benkyou shimasu.", pt: "Eu estudo japonês." },
+      {
+        jp: "日本語を勉強します。",
+        romaji: "Nihongo wo benkyou shimasu.",
+        pt: "Eu estudo japonês.",
+      },
     ],
   },
   {
@@ -181,7 +186,8 @@ export const gramatica = [
   },
   {
     title: "Perguntas com か (ka)",
-    explanation: "Para formar perguntas, basta adicionar か no final da frase. Não é necessário inverter a ordem.",
+    explanation:
+      "Para formar perguntas, basta adicionar か no final da frase. Não é necessário inverter a ordem.",
     pattern: "Frase + か",
     examples: [
       { jp: "あなたは学生ですか。", romaji: "Anata wa gakusei desu ka?", pt: "Você é estudante?" },
@@ -190,10 +196,15 @@ export const gramatica = [
   },
   {
     title: "Adjetivos em い (i-adjetivos)",
-    explanation: "Adjetivos terminados em い podem ser conjugados diretamente, sem precisar de です na forma informal.",
+    explanation:
+      "Adjetivos terminados em い podem ser conjugados diretamente, sem precisar de です na forma informal.",
     pattern: "い-adjetivo + です (formal)",
     examples: [
-      { jp: "この本は面白いです。", romaji: "Kono hon wa omoshiroi desu.", pt: "Este livro é interessante." },
+      {
+        jp: "この本は面白いです。",
+        romaji: "Kono hon wa omoshiroi desu.",
+        pt: "Este livro é interessante.",
+      },
       { jp: "新しい車です。", romaji: "Atarashii kuruma desu.", pt: "É um carro novo." },
     ],
   },
@@ -203,7 +214,8 @@ export const licoes = [
   {
     id: "l1",
     title: "Hiragana: sons básicos",
-    description: "Aprenda as 46 formas básicas do hiragana: a, ka, sa, ta, na, ha, ma, ya, ra, wa, n.",
+    description:
+      "Aprenda as 46 formas básicas do hiragana: a, ka, sa, ta, na, ha, ma, ya, ra, wa, n.",
     duration: "15 min",
     completed: true,
     locked: false,
@@ -301,7 +313,12 @@ export const revisaoQuestions = [
   },
   {
     question: "Qual é a ordem padrão de uma frase em japonês?",
-    options: ["Verbo + Sujeito + Objeto", "Objeto + Verbo + Sujeito", "Sujeito + Objeto + Verbo", "Sujeito + Verbo + Objeto"],
+    options: [
+      "Verbo + Sujeito + Objeto",
+      "Objeto + Verbo + Sujeito",
+      "Sujeito + Objeto + Verbo",
+      "Sujeito + Verbo + Objeto",
+    ],
     answer: 2,
   },
 ];
