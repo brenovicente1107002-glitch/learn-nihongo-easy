@@ -109,7 +109,6 @@ const n4 = `
 意見|iken|opinião|substantivo
 気持ち|kimochi|sentimento|substantivo
 運ぶ|hakobu|transportar|verbo
-집중|-|-|-
 `;
 
 const n4b = `
@@ -170,7 +169,6 @@ const n3 = `
 断る|kotowaru|recusar|verbo
 認める|mitomeru|reconhecer|verbo
 求める|motomeru|buscar|verbo
-предлагать|-|-|-
 `;
 
 const n3b = `
@@ -264,6 +262,8 @@ export const vocabulario: VocabItem[] = [
   ...parse("N3", n3b),
   ...parse("N2", n2),
   ...parse("N1", n1),
-].filter((v) => v.meaning !== "-");
+].filter(
+  (v, i, arr) => v.meaning !== "-" && arr.findIndex((o) => o.word === v.word) === i,
+);
 
 export const vocabByLevel = (level: JlptLevel) => vocabulario.filter((v) => v.level === level);
