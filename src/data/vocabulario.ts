@@ -262,8 +262,6 @@ export const vocabulario: VocabItem[] = [
   ...parse("N3", n3b),
   ...parse("N2", n2),
   ...parse("N1", n1),
-].filter(
-  (v, i, arr) => v.meaning !== "-" && arr.findIndex((o) => o.word === v.word) === i,
-);
+].filter((v, i, arr) => v.meaning !== "-" && arr.findIndex((o) => o.word === v.word) === i);
 
 export const vocabByLevel = (level: JlptLevel) => vocabulario.filter((v) => v.level === level);

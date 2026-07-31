@@ -21,7 +21,7 @@ export const kanjiFlashcards = kanji.map((k) => ({
   level: k.level,
 }));
 
-const shuffle = <T,>(arr: T[], seed: number): T[] => {
+const shuffle = <T>(arr: T[], seed: number): T[] => {
   const a = [...arr];
   let s = seed;
   for (let i = a.length - 1; i > 0; i--) {

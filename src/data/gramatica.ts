@@ -37,7 +37,11 @@ export const gramatica: GrammarPoint[] = [
     level: "N5",
     examples: [
       { jp: "水を飲みます。", romaji: "Mizu wo nomimasu.", pt: "Eu bebo água." },
-      { jp: "日本語を勉強します。", romaji: "Nihongo wo benkyou shimasu.", pt: "Eu estudo japonês." },
+      {
+        jp: "日本語を勉強します。",
+        romaji: "Nihongo wo benkyou shimasu.",
+        pt: "Eu estudo japonês.",
+      },
     ],
   },
   {
@@ -48,7 +52,11 @@ export const gramatica: GrammarPoint[] = [
     level: "N5",
     examples: [
       { jp: "学校に行きます。", romaji: "Gakkou ni ikimasu.", pt: "Vou para a escola." },
-      { jp: "図書館で勉強します。", romaji: "Toshokan de benkyou shimasu.", pt: "Estudo na biblioteca." },
+      {
+        jp: "図書館で勉強します。",
+        romaji: "Toshokan de benkyou shimasu.",
+        pt: "Estudo na biblioteca.",
+      },
     ],
   },
   {
@@ -79,7 +87,11 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-て + ください",
     level: "N5",
     examples: [
-      { jp: "ちょっと待ってください。", romaji: "Chotto matte kudasai.", pt: "Espere um pouco, por favor." },
+      {
+        jp: "ちょっと待ってください。",
+        romaji: "Chotto matte kudasai.",
+        pt: "Espere um pouco, por favor.",
+      },
       { jp: "見せてください。", romaji: "Misete kudasai.", pt: "Mostre-me, por favor." },
     ],
   },
@@ -99,7 +111,11 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-て + いる",
     level: "N4",
     examples: [
-      { jp: "今、勉強しています。", romaji: "Ima, benkyou shite imasu.", pt: "Estou estudando agora." },
+      {
+        jp: "今、勉強しています。",
+        romaji: "Ima, benkyou shite imasu.",
+        pt: "Estou estudando agora.",
+      },
       { jp: "彼は結婚しています。", romaji: "Kare wa kekkon shite imasu.", pt: "Ele é casado." },
     ],
   },
@@ -110,7 +126,11 @@ export const gramatica: GrammarPoint[] = [
     level: "N4",
     examples: [
       { jp: "日本語が話せます。", romaji: "Nihongo ga hanasemasu.", pt: "Consigo falar japonês." },
-      { jp: "刺身が食べられますか。", romaji: "Sashimi ga taberaremasu ka?", pt: "Você consegue comer sashimi?" },
+      {
+        jp: "刺身が食べられますか。",
+        romaji: "Sashimi ga taberaremasu ka?",
+        pt: "Você consegue comer sashimi?",
+      },
     ],
   },
   {
@@ -119,8 +139,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-ない (sem い) + ければならない",
     level: "N4",
     examples: [
-      { jp: "早く帰らなければなりません。", romaji: "Hayaku kaeranakereba narimasen.", pt: "Preciso voltar cedo." },
-      { jp: "薬を飲まないといけない。", romaji: "Kusuri wo nomanai to ikenai.", pt: "Tenho que tomar o remédio." },
+      {
+        jp: "早く帰らなければなりません。",
+        romaji: "Hayaku kaeranakereba narimasen.",
+        pt: "Preciso voltar cedo.",
+      },
+      {
+        jp: "薬を飲まないといけない。",
+        romaji: "Kusuri wo nomanai to ikenai.",
+        pt: "Tenho que tomar o remédio.",
+      },
     ],
   },
   {
@@ -129,7 +157,11 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-たら / V-ば",
     level: "N4",
     examples: [
-      { jp: "雨が降ったら、行きません。", romaji: "Ame ga futtara, ikimasen.", pt: "Se chover, não vou." },
+      {
+        jp: "雨が降ったら、行きません。",
+        romaji: "Ame ga futtara, ikimasen.",
+        pt: "Se chover, não vou.",
+      },
       { jp: "安ければ買います。", romaji: "Yasukereba kaimasu.", pt: "Se for barato, eu compro." },
     ],
   },
@@ -149,7 +181,11 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-passiva",
     level: "N4",
     examples: [
-      { jp: "先生に褒められました。", romaji: "Sensei ni homeraremashita.", pt: "Fui elogiado pelo professor." },
+      {
+        jp: "先生に褒められました。",
+        romaji: "Sensei ni homeraremashita.",
+        pt: "Fui elogiado pelo professor.",
+      },
       { jp: "雨に降られた。", romaji: "Ame ni furareta.", pt: "Fui pego pela chuva." },
     ],
   },
@@ -160,8 +196,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-辞書 + ようになる / ことにする",
     level: "N3",
     examples: [
-      { jp: "漢字が読めるようになった。", romaji: "Kanji ga yomeru you ni natta.", pt: "Passei a conseguir ler kanji." },
-      { jp: "毎朝走ることにしました。", romaji: "Maiasa hashiru koto ni shimashita.", pt: "Decidi correr toda manhã." },
+      {
+        jp: "漢字が読めるようになった。",
+        romaji: "Kanji ga yomeru you ni natta.",
+        pt: "Passei a conseguir ler kanji.",
+      },
+      {
+        jp: "毎朝走ることにしました。",
+        romaji: "Maiasa hashiru koto ni shimashita.",
+        pt: "Decidi correr toda manhã.",
+      },
     ],
   },
   {
@@ -170,8 +214,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "Forma simples + わけだ / はずだ",
     level: "N3",
     examples: [
-      { jp: "彼は日本育ちだ。上手なわけだ。", romaji: "Kare wa Nihon sodachi da. Jouzu na wake da.", pt: "Ele cresceu no Japão. Por isso é bom." },
-      { jp: "もう着いているはずです。", romaji: "Mou tsuite iru hazu desu.", pt: "Ele já deve ter chegado." },
+      {
+        jp: "彼は日本育ちだ。上手なわけだ。",
+        romaji: "Kare wa Nihon sodachi da. Jouzu na wake da.",
+        pt: "Ele cresceu no Japão. Por isso é bom.",
+      },
+      {
+        jp: "もう着いているはずです。",
+        romaji: "Mou tsuite iru hazu desu.",
+        pt: "Ele já deve ter chegado.",
+      },
     ],
   },
   {
@@ -180,8 +232,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-raiz + ながら / V-辞書 + たびに",
     level: "N3",
     examples: [
-      { jp: "音楽を聞きながら勉強する。", romaji: "Ongaku wo kikinagara benkyou suru.", pt: "Estudo ouvindo música." },
-      { jp: "会うたびに背が伸びる。", romaji: "Au tabi ni se ga nobiru.", pt: "Toda vez que o vejo, está mais alto." },
+      {
+        jp: "音楽を聞きながら勉強する。",
+        romaji: "Ongaku wo kikinagara benkyou suru.",
+        pt: "Estudo ouvindo música.",
+      },
+      {
+        jp: "会うたびに背が伸びる。",
+        romaji: "Au tabi ni se ga nobiru.",
+        pt: "Toda vez que o vejo, está mais alto.",
+      },
     ],
   },
   {
@@ -190,8 +250,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-ば + V-辞書 + ほど",
     level: "N3",
     examples: [
-      { jp: "練習すればするほど上手になる。", romaji: "Renshuu sureba suru hodo jouzu ni naru.", pt: "Quanto mais pratica, melhor fica." },
-      { jp: "安ければ安いほどいい。", romaji: "Yasukereba yasui hodo ii.", pt: "Quanto mais barato, melhor." },
+      {
+        jp: "練習すればするほど上手になる。",
+        romaji: "Renshuu sureba suru hodo jouzu ni naru.",
+        pt: "Quanto mais pratica, melhor fica.",
+      },
+      {
+        jp: "安ければ安いほどいい。",
+        romaji: "Yasukereba yasui hodo ii.",
+        pt: "Quanto mais barato, melhor.",
+      },
     ],
   },
   {
@@ -200,8 +268,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "N + に基づいて / をめぐって",
     level: "N2",
     examples: [
-      { jp: "データに基づいて判断する。", romaji: "Deeta ni motozuite handan suru.", pt: "Julgar com base nos dados." },
-      { jp: "法案をめぐって議論が続く。", romaji: "Houan wo megutte giron ga tsuzuku.", pt: "O debate continua em torno do projeto de lei." },
+      {
+        jp: "データに基づいて判断する。",
+        romaji: "Deeta ni motozuite handan suru.",
+        pt: "Julgar com base nos dados.",
+      },
+      {
+        jp: "法案をめぐって議論が続く。",
+        romaji: "Houan wo megutte giron ga tsuzuku.",
+        pt: "O debate continua em torno do projeto de lei.",
+      },
     ],
   },
   {
@@ -211,8 +287,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "Forma simples + わけではない / どころか",
     level: "N2",
     examples: [
-      { jp: "嫌いなわけではない。", romaji: "Kirai na wake dewa nai.", pt: "Não é que eu não goste." },
-      { jp: "休むどころか、もっと働いた。", romaji: "Yasumu dokoro ka, motto hataraita.", pt: "Longe de descansar, trabalhei mais." },
+      {
+        jp: "嫌いなわけではない。",
+        romaji: "Kirai na wake dewa nai.",
+        pt: "Não é que eu não goste.",
+      },
+      {
+        jp: "休むどころか、もっと働いた。",
+        romaji: "Yasumu dokoro ka, motto hataraita.",
+        pt: "Longe de descansar, trabalhei mais.",
+      },
     ],
   },
   {
@@ -221,8 +305,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-raiz + 次第 / V-た + 上で",
     level: "N2",
     examples: [
-      { jp: "着き次第、連絡します。", romaji: "Tsuki shidai, renraku shimasu.", pt: "Assim que chegar, aviso." },
-      { jp: "検討した上で決めます。", romaji: "Kentou shita ue de kimemasu.", pt: "Decidirei depois de analisar." },
+      {
+        jp: "着き次第、連絡します。",
+        romaji: "Tsuki shidai, renraku shimasu.",
+        pt: "Assim que chegar, aviso.",
+      },
+      {
+        jp: "検討した上で決めます。",
+        romaji: "Kentou shita ue de kimemasu.",
+        pt: "Decidirei depois de analisar.",
+      },
     ],
   },
   {
@@ -232,8 +324,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-ない (raiz) + ざるを得ない",
     level: "N1",
     examples: [
-      { jp: "認めざるを得ない。", romaji: "Mitomezaru wo enai.", pt: "Não tenho como não admitir." },
-      { jp: "成功を願ってやみません。", romaji: "Seikou wo negatte yamimasen.", pt: "Desejo sinceramente seu sucesso." },
+      {
+        jp: "認めざるを得ない。",
+        romaji: "Mitomezaru wo enai.",
+        pt: "Não tenho como não admitir.",
+      },
+      {
+        jp: "成功を願ってやみません。",
+        romaji: "Seikou wo negatte yamimasen.",
+        pt: "Desejo sinceramente seu sucesso.",
+      },
     ],
   },
   {
@@ -243,8 +343,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "V-辞書 + きらいがある",
     level: "N1",
     examples: [
-      { jp: "彼は物事を悲観するきらいがある。", romaji: "Kare wa monogoto wo hikan suru kirai ga aru.", pt: "Ele tende a ver tudo de forma pessimista." },
-      { jp: "見るにたえない光景。", romaji: "Miru ni taenai koukei.", pt: "Uma cena insuportável de se ver." },
+      {
+        jp: "彼は物事を悲観するきらいがある。",
+        romaji: "Kare wa monogoto wo hikan suru kirai ga aru.",
+        pt: "Ele tende a ver tudo de forma pessimista.",
+      },
+      {
+        jp: "見るにたえない光景。",
+        romaji: "Miru ni taenai koukei.",
+        pt: "Uma cena insuportável de se ver.",
+      },
     ],
   },
   {
@@ -253,8 +361,16 @@ export const gramatica: GrammarPoint[] = [
     pattern: "N + ともなると / であれ",
     level: "N1",
     examples: [
-      { jp: "社長ともなると責任が重い。", romaji: "Shachou to mo naru to sekinin ga omoi.", pt: "Quando se é presidente, a responsabilidade é grande." },
-      { jp: "理由が何であれ、遅刻は遅刻だ。", romaji: "Riyuu ga nan de are, chikoku wa chikoku da.", pt: "Seja qual for o motivo, atraso é atraso." },
+      {
+        jp: "社長ともなると責任が重い。",
+        romaji: "Shachou to mo naru to sekinin ga omoi.",
+        pt: "Quando se é presidente, a responsabilidade é grande.",
+      },
+      {
+        jp: "理由が何であれ、遅刻は遅刻だ。",
+        romaji: "Riyuu ga nan de are, chikoku wa chikoku da.",
+        pt: "Seja qual for o motivo, atraso é atraso.",
+      },
     ],
   },
 ];
