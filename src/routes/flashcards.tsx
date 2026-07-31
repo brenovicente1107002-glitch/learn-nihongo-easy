@@ -1,48 +1,59 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { flashcards } from "@/data/japanese";
+import { LevelTabs } from "@/components/level-tabs";
+import { flashcards, kanjiFlashcards, type JlptLevel } from "@/data/japanese";
 import { ArrowLeft, ArrowRight, RotateCw } from "lucide-react";
 
 export const Route = createFileRoute("/flashcards")({
   head: () => ({
     meta: [
-      { title: "Flashcards — Nihongo Quest" },
-      { name: "description", content: "Revise vocabulário japonês com flashcards interativos." },
-      { property: "og:title", content: "Flashcards — Nihongo Quest" },
+      { title: "Flashcards JLPT N5–N1 — Nihongo Quest" },
+      {
+        name: "description",
+        content: "Revise vocabulário e kanji de todos os níveis do JLPT com flashcards.",
+      },
+      { property: "og:title", content: "Flashcards JLPT N5–N1 — Nihongo Quest" },
       {
         property: "og:description",
-        content: "Revise vocabulário japonês com flashcards interativos.",
+        content: "Cartões interativos de vocabulário e kanji, filtrados por nível do JLPT.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: FlashcardsPage,
 });
 
 function FlashcardsPage() {
+  const [level, setLevel] = useState<JlptLevel>("N5");
+  const [mode, setMode] = useState<"vocab" | "kanji">("vocab");
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
-  const card = flashcards[index];
-  const progress = Math.round(((index + 1) / flashcards.length) * 100);
+  const deck = useMemo(
+    () => (mode === "vocab" ? flashcards : kanjiFlashcards).filter((c) => c.level === level),
+    [mode, level],
+  );
 
-  if (!card) {
-    return (
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-muted-foreground">Nenhum flashcard disponível.</p>
-      </div>
-    );
+  const card = deck[index];
+  const progress = deck.length ? Math.round(((index + 1) / deck.length) * 100) : 0;
+
+  function reset(fn: () => void) {
+    fn();
+    setIndex(0);
+    setFlipped(false);
   }
 
   function next() {
-    setIndex((i) => (i + 1) % flashcards.length);
+    setIndex((i) => (i + 1) % deck.length);
     setFlipped(false);
   }
 
   function prev() {
-    setIndex((i) => (i - 1 + flashcards.length) % flashcards.length);
+    setIndex((i) => (i - 1 + deck.length) % deck.length);
     setFlipped(false);
   }
 
@@ -53,44 +64,69 @@ function FlashcardsPage() {
         <p className="mt-1 text-muted-foreground">Clique no cartão para ver a resposta.</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            Cartão {index + 1} de {flashcards.length}
-          </CardTitle>
-          <CardDescription>Memorize a leitura e o significado.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <Progress value={progress} />
+      <LevelTabs value={level} onChange={(l) => reset(() => setLevel(l))} />
 
-          <button
-            onClick={() => setFlipped((f) => !f)}
-            className="relative w-full rounded-2xl border border-border bg-card p-12 text-center transition-all hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <div className="font-display text-5xl font-bold text-foreground sm:text-6xl">
-              {flipped ? card.back : card.front}
-            </div>
-            <div className="mt-4 text-sm text-muted-foreground">
-              {flipped ? "Verso" : "Frente"} — clique para virar
-            </div>
-          </button>
+      <div className="flex gap-2">
+        <Button
+          variant={mode === "vocab" ? "default" : "outline"}
+          onClick={() => reset(() => setMode("vocab"))}
+        >
+          Vocabulário
+        </Button>
+        <Button
+          variant={mode === "kanji" ? "default" : "outline"}
+          onClick={() => reset(() => setMode("kanji"))}
+        >
+          Kanji
+        </Button>
+      </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <Button variant="outline" onClick={prev}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Anterior
-            </Button>
-            <Button variant="secondary" onClick={() => setFlipped((f) => !f)}>
-              <RotateCw className="mr-2 h-4 w-4" />
-              Virar
-            </Button>
-            <Button onClick={next}>
-              Próximo
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {!card ? (
+        <Card>
+          <CardContent className="p-8 text-center text-muted-foreground">
+            Nenhum cartão disponível para este nível.
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Cartão {index + 1} de {deck.length}
+            </CardTitle>
+            <CardDescription>Memorize a leitura e o significado.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Progress value={progress} />
+
+            <button
+              onClick={() => setFlipped((f) => !f)}
+              className="relative w-full rounded-2xl border border-border bg-card p-12 text-center transition-all hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <div className="font-display text-4xl font-bold text-foreground sm:text-5xl">
+                {flipped ? card.back : card.front}
+              </div>
+              <div className="mt-4 text-sm text-muted-foreground">
+                {flipped ? "Verso" : "Frente"} — clique para virar
+              </div>
+            </button>
+
+            <div className="flex items-center justify-between gap-3">
+              <Button variant="outline" onClick={prev}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Anterior
+              </Button>
+              <Button variant="secondary" onClick={() => setFlipped((f) => !f)}>
+                <RotateCw className="mr-2 h-4 w-4" />
+                Virar
+              </Button>
+              <Button onClick={next}>
+                Próximo
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
