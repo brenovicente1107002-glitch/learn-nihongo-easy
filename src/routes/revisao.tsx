@@ -28,6 +28,14 @@ function RevisaoPage() {
   const question = revisaoQuestions[current];
   const progress = Math.round(((current + (finished ? 1 : 0)) / revisaoQuestions.length) * 100);
 
+  if (!question) {
+    return (
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-muted-foreground">Nenhuma pergunta disponível.</p>
+      </div>
+    );
+  }
+
   function handleAnswer(index: number) {
     if (selected !== null) return;
     setSelected(index);

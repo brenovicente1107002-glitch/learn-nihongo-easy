@@ -25,6 +25,14 @@ function FlashcardsPage() {
   const card = flashcards[index];
   const progress = Math.round(((index + 1) / flashcards.length) * 100);
 
+  if (!card) {
+    return (
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-muted-foreground">Nenhum flashcard disponível.</p>
+      </div>
+    );
+  }
+
   function next() {
     setIndex((i) => (i + 1) % flashcards.length);
     setFlipped(false);
@@ -58,7 +66,7 @@ function FlashcardsPage() {
               {flipped ? card.back : card.front}
             </div>
             <div className="mt-4 text-sm text-muted-foreground">
-              {flipped ? "Frente" : "Verso"} — clique para virar
+              {flipped ? "Verso" : "Frente"} — clique para virar
             </div>
           </button>
 
