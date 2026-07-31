@@ -53,9 +53,7 @@ function Dashboard() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Seu progresso</CardTitle>
-            <CardDescription>
-              Você concluiu {progress}% do módulo inicial.
-            </CardDescription>
+            <CardDescription>Você concluiu {progress}% do módulo inicial.</CardDescription>
           </CardHeader>
           <CardContent>
             <Progress value={progress} />
