@@ -10,33 +10,141 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FlashcardsRouteImport } from './routes/flashcards'
+import { Route as GramaticaRouteImport } from './routes/gramatica'
+import { Route as HiraganaRouteImport } from './routes/hiragana'
+import { Route as KanjiRouteImport } from './routes/kanji'
+import { Route as KatakanaRouteImport } from './routes/katakana'
+import { Route as LicoesRouteImport } from './routes/licoes'
+import { Route as RevisaoRouteImport } from './routes/revisao'
+import { Route as VocabularioRouteImport } from './routes/vocabulario'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FlashcardsRoute = FlashcardsRouteImport.update({
+  id: '/flashcards',
+  path: '/flashcards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GramaticaRoute = GramaticaRouteImport.update({
+  id: '/gramatica',
+  path: '/gramatica',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HiraganaRoute = HiraganaRouteImport.update({
+  id: '/hiragana',
+  path: '/hiragana',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KanjiRoute = KanjiRouteImport.update({
+  id: '/kanji',
+  path: '/kanji',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KatakanaRoute = KatakanaRouteImport.update({
+  id: '/katakana',
+  path: '/katakana',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LicoesRoute = LicoesRouteImport.update({
+  id: '/licoes',
+  path: '/licoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RevisaoRoute = RevisaoRouteImport.update({
+  id: '/revisao',
+  path: '/revisao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VocabularioRoute = VocabularioRouteImport.update({
+  id: '/vocabulario',
+  path: '/vocabulario',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/gramatica': typeof GramaticaRoute
+  '/hiragana': typeof HiraganaRoute
+  '/kanji': typeof KanjiRoute
+  '/katakana': typeof KatakanaRoute
+  '/licoes': typeof LicoesRoute
+  '/revisao': typeof RevisaoRoute
+  '/vocabulario': typeof VocabularioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/gramatica': typeof GramaticaRoute
+  '/hiragana': typeof HiraganaRoute
+  '/kanji': typeof KanjiRoute
+  '/katakana': typeof KatakanaRoute
+  '/licoes': typeof LicoesRoute
+  '/revisao': typeof RevisaoRoute
+  '/vocabulario': typeof VocabularioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/flashcards': typeof FlashcardsRoute
+  '/gramatica': typeof GramaticaRoute
+  '/hiragana': typeof HiraganaRoute
+  '/kanji': typeof KanjiRoute
+  '/katakana': typeof KatakanaRoute
+  '/licoes': typeof LicoesRoute
+  '/revisao': typeof RevisaoRoute
+  '/vocabulario': typeof VocabularioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/flashcards'
+    | '/gramatica'
+    | '/hiragana'
+    | '/kanji'
+    | '/katakana'
+    | '/licoes'
+    | '/revisao'
+    | '/vocabulario'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/flashcards'
+    | '/gramatica'
+    | '/hiragana'
+    | '/kanji'
+    | '/katakana'
+    | '/licoes'
+    | '/revisao'
+    | '/vocabulario'
+  id:
+    | '__root__'
+    | '/'
+    | '/flashcards'
+    | '/gramatica'
+    | '/hiragana'
+    | '/kanji'
+    | '/katakana'
+    | '/licoes'
+    | '/revisao'
+    | '/vocabulario'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FlashcardsRoute: typeof FlashcardsRoute
+  GramaticaRoute: typeof GramaticaRoute
+  HiraganaRoute: typeof HiraganaRoute
+  KanjiRoute: typeof KanjiRoute
+  KatakanaRoute: typeof KatakanaRoute
+  LicoesRoute: typeof LicoesRoute
+  RevisaoRoute: typeof RevisaoRoute
+  VocabularioRoute: typeof VocabularioRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +156,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/flashcards': {
+      id: '/flashcards'
+      path: '/flashcards'
+      fullPath: '/flashcards'
+      preLoaderRoute: typeof FlashcardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gramatica': {
+      id: '/gramatica'
+      path: '/gramatica'
+      fullPath: '/gramatica'
+      preLoaderRoute: typeof GramaticaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hiragana': {
+      id: '/hiragana'
+      path: '/hiragana'
+      fullPath: '/hiragana'
+      preLoaderRoute: typeof HiraganaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kanji': {
+      id: '/kanji'
+      path: '/kanji'
+      fullPath: '/kanji'
+      preLoaderRoute: typeof KanjiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/katakana': {
+      id: '/katakana'
+      path: '/katakana'
+      fullPath: '/katakana'
+      preLoaderRoute: typeof KatakanaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/licoes': {
+      id: '/licoes'
+      path: '/licoes'
+      fullPath: '/licoes'
+      preLoaderRoute: typeof LicoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/revisao': {
+      id: '/revisao'
+      path: '/revisao'
+      fullPath: '/revisao'
+      preLoaderRoute: typeof RevisaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vocabulario': {
+      id: '/vocabulario'
+      path: '/vocabulario'
+      fullPath: '/vocabulario'
+      preLoaderRoute: typeof VocabularioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FlashcardsRoute: FlashcardsRoute,
+  GramaticaRoute: GramaticaRoute,
+  HiraganaRoute: HiraganaRoute,
+  KanjiRoute: KanjiRoute,
+  KatakanaRoute: KatakanaRoute,
+  LicoesRoute: LicoesRoute,
+  RevisaoRoute: RevisaoRoute,
+  VocabularioRoute: VocabularioRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
