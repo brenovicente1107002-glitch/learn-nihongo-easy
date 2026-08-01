@@ -1,4 +1,4 @@
-import { jlptLevels, kanji, type JlptLevel, type KanjiItem } from "./kanji";
+import { jlptLevels, kanji, type JlptLevel, type Kanji } from "./kanji";
 import { vocabulario, type VocabItem } from "./vocabulario";
 import { gramatica, type GrammarPoint } from "./gramatica";
 import {
@@ -16,7 +16,7 @@ export type LicaoNivel = JlptLevel | "Kana";
 
 export type LicaoConteudo =
   | { kind: "kana"; items: KanaItem[] }
-  | { kind: "kanji"; items: KanjiItem[] }
+  | { kind: "kanji"; items: Kanji[] }
   | { kind: "vocab"; items: VocabItem[] }
   | { kind: "gramatica"; point: GrammarPoint };
 
