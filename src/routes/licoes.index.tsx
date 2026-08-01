@@ -135,18 +135,23 @@ function LicoesPage() {
                     <div className="mt-2 text-xs text-muted-foreground">Duração: {l.duration}</div>
                   </div>
                 </div>
-                <Button asChild variant={feito ? "secondary" : "default"} className="shrink-0">
-                  <Link to="/licoes/$id" params={{ id: l.id }}>
-                    {feito ? (
-                      "Revisar"
-                    ) : (
-                      <>
-                        <Play className="mr-2 h-4 w-4" />
-                        Iniciar
-                      </>
-                    )}
-                  </Link>
-                </Button>
+                <Link
+                  to="/licoes/$id"
+                  params={{ id: l.id }}
+                  className={cn(
+                    buttonVariants({ variant: feito ? "secondary" : "default" }),
+                    "shrink-0",
+                  )}
+                >
+                  {feito ? (
+                    "Revisar"
+                  ) : (
+                    <>
+                      <Play className="mr-2 h-4 w-4" />
+                      Iniciar
+                    </>
+                  )}
+                </Link>
               </CardContent>
             </Card>
           );
