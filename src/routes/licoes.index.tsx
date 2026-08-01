@@ -9,7 +9,7 @@ import { useProgress } from "@/hooks/use-progress";
 import { jlptInfo, licoes, niveisDeLicao, type LicaoNivel } from "@/data/japanese";
 import { Check, Play } from "lucide-react";
 
-export const Route = createFileRoute("/licoes")({
+export const Route = createFileRoute("/licoes/")({
   head: () => ({
     meta: [
       { title: "Lições de japonês N5–N1 — Nihongo Quest" },
