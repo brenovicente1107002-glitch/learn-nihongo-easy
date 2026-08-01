@@ -1,87 +1,119 @@
-import { jlptLevels, type JlptLevel } from "./kanji";
+import { jlptLevels, kanji, type JlptLevel, type KanjiItem } from "./kanji";
+import { vocabulario, type VocabItem } from "./vocabulario";
+import { gramatica, type GrammarPoint } from "./gramatica";
+import {
+  hiragana,
+  hiraganaDakuten,
+  hiraganaYouon,
+  katakana,
+  katakanaDakuten,
+  katakanaYouon,
+  katakanaExtra,
+  type KanaItem,
+} from "./kana";
+
+export type LicaoNivel = JlptLevel | "Kana";
+
+export type LicaoConteudo =
+  | { kind: "kana"; items: KanaItem[] }
+  | { kind: "kanji"; items: KanjiItem[] }
+  | { kind: "vocab"; items: VocabItem[] }
+  | { kind: "gramatica"; point: GrammarPoint };
 
 export type Licao = {
   id: string;
   title: string;
   description: string;
   duration: string;
-  completed: boolean;
-  locked: boolean;
-  category: string;
-  level: JlptLevel | "Kana";
+  category: "Escrita" | "Kanji" | "Vocabulário" | "Gramática";
+  level: LicaoNivel;
+  content: LicaoConteudo;
 };
 
-export const licoes: Licao[] = [
-  {
-    id: "kana-1",
-    title: "Hiragana: sons básicos",
-    description: "As 46 formas básicas do hiragana: a, ka, sa, ta, na, ha, ma, ya, ra, wa, n.",
-    duration: "15 min",
-    completed: true,
-    locked: false,
-    category: "Escrita",
-    level: "Kana",
-  },
-  {
-    id: "kana-2",
-    title: "Hiragana: dakuten e youon",
-    description: "が、ざ、だ、ば、ぱ e as combinações きゃ、しゅ、ちょ.",
-    duration: "15 min",
-    completed: true,
-    locked: false,
-    category: "Escrita",
-    level: "Kana",
-  },
-  {
-    id: "kana-3",
-    title: "Katakana completo",
-    description: "Katakana básico, dakuten, youon e sons estrangeiros (ファ、ヴィ、ティ).",
-    duration: "20 min",
-    completed: false,
-    locked: false,
-    category: "Escrita",
-    level: "Kana",
-  },
-  ...jlptLevels.flatMap<Licao>((level, i) => [
-    {
-      id: `${level}-kanji`,
-      title: `Kanji ${level}`,
-      description: `Kanji essenciais do nível ${level} com leituras on'yomi e kun'yomi.`,
-      duration: "30 min",
-      completed: false,
-      locked: i > 0,
-      category: "Kanji",
-      level,
-    },
-    {
-      id: `${level}-vocab`,
-      title: `Vocabulário ${level}`,
-      description: `Palavras-chave do nível ${level} organizadas por classe gramatical.`,
-      duration: "25 min",
-      completed: false,
-      locked: i > 0,
-      category: "Vocabulário",
-      level,
-    },
-    {
-      id: `${level}-gram`,
-      title: `Gramática ${level}`,
-      description: `Padrões gramaticais cobrados no ${level}, com exemplos traduzidos.`,
-      duration: "35 min",
-      completed: false,
-      locked: i > 0,
-      category: "Gramática",
-      level,
-    },
-    {
-      id: `${level}-review`,
-      title: `Revisão ${level}`,
-      description: `Quiz misto de kanji, vocabulário e gramática do nível ${level}.`,
-      duration: "20 min",
-      completed: false,
-      locked: i > 0,
-      category: "Revisão",
-      level,
-    },
-  ]),
+const chunk = <T>(arr: T[], size: number): T[][] => {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+};
+
+const kanaLessons = (
+  slug: string,
+  label: string,
+  items: KanaItem[],
+  size = 5,
+): Licao[] =>
+  chunk(items, size).map((group, i) => ({
+    id: `kana-${slug}-${i + 1}`,
+    title: `${label} ${i + 1}`,
+    description: group.map((k) => `${k.char} (${k.romaji})`).join("  ·  "),
+    duration: "3 min",
+    category: "Escrita" as const,
+    level: "Kana" as const,
+    content: { kind: "kana" as const, items: group },
+  }));
+
+const escrita: Licao[] = [
+  ...kanaLessons("hira", "Hiragana básico", hiragana),
+  ...kanaLessons("hira-daku", "Hiragana dakuten", hiraganaDakuten),
+  ...kanaLessons("hira-youon", "Hiragana youon", hiraganaYouon),
+  ...kanaLessons("kata", "Katakana básico", katakana),
+  ...kanaLessons("kata-daku", "Katakana dakuten", katakanaDakuten),
+  ...kanaLessons("kata-youon", "Katakana youon", katakanaYouon),
+  ...kanaLessons("kata-extra", "Katakana estrangeiro", katakanaExtra),
 ];
+
+const porNivel: Licao[] = jlptLevels.flatMap((level) => {
+  const vocabDoNivel = vocabulario.filter((v) => v.level === level);
+  const tipos = Array.from(new Set(vocabDoNivel.map((v) => v.type)));
+
+  const vocabLessons: Licao[] = tipos.flatMap((tipo) =>
+    chunk(
+      vocabDoNivel.filter((v) => v.type === tipo),
+      5,
+    ).map((group, i) => ({
+      id: `${level}-vocab-${tipo}-${i + 1}`.replace(/\s+/g, "-"),
+      title: `${tipo.charAt(0).toUpperCase()}${tipo.slice(1)}s ${level} — parte ${i + 1}`,
+      description: group.map((v) => `${v.word} (${v.meaning})`).join("  ·  "),
+      duration: "4 min",
+      category: "Vocabulário" as const,
+      level,
+      content: { kind: "vocab" as const, items: group },
+    })),
+  );
+
+  const kanjiLessons: Licao[] = chunk(
+    kanji.filter((k) => k.level === level),
+    5,
+  ).map((group, i) => ({
+    id: `${level}-kanji-${i + 1}`,
+    title: `Kanji ${level} — parte ${i + 1}`,
+    description: group.map((k) => `${k.char} (${k.meaning})`).join("  ·  "),
+    duration: "5 min",
+    category: "Kanji" as const,
+    level,
+    content: { kind: "kanji" as const, items: group },
+  }));
+
+  const gramLessons: Licao[] = gramatica
+    .filter((g) => g.level === level)
+    .map((point, i) => ({
+      id: `${level}-gram-${i + 1}`,
+      title: `${point.title} (${level})`,
+      description: point.explanation,
+      duration: "6 min",
+      category: "Gramática" as const,
+      level,
+      content: { kind: "gramatica" as const, point },
+    }));
+
+  return [...vocabLessons, ...kanjiLessons, ...gramLessons];
+});
+
+export const licoes: Licao[] = [...escrita, ...porNivel];
+
+export const licaoPorId = (id: string): Licao | undefined => licoes.find((l) => l.id === id);
+
+export const licoesPorNivel = (level: LicaoNivel): Licao[] =>
+  licoes.filter((l) => l.level === level);
+
+export const niveisDeLicao: LicaoNivel[] = ["Kana", ...jlptLevels];
