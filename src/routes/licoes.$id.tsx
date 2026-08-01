@@ -9,9 +9,9 @@ import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 export const Route = createFileRoute("/licoes/$id")({
   loader: ({ params }) => {
-    const licao = licaoPorId(params.id);
-    if (!licao) throw notFound();
-    return { licao };
+    const found = licaoPorId(params.id);
+    if (!found) throw notFound();
+    return { title: found.title, description: found.description };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -19,14 +19,13 @@ export const Route = createFileRoute("/licoes/$id")({
         meta: [{ title: "Lição não encontrada — Nihongo Quest" }, { name: "robots", content: "noindex" }],
       };
     }
-    const { licao } = loaderData;
-    const title = `${licao.title} — Nihongo Quest`;
+    const title = `${loaderData.title} — Nihongo Quest`;
     return {
       meta: [
         { title },
-        { name: "description", content: licao.description.slice(0, 150) },
+        { name: "description", content: loaderData.description.slice(0, 150) },
         { property: "og:title", content: title },
-        { property: "og:description", content: licao.description.slice(0, 150) },
+        { property: "og:description", content: loaderData.description.slice(0, 150) },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
@@ -36,7 +35,8 @@ export const Route = createFileRoute("/licoes/$id")({
 });
 
 function LicaoPage() {
-  const { licao } = Route.useLoaderData();
+  const { id } = Route.useParams();
+  const licao = licaoPorId(id)!;
   const { done, complete } = useProgress();
   const feito = done.includes(licao.id);
 

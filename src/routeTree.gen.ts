@@ -19,6 +19,7 @@ import { Route as LicoesRouteImport } from './routes/licoes'
 import { Route as RevisaoRouteImport } from './routes/revisao'
 import { Route as VocabularioRouteImport } from './routes/vocabulario'
 import { Route as LicoesIndexRouteImport } from './routes/licoes.index'
+import { Route as LicoesIdRouteImport } from './routes/licoes.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -70,6 +71,11 @@ const LicoesIndexRoute = LicoesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LicoesRoute,
 } as any)
+const LicoesIdRoute = LicoesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => LicoesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/licoes': typeof LicoesRouteWithChildren
   '/revisao': typeof RevisaoRoute
   '/vocabulario': typeof VocabularioRoute
+  '/licoes/$id': typeof LicoesIdRoute
   '/licoes/': typeof LicoesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/katakana': typeof KatakanaRoute
   '/revisao': typeof RevisaoRoute
   '/vocabulario': typeof VocabularioRoute
+  '/licoes/$id': typeof LicoesIdRoute
   '/licoes': typeof LicoesIndexRoute
 }
 export interface FileRoutesById {
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/licoes': typeof LicoesRouteWithChildren
   '/revisao': typeof RevisaoRoute
   '/vocabulario': typeof VocabularioRoute
+  '/licoes/$id': typeof LicoesIdRoute
   '/licoes/': typeof LicoesIndexRoute
 }
 export interface FileRouteTypes {
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/licoes'
     | '/revisao'
     | '/vocabulario'
+    | '/licoes/$id'
     | '/licoes/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/katakana'
     | '/revisao'
     | '/vocabulario'
+    | '/licoes/$id'
     | '/licoes'
   id:
     | '__root__'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/licoes'
     | '/revisao'
     | '/vocabulario'
+    | '/licoes/$id'
     | '/licoes/'
   fileRoutesById: FileRoutesById
 }
@@ -229,14 +241,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LicoesIndexRouteImport
       parentRoute: typeof LicoesRoute
     }
+    '/licoes/$id': {
+      id: '/licoes/$id'
+      path: '/$id'
+      fullPath: '/licoes/$id'
+      preLoaderRoute: typeof LicoesIdRouteImport
+      parentRoute: typeof LicoesRoute
+    }
   }
 }
 
 interface LicoesRouteChildren {
+  LicoesIdRoute: typeof LicoesIdRoute
   LicoesIndexRoute: typeof LicoesIndexRoute
 }
 
 const LicoesRouteChildren: LicoesRouteChildren = {
+  LicoesIdRoute: LicoesIdRoute,
   LicoesIndexRoute: LicoesIndexRoute,
 }
 
