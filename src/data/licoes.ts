@@ -36,12 +36,7 @@ const chunk = <T>(arr: T[], size: number): T[][] => {
   return out;
 };
 
-const kanaLessons = (
-  slug: string,
-  label: string,
-  items: KanaItem[],
-  size = 5,
-): Licao[] =>
+const kanaLessons = (slug: string, label: string, items: KanaItem[], size = 5): Licao[] =>
   chunk(items, size).map((group, i) => ({
     id: `kana-${slug}-${i + 1}`,
     title: `${label} ${i + 1}`,

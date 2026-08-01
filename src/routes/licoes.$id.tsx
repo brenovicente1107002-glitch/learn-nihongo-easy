@@ -16,7 +16,10 @@ export const Route = createFileRoute("/licoes/$id")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Lição não encontrada — Nihongo Quest" }, { name: "robots", content: "noindex" }],
+        meta: [
+          { title: "Lição não encontrada — Nihongo Quest" },
+          { name: "robots", content: "noindex" },
+        ],
       };
     }
     const title = `${loaderData.title} — Nihongo Quest`;
@@ -175,11 +178,7 @@ function LicaoPage() {
           <span />
         )}
         {proxima && (
-          <Link
-            to="/licoes/$id"
-            params={{ id: proxima.id }}
-            className={cn(buttonVariants())}
-          >
+          <Link to="/licoes/$id" params={{ id: proxima.id }} className={cn(buttonVariants())}>
             Próxima
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

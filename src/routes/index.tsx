@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { licoes, vocabulario, gramatica } from "@/data/japanese";
+import { useProgress } from "@/hooks/use-progress";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,7 +19,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const completedLessons = licoes.filter((l) => l.completed).length;
+  const { done } = useProgress();
+  const completedLessons = done.length;
   const totalLessons = licoes.length;
   const progress = Math.round((completedLessons / totalLessons) * 100);
 
@@ -84,7 +86,7 @@ function Dashboard() {
           </CardHeader>
           <CardContent>
             {(() => {
-              const next = licoes.find((l) => !l.completed && !l.locked);
+              const next = licoes.find((l) => !done.includes(l.id));
               if (!next)
                 return (
                   <p className="text-sm text-muted-foreground">
@@ -104,7 +106,8 @@ function Dashboard() {
                     </div>
                   </div>
                   <Link
-                    to="/licoes"
+                    to="/licoes/$id"
+                    params={{ id: next.id }}
                     className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                   >
                     <BookOpen className="mr-2 h-4 w-4" />
@@ -151,7 +154,7 @@ function Dashboard() {
               {gramatica.slice(0, 3).map((g, i) => (
                 <Link
                   key={i}
-                  to="/gramatica"
+                  to="/licoes"
                   className="block rounded-lg border border-border p-4 transition-colors hover:bg-accent"
                 >
                   <div className="font-display font-semibold">{g.title}</div>

@@ -164,8 +164,6 @@ const navItems = [
   { to: "/hiragana", label: "Hiragana", icon: ScrollText },
   { to: "/katakana", label: "Katakana", icon: BookOpen },
   { to: "/kanji", label: "Kanji", icon: Sparkles },
-  { to: "/vocabulario", label: "Vocabulário", icon: Library },
-  { to: "/gramatica", label: "Gramática", icon: NotebookPen },
 ];
 
 function AppShell({ children }: { children: ReactNode }) {
