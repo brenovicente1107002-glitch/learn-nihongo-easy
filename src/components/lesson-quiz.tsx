@@ -10,7 +10,7 @@ import { formatDue, lessonQuestions, type SrsCard } from "@/lib/srs";
 type Props = {
   licao: Licao;
   onFinish: (accuracy: number) => SrsCard | void;
-  card?: SrsCard;
+  card?: SrsCard | undefined;
 };
 
 export function LessonQuiz({ licao, onFinish, card }: Props) {
