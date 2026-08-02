@@ -5,6 +5,9 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { licoes, vocabulario, gramatica, kanji } from "@/data/japanese";
 import { useProgress } from "@/hooks/use-progress";
+import { useSrs } from "@/hooks/use-srs";
+import { formatDue } from "@/lib/srs";
+import { licaoPorId } from "@/data/japanese";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,6 +23,8 @@ export const Route = createFileRoute("/")({
 
 function Dashboard() {
   const { done } = useProgress();
+  const { dueIds, cards, scheduledCount } = useSrs();
+  const proximaRevisao = Object.values(cards).sort((a, b) => a.due - b.due)[0];
   const completedLessons = done.length;
   const totalLessons = licoes.length;
   const progress = Math.round((completedLessons / totalLessons) * 100);
@@ -89,6 +94,43 @@ function Dashboard() {
                 <div className="text-muted-foreground">Kanji</div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Revisão espaçada</CardTitle>
+            <CardDescription>
+              {scheduledCount === 0
+                ? "Faça o quiz de uma lição para ativar o agendamento automático."
+                : dueIds.length > 0
+                  ? `${dueIds.length} lição(ões) prontas para revisar agora.`
+                  : proximaRevisao
+                    ? `Tudo em dia. Próxima revisão ${formatDue(proximaRevisao.due)}.`
+                    : ""}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {dueIds.slice(0, 3).map((id) => (
+              <Link
+                key={id}
+                to="/licoes/$id"
+                params={{ id }}
+                className="block rounded-lg border border-border p-3 transition-colors hover:bg-accent"
+              >
+                <div className="truncate font-medium">{licaoPorId(id)?.title ?? id}</div>
+                <div className="text-xs text-muted-foreground">
+                  último resultado {cards[id]?.lastScore ?? 0}%
+                </div>
+              </Link>
+            ))}
+            <Link
+              to="/revisao"
+              className="inline-flex w-full items-center justify-center rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Ver agenda
+            </Link>
           </CardContent>
         </Card>
 
