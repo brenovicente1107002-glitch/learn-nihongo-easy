@@ -51,13 +51,16 @@ function Dashboard() {
           label="Palavras no curso"
           value={vocabulario.length.toLocaleString("pt-BR")}
         />
-        <StatsCard icon={Sparkles} label="Kanji (jōyō)" value={kanji.length.toLocaleString("pt-BR")} />
+        <StatsCard
+          icon={Sparkles}
+          label="Kanji (jōyō)"
+          value={kanji.length.toLocaleString("pt-BR")}
+        />
         <StatsCard
           icon={Target}
           label="Pontos de gramática"
           value={gramatica.length.toLocaleString("pt-BR")}
         />
-
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
