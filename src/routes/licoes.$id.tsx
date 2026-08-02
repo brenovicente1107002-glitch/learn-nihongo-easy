@@ -4,6 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/hooks/use-progress";
+import { useSrs } from "@/hooks/use-srs";
+import { LessonQuiz } from "@/components/lesson-quiz";
+import { formatDue } from "@/lib/srs";
 import { licaoPorId, licoes } from "@/data/japanese";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
@@ -41,6 +44,8 @@ function LicaoPage() {
   const { id } = Route.useParams();
   const licao = licaoPorId(id)!;
   const { done, complete } = useProgress();
+  const { review, getCard } = useSrs();
+  const card = getCard(licao.id);
   const feito = done.includes(licao.id);
 
   const index = licoes.findIndex((l) => l.id === licao.id);
@@ -152,10 +157,23 @@ function LicaoPage() {
         </>
       )}
 
+      <LessonQuiz
+        licao={licao}
+        card={card}
+        onFinish={(accuracy) => {
+          complete(licao.id);
+          return review(licao.id, accuracy);
+        }}
+      />
+
       <Card>
         <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-muted-foreground">
-            {feito ? "Lição concluída. Bom trabalho!" : "Terminou de estudar esta lição?"}
+            {card
+              ? `Revisão espaçada ativa · próxima ${formatDue(card.due)}`
+              : feito
+                ? "Lição concluída. Bom trabalho!"
+                : "Terminou de estudar esta lição?"}
           </div>
           <Button onClick={() => complete(licao.id)} disabled={feito}>
             <Check className="mr-2 h-4 w-4" />
