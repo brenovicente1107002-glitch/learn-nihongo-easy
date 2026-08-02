@@ -5,7 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { LevelTabs } from "@/components/level-tabs";
-import { buildQuestions, type JlptLevel } from "@/data/japanese";
+import { buildQuestions, licaoPorId, licoes, type JlptLevel } from "@/data/japanese";
+import { useSrs } from "@/hooks/use-srs";
+import { formatDue } from "@/lib/srs";
+import { Link } from "@tanstack/react-router";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { CheckCircle, XCircle, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/revisao")({
@@ -29,6 +34,7 @@ export const Route = createFileRoute("/revisao")({
 });
 
 function RevisaoPage() {
+  const { dueIds, cards, scheduledCount } = useSrs();
   const [level, setLevel] = useState<JlptLevel>("N5");
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -79,6 +85,59 @@ function RevisaoPage() {
           Quiz gerado a partir do conteúdo do nível escolhido.
         </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Agenda de revisão espaçada</CardTitle>
+          <CardDescription>
+            {scheduledCount === 0
+              ? "Faça o quiz de uma lição para que ela entre no agendamento automático."
+              : `${dueIds.length} lição(ões) para revisar agora · ${scheduledCount} agendadas no total.`}
+          </CardDescription>
+        </CardHeader>
+        {scheduledCount > 0 && (
+          <CardContent className="space-y-3">
+            {dueIds.slice(0, 8).map((id) => {
+              const l = licaoPorId(id);
+              if (!l) return null;
+              return (
+                <div
+                  key={id}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
+                >
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{l.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {l.category} · último resultado {cards[id]?.lastScore ?? 0}%
+                    </div>
+                  </div>
+                  <Link
+                    to="/licoes/$id"
+                    params={{ id }}
+                    className={cn(buttonVariants({ size: "sm" }), "shrink-0")}
+                  >
+                    Revisar
+                  </Link>
+                </div>
+              );
+            })}
+            {dueIds.length === 0 && (
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>Nada vencido agora. Próximas revisões:</p>
+                {Object.values(cards)
+                  .sort((a, b) => a.due - b.due)
+                  .slice(0, 5)
+                  .map((c) => (
+                    <div key={c.id} className="flex justify-between gap-3">
+                      <span className="truncate">{licaoPorId(c.id)?.title ?? c.id}</span>
+                      <span className="shrink-0">{formatDue(c.due)}</span>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </CardContent>
+        )}
+      </Card>
 
       <LevelTabs value={level} onChange={changeLevel} />
 

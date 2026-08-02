@@ -34,7 +34,11 @@ export const scoreToQuality = (accuracy: number): number => {
 };
 
 /** Aplica o algoritmo SM-2 e devolve o novo estado do cartão. */
-export function scheduleCard(prev: SrsCard | undefined, accuracy: number, now = Date.now()): SrsCard {
+export function scheduleCard(
+  prev: SrsCard | undefined,
+  accuracy: number,
+  now = Date.now(),
+): SrsCard {
   const quality = scoreToQuality(accuracy);
   const base: SrsCard = prev ?? {
     id: "",
@@ -113,7 +117,12 @@ const shuffle = <T>(arr: T[], seed: number): T[] => {
   return a;
 };
 
-const makeQuestion = (prompt: string, correct: string, wrong: string[], seed: number): Question | null => {
+const makeQuestion = (
+  prompt: string,
+  correct: string,
+  wrong: string[],
+  seed: number,
+): Question | null => {
   const uniqueWrong = Array.from(new Set(wrong.filter((w) => w && w !== correct))).slice(0, 3);
   if (uniqueWrong.length < 3) return null;
   const options = shuffle([correct, ...uniqueWrong], seed);
@@ -155,7 +164,12 @@ export function lessonQuestions(licao: Licao): Question[] {
   if (content.kind === "gramatica") {
     const point = content.point;
     const wrong = pick(gramatica, 3, 41, (o) => o.title === point.title).map((o) => o.pattern);
-    const q1 = makeQuestion(`Qual estrutura corresponde a "${point.title}"?`, point.pattern, wrong, 43);
+    const q1 = makeQuestion(
+      `Qual estrutura corresponde a "${point.title}"?`,
+      point.pattern,
+      wrong,
+      43,
+    );
     if (q1) out.push(q1);
     point.examples.slice(0, 3).forEach((ex, i) => {
       const wrongPt = pick(gramatica, 6, i + 47, (o) => o.title === point.title)
