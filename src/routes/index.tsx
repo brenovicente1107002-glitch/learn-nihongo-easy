@@ -3,7 +3,7 @@ import { BookOpen, Flame, GraduationCap, Layers, RefreshCw, Sparkles, Target } f
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { licoes, vocabulario, gramatica } from "@/data/japanese";
+import { licoes, vocabulario, gramatica, kanji } from "@/data/japanese";
 import { useProgress } from "@/hooks/use-progress";
 
 export const Route = createFileRoute("/")({
