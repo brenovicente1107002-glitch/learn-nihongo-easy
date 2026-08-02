@@ -3,7 +3,7 @@ import { BookOpen, Flame, GraduationCap, Layers, RefreshCw, Sparkles, Target } f
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { licoes, vocabulario, gramatica } from "@/data/japanese";
+import { licoes, vocabulario, gramatica, kanji } from "@/data/japanese";
 import { useProgress } from "@/hooks/use-progress";
 
 export const Route = createFileRoute("/")({
@@ -46,9 +46,21 @@ function Dashboard() {
           label="Lições concluídas"
           value={`${completedLessons}/${totalLessons}`}
         />
-        <StatsCard icon={Layers} label="Flashcards" value="120" />
-        <StatsCard icon={Sparkles} label="Kanji aprendidos" value="18" />
-        <StatsCard icon={Target} label="Pontos de XP" value="2.450" />
+        <StatsCard
+          icon={Layers}
+          label="Palavras no curso"
+          value={vocabulario.length.toLocaleString("pt-BR")}
+        />
+        <StatsCard
+          icon={Sparkles}
+          label="Kanji (jōyō)"
+          value={kanji.length.toLocaleString("pt-BR")}
+        />
+        <StatsCard
+          icon={Target}
+          label="Pontos de gramática"
+          value={gramatica.length.toLocaleString("pt-BR")}
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
