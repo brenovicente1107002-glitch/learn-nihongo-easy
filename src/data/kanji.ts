@@ -48,7 +48,6 @@ const parse = (level: JlptLevel, raw: string): Kanji[] =>
       };
     });
 
-
 const n5 = `
 日|dia / sol / Japão|にち,じつ,ひ,び,か
 一|um|いち,いつ,ひと,ひとつ

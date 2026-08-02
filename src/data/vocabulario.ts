@@ -25,7 +25,6 @@ const parse = (level: JlptLevel, raw: string): VocabItem[] =>
       };
     });
 
-
 const n5 = `
 ～がる|～がる|sentir|verbo
 軽い|かるい|leve / não sério / menor|adjetivo
