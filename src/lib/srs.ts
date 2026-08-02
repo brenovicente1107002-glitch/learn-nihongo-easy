@@ -1,11 +1,8 @@
-import { kana as _kanaUnused } from "@/data/kana";
 import { kanji } from "@/data/kanji";
 import { vocabulario } from "@/data/vocabulario";
 import { gramatica } from "@/data/gramatica";
 import type { Licao } from "@/data/licoes";
 import type { Question } from "@/data/japanese";
-
-void _kanaUnused;
 
 /** Estado de repetição espaçada (SM-2) de uma lição. */
 export type SrsCard = {
