@@ -43,7 +43,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   };
 
   const continuar = () => {
-    if (index + 1 >= total) {
+    if (vidas === 0 || index + 1 >= total) {
       onFinish(acertos / total);
       return;
     }
