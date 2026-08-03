@@ -24,6 +24,7 @@ import {
   RefreshCw,
   ScrollText,
   Sparkles,
+  UserRound,
   X,
 } from "lucide-react";
 import { cn } from "../lib/utils";
@@ -159,11 +160,12 @@ function RootComponent() {
 const navItems = [
   { to: "/", label: "Início", icon: Home },
   { to: "/licoes", label: "Lições", icon: GraduationCap },
-  { to: "/flashcards", label: "Flashcards", icon: Layers },
   { to: "/revisao", label: "Revisão", icon: RefreshCw },
+  { to: "/flashcards", label: "Flashcards", icon: Layers },
   { to: "/hiragana", label: "Hiragana", icon: ScrollText },
   { to: "/katakana", label: "Katakana", icon: BookOpen },
   { to: "/kanji", label: "Kanji", icon: Sparkles },
+  { to: "/conta", label: "Conta", icon: UserRound },
 ];
 
 function AppShell({ children }: { children: ReactNode }) {
