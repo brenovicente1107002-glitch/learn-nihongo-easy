@@ -1,30 +1,28 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { LevelTabs } from "@/components/level-tabs";
-import { buildQuestions, licaoPorId, licoes, type JlptLevel } from "@/data/japanese";
+import { LessonPlayer } from "@/components/lesson-player";
+import { licaoPorId, licoes, type JlptLevel } from "@/data/japanese";
 import { useSrs } from "@/hooks/use-srs";
-import { formatDue } from "@/lib/srs";
-import { Link } from "@tanstack/react-router";
-import { buttonVariants } from "@/components/ui/button";
+import { formatDue, lessonQuestions, type QuizQuestion } from "@/lib/srs";
 import { cn } from "@/lib/utils";
-import { CheckCircle, XCircle, RotateCcw } from "lucide-react";
+import { CalendarClock, Flame, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/revisao")({
   head: () => ({
     meta: [
-      { title: "Revisão JLPT N5–N1 — Nihongo Quest" },
+      { title: "Revisão espaçada de japonês — Nihongo Quest" },
       {
         name: "description",
-        content: "Quizzes de kanji, vocabulário e gramática para todos os níveis do JLPT.",
+        content:
+          "Sessões rápidas de revisão com áudio nativo: kanji, vocabulário em frases e gramática no ritmo certo.",
       },
-      { property: "og:title", content: "Revisão JLPT N5–N1 — Nihongo Quest" },
+      { property: "og:title", content: "Revisão espaçada de japonês — Nihongo Quest" },
       {
         property: "og:description",
-        content: "Teste seus conhecimentos de japonês com quizzes por nível do JLPT.",
+        content: "Revise as lições no momento exato em que você está prestes a esquecer.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -33,48 +31,54 @@ export const Route = createFileRoute("/revisao")({
   component: RevisaoPage,
 });
 
+const SESSAO = 15;
+
 function RevisaoPage() {
-  const { dueIds, cards, scheduledCount } = useSrs();
+  const { dueIds, cards, scheduledCount, review } = useSrs();
   const [level, setLevel] = useState<JlptLevel>("N5");
-  const [current, setCurrent] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [score, setScore] = useState(0);
-  const [finished, setFinished] = useState(false);
+  const [sessao, setSessao] = useState<{ ids: string[]; questions: QuizQuestion[] } | null>(null);
+  const [resultado, setResultado] = useState<number | null>(null);
 
-  const questions = useMemo(() => buildQuestions(level, 10), [level]);
-  const question = questions[current];
-  const progress = questions.length
-    ? Math.round(((current + (finished ? 1 : 0)) / questions.length) * 100)
-    : 0;
+  const proximas = useMemo(() => Object.values(cards).sort((a, b) => a.due - b.due), [cards]);
 
-  function changeLevel(l: JlptLevel) {
-    setLevel(l);
-    setCurrent(0);
-    setSelected(null);
-    setScore(0);
-    setFinished(false);
-  }
-
-  function handleAnswer(index: number) {
-    if (selected !== null || !question) return;
-    setSelected(index);
-    if (index === question.answer) setScore((s) => s + 1);
-  }
-
-  function next() {
-    if (current + 1 >= questions.length) {
-      setFinished(true);
-    } else {
-      setCurrent((c) => c + 1);
-      setSelected(null);
+  const iniciar = (ids: string[]) => {
+    const usados: string[] = [];
+    const questions: QuizQuestion[] = [];
+    for (const id of ids) {
+      const l = licaoPorId(id);
+      if (!l) continue;
+      const qs = lessonQuestions(l).slice(0, 5);
+      if (!qs.length) continue;
+      usados.push(id);
+      questions.push(...qs);
+      if (questions.length >= SESSAO) break;
     }
-  }
+    if (!questions.length) return;
+    setResultado(null);
+    setSessao({ ids: usados, questions: questions.slice(0, SESSAO) });
+  };
 
-  function restart() {
-    setCurrent(0);
-    setSelected(null);
-    setScore(0);
-    setFinished(false);
+  const treinoLivre = () => {
+    const doNivel = licoes.filter((l) => l.level === level);
+    const escolhidas = doNivel.slice(0, 3).map((l) => l.id);
+    iniciar(escolhidas);
+  };
+
+  if (sessao) {
+    return (
+      <div className="mx-auto max-w-2xl">
+        <LessonPlayer
+          questions={sessao.questions}
+          titulo="Revisão"
+          onExit={() => setSessao(null)}
+          onFinish={(accuracy) => {
+            sessao.ids.forEach((id) => review(id, accuracy));
+            setResultado(Math.round(accuracy * 100));
+            setSessao(null);
+          }}
+        />
+      </div>
+    );
   }
 
   return (
@@ -82,138 +86,96 @@ function RevisaoPage() {
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Revisão</h1>
         <p className="mt-1 text-muted-foreground">
-          Quiz gerado a partir do conteúdo do nível escolhido.
+          Sessões curtas de 15 exercícios, no momento certo para não esquecer.
         </p>
       </div>
 
+      {resultado !== null && (
+        <Card className="border-primary/40 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Flame className="h-5 w-5 text-primary" />
+              Sessão concluída — {resultado}% de acerto
+            </CardTitle>
+            <CardDescription>As lições revisadas já foram reagendadas.</CardDescription>
+          </CardHeader>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
-          <CardTitle>Agenda de revisão espaçada</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
+            {dueIds.length > 0 ? `${dueIds.length} lição(ões) prontas` : "Nada vencido agora"}
+          </CardTitle>
           <CardDescription>
             {scheduledCount === 0
-              ? "Faça o quiz de uma lição para que ela entre no agendamento automático."
-              : `${dueIds.length} lição(ões) para revisar agora · ${scheduledCount} agendadas no total.`}
+              ? "Faça uma lição para que ela entre no agendamento automático."
+              : `${scheduledCount} lições no seu calendário de revisão.`}
           </CardDescription>
         </CardHeader>
-        {scheduledCount > 0 && (
-          <CardContent className="space-y-3">
-            {dueIds.slice(0, 8).map((id) => {
-              const l = licaoPorId(id);
-              if (!l) return null;
-              return (
-                <div
-                  key={id}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
-                >
-                  <div className="min-w-0">
-                    <div className="truncate font-medium">{l.title}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {l.category} · último resultado {cards[id]?.lastScore ?? 0}%
-                    </div>
+        <CardContent className="space-y-4">
+          <Button size="lg" disabled={dueIds.length === 0} onClick={() => iniciar(dueIds)}>
+            Revisar agora
+          </Button>
+          {dueIds.slice(0, 6).map((id) => {
+            const l = licaoPorId(id);
+            if (!l) return null;
+            return (
+              <div
+                key={id}
+                className="flex items-center justify-between gap-3 rounded-xl border border-border p-3"
+              >
+                <div className="min-w-0">
+                  <div className="truncate font-medium">{l.title}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {l.category} · último resultado {cards[id]?.lastScore ?? 0}%
                   </div>
-                  <Link
-                    to="/licoes/$id"
-                    params={{ id }}
-                    className={cn(buttonVariants({ size: "sm" }), "shrink-0")}
-                  >
-                    Revisar
-                  </Link>
                 </div>
-              );
-            })}
-            {dueIds.length === 0 && (
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>Nada vencido agora. Próximas revisões:</p>
-                {Object.values(cards)
-                  .sort((a, b) => a.due - b.due)
-                  .slice(0, 5)
-                  .map((c) => (
-                    <div key={c.id} className="flex justify-between gap-3">
-                      <span className="truncate">{licaoPorId(c.id)?.title ?? c.id}</span>
-                      <span className="shrink-0">{formatDue(c.due)}</span>
-                    </div>
-                  ))}
+                <Link
+                  to="/licoes/$id"
+                  params={{ id }}
+                  className={cn(buttonVariants({ size: "sm", variant: "outline" }), "shrink-0")}
+                >
+                  Abrir lição
+                </Link>
               </div>
-            )}
-          </CardContent>
-        )}
+            );
+          })}
+        </CardContent>
       </Card>
 
-      <LevelTabs value={level} onChange={changeLevel} />
-
-      {!question && !finished ? (
-        <Card>
-          <CardContent className="p-8 text-center text-muted-foreground">
-            Nenhuma pergunta disponível para este nível.
-          </CardContent>
-        </Card>
-      ) : finished ? (
+      {proximas.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Resultado — {level}</CardTitle>
-            <CardDescription>
-              Você acertou {score} de {questions.length} perguntas.
-            </CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <CalendarClock className="h-5 w-5 text-primary" />
+              Próximas revisões
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <Progress value={Math.round((score / questions.length) * 100)} />
-            <Button onClick={restart}>
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Refazer quiz
-            </Button>
+          <CardContent className="space-y-2 text-sm">
+            {proximas.slice(0, 6).map((c) => (
+              <div key={c.id} className="flex justify-between gap-3">
+                <span className="truncate">{licaoPorId(c.id)?.title ?? c.id}</span>
+                <span className="shrink-0 text-muted-foreground">{formatDue(c.due)}</span>
+              </div>
+            ))}
           </CardContent>
         </Card>
-      ) : (
-        question && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>
-                  Pergunta {current + 1} de {questions.length}
-                </CardTitle>
-                <Badge variant="outline">{level}</Badge>
-              </div>
-              <CardDescription>Escolha a alternativa correta.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <Progress value={progress} />
-              <p className="font-display text-xl font-semibold">{question.question}</p>
-              <div className="space-y-3">
-                {question.options.map((opt, i) => {
-                  const isAnswer = i === question.answer;
-                  const isSelected = i === selected;
-                  const show = selected !== null;
-                  return (
-                    <button
-                      key={i}
-                      onClick={() => handleAnswer(i)}
-                      disabled={show}
-                      className={`flex w-full items-center justify-between rounded-lg border p-4 text-left transition-colors ${
-                        show && isAnswer
-                          ? "border-primary bg-primary/10"
-                          : show && isSelected
-                            ? "border-destructive bg-destructive/10"
-                            : "border-border hover:border-primary/40 hover:bg-primary/5"
-                      }`}
-                    >
-                      <span className="font-medium">{opt}</span>
-                      {show && isAnswer && <CheckCircle className="h-5 w-5 text-primary" />}
-                      {show && isSelected && !isAnswer && (
-                        <XCircle className="h-5 w-5 text-destructive" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-              {selected !== null && (
-                <Button onClick={next} className="w-full">
-                  {current + 1 >= questions.length ? "Ver resultado" : "Próxima pergunta"}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        )
       )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Treino livre</CardTitle>
+          <CardDescription>Pratique qualquer nível, sem afetar muito o calendário.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <LevelTabs value={level} onChange={setLevel} />
+          <Button variant="outline" onClick={treinoLivre}>
+            Treinar {level}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

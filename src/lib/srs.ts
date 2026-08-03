@@ -3,6 +3,7 @@ import { vocabulario } from "@/data/vocabulario";
 import { gramatica } from "@/data/gramatica";
 import type { Licao } from "@/data/licoes";
 import type { Question } from "@/data/japanese";
+import { frase } from "@/lib/sentences";
 
 /** Estado de repetição espaçada (SM-2) de uma lição. */
 export type SrsCard = {
@@ -117,68 +118,107 @@ const shuffle = <T>(arr: T[], seed: number): T[] => {
   return a;
 };
 
+/** Pergunta de lição, com áudio nativo e legenda opcional. */
+export type QuizQuestion = Question & {
+  /** texto japonês que deve ser falado em voz alta */
+  audio?: string;
+  /** frase de apoio (tradução, leitura, etc.) */
+  sub?: string;
+  /** etiqueta do tipo de exercício */
+  tag?: "Kana" | "Kanji" | "Vocabulário" | "Frase" | "Gramática";
+};
+
 const makeQuestion = (
   prompt: string,
   correct: string,
   wrong: string[],
   seed: number,
-): Question | null => {
+  extra: Omit<QuizQuestion, "question" | "options" | "answer"> = {},
+): QuizQuestion | null => {
   const uniqueWrong = Array.from(new Set(wrong.filter((w) => w && w !== correct))).slice(0, 3);
   if (uniqueWrong.length < 3) return null;
   const options = shuffle([correct, ...uniqueWrong], seed);
-  return { question: prompt, options, answer: options.indexOf(correct) };
+  return { question: prompt, options, answer: options.indexOf(correct), ...extra };
 };
 
-/** Monta as perguntas de revisão de uma micro-lição específica. */
-export function lessonQuestions(licao: Licao): Question[] {
-  const out: Question[] = [];
+/** Monta as perguntas de uma micro-lição (até 15, estilo Duolingo). */
+export function lessonQuestions(licao: Licao): QuizQuestion[] {
+  const out: QuizQuestion[] = [];
   const content = licao.content;
 
   if (content.kind === "kana") {
     const pool = content.items;
     content.items.forEach((k, i) => {
       const wrong = pick(pool, 3, i + 11, (o) => o.romaji === k.romaji).map((o) => o.romaji);
-      const q = makeQuestion(`Como se lê ${k.char}?`, k.romaji, wrong, i + 17);
+      const q = makeQuestion(`Como se lê ${k.char}?`, k.romaji, wrong, i + 17, {
+        audio: k.char,
+        tag: "Kana",
+      });
       if (q) out.push(q);
     });
+    return out;
   }
 
-  if (content.kind === "kanji") {
-    const pool = kanji.filter((k) => k.level === licao.level);
-    content.items.forEach((k, i) => {
-      const wrong = pick(pool, 3, i + 23, (o) => o.meaning === k.meaning).map((o) => o.meaning);
-      const q = makeQuestion(`Qual o significado do kanji ${k.char}?`, k.meaning, wrong, i + 29);
-      if (q) out.push(q);
+  const vocabPool = vocabulario.filter((v) => v.level === licao.level);
+  const kanjiPool = kanji.filter((k) => k.level === licao.level);
+
+  // 1) vocabulário dentro de frases
+  content.vocab.forEach((v, i) => {
+    const f = frase(v);
+    const wrong = pick(vocabPool, 3, i + 31, (o) => o.word === v.word).map((o) => o.word);
+    const q = makeQuestion(`Complete a frase: ${f.lacuna}`, v.word, wrong, i + 37, {
+      audio: f.jp,
+      sub: f.pt,
+      tag: "Frase",
     });
-  }
+    if (q) out.push(q);
+  });
 
-  if (content.kind === "vocab") {
-    const pool = vocabulario.filter((v) => v.level === licao.level);
-    content.items.forEach((v, i) => {
-      const wrong = pick(pool, 3, i + 31, (o) => o.meaning === v.meaning).map((o) => o.meaning);
-      const q = makeQuestion(`O que significa ${v.word} (${v.reading})?`, v.meaning, wrong, i + 37);
-      if (q) out.push(q);
+  // 2) significado das palavras
+  content.vocab.forEach((v, i) => {
+    const wrong = pick(vocabPool, 3, i + 61, (o) => o.meaning === v.meaning).map((o) => o.meaning);
+    const q = makeQuestion(`O que significa ${v.word} (${v.reading})?`, v.meaning, wrong, i + 67, {
+      audio: v.word,
+      tag: "Vocabulário",
     });
-  }
+    if (q) out.push(q);
+  });
 
-  if (content.kind === "gramatica") {
-    const point = content.point;
+  // 3) kanji
+  content.kanji.forEach((k, i) => {
+    const wrong = pick(kanjiPool, 3, i + 23, (o) => o.meaning === k.meaning).map((o) => o.meaning);
+    const q = makeQuestion(`Qual o significado do kanji ${k.char}?`, k.meaning, wrong, i + 29, {
+      audio: k.char,
+      sub: k.readings.join(" · "),
+      tag: "Kanji",
+    });
+    if (q) out.push(q);
+  });
+
+  // 4) gramática
+  const point = content.point;
+  if (point) {
     const wrong = pick(gramatica, 3, 41, (o) => o.title === point.title).map((o) => o.pattern);
     const q1 = makeQuestion(
       `Qual estrutura corresponde a "${point.title}"?`,
       point.pattern,
       wrong,
       43,
+      { tag: "Gramática" },
     );
     if (q1) out.push(q1);
-    point.examples.slice(0, 3).forEach((ex, i) => {
+    point.examples.slice(0, 2).forEach((ex, i) => {
       const wrongPt = pick(gramatica, 6, i + 47, (o) => o.title === point.title)
         .flatMap((o) => o.examples.map((e) => e.pt))
         .filter((pt) => pt !== ex.pt);
-      const q = makeQuestion(`O que significa "${ex.jp}"?`, ex.pt, wrongPt, i + 53);
+      const q = makeQuestion(`O que significa "${ex.jp}"?`, ex.pt, wrongPt, i + 53, {
+        audio: ex.jp,
+        sub: ex.romaji,
+        tag: "Gramática",
+      });
       if (q) out.push(q);
     });
   }
 
-  return out;
+  return shuffle(out, 71).slice(0, 15);
 }

@@ -30,7 +30,7 @@ export const Route = createFileRoute("/licoes/")({
   component: LicoesPage,
 });
 
-const categorias = ["Todas", "Escrita", "Vocabulário", "Gramática", "Kanji"] as const;
+const categorias = ["Todas", "Escrita", "Lição completa"] as const;
 
 function LicoesPage() {
   const [level, setLevel] = useState<LicaoNivel>("Kana");
@@ -47,7 +47,8 @@ function LicoesPage() {
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Lições</h1>
         <p className="mt-1 text-muted-foreground">
-          {licoes.length} micro-lições, do kana ao N1 — vocabulário e gramática vêm dentro da lição.
+          {licoes.length} micro-lições com 15 exercícios cada — vocabulário em frases, kanji e
+          gramática juntos, com áudio nativo.
         </p>
       </div>
 
