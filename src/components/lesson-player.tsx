@@ -155,7 +155,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
               {q.sub && <p className="mt-1 text-sm text-muted-foreground">{q.sub}</p>}
             </div>
             <Button size="lg" onClick={continuar}>
-              {index + 1 >= total ? "Finalizar" : "Continuar"}
+              {vidas === 0 ? "Ver resultado" : index + 1 >= total ? "Finalizar" : "Continuar"}
             </Button>
           </div>
         ) : (
