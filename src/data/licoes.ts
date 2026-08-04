@@ -20,8 +20,9 @@ export type LicaoConteudo =
       kind: "mista";
       vocab: VocabItem[];
       kanji: Kanji[];
-      point: GrammarPoint | undefined;
+      points: GrammarPoint[];
     };
+
 
 export type Licao = {
   id: string;
