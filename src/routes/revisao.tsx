@@ -6,7 +6,15 @@ import { LevelTabs } from "@/components/level-tabs";
 import { LessonPlayer } from "@/components/lesson-player";
 import { licaoPorId, licoes, type JlptLevel } from "@/data/japanese";
 import { useSrs } from "@/hooks/use-srs";
-import { formatDue, lessonQuestions, type QuizQuestion } from "@/lib/srs";
+import {
+  filtrarPorModo,
+  formatDue,
+  lessonQuestions,
+  modosRevisao,
+  type ExercicioKind,
+  type QuizQuestion,
+} from "@/lib/srs";
+
 import { cn } from "@/lib/utils";
 import { CalendarClock, Flame, Zap } from "lucide-react";
 
