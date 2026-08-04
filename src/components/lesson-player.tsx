@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { speakJa, ttsDisponivel } from "@/lib/tts";
 import type { QuizQuestion } from "@/lib/srs";
-import { Check, Heart, Volume2, X } from "lucide-react";
+import { Check, Heart, Mic, Volume2, X } from "lucide-react";
 
 type Props = {
   questions: QuizQuestion[];
@@ -13,7 +13,30 @@ type Props = {
   titulo?: string;
 };
 
-/** Sessão de exercícios estilo Duolingo: barra de progresso, vidas e feedback imediato. */
+type SpeechRecognitionLike = {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  start: () => void;
+  stop: () => void;
+  onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+};
+
+const getRecognition = (): SpeechRecognitionLike | null => {
+  if (typeof window === "undefined") return null;
+  const w = window as unknown as {
+    SpeechRecognition?: new () => SpeechRecognitionLike;
+    webkitSpeechRecognition?: new () => SpeechRecognitionLike;
+  };
+  const Ctor = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+  return Ctor ? new Ctor() : null;
+};
+
+const limpar = (s: string) => s.replace(/[。、．，\s!?！？]/g, "");
+
+/** Sessão de exercícios estilo Duolingo: progresso, vidas, escuta, fala e montar frase. */
 export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   const total = questions.length;
   const [index, setIndex] = useState(0);
@@ -21,35 +44,75 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   const [checked, setChecked] = useState(false);
   const [acertos, setAcertos] = useState(0);
   const [vidas, setVidas] = useState(3);
+  const [montado, setMontado] = useState<number[]>([]);
+  const [ouvindo, setOuvindo] = useState(false);
+  const [falado, setFalado] = useState("");
+  const [certoManual, setCertoManual] = useState(false);
 
   const q = questions[index];
   const audio = q?.audio;
+  const kind = q?.kind ?? "escolha";
 
   useEffect(() => {
-    if (audio) speakJa(audio);
-  }, [audio]);
+    if (audio && kind !== "montar") speakJa(audio);
+  }, [audio, kind]);
 
   const progresso = useMemo(() => Math.round((index / Math.max(total, 1)) * 100), [index, total]);
 
+  const tokens = q?.tokens ?? [];
+  const fraseMontada = montado.map((i) => tokens[i] ?? "").join("");
+
+  const ouvirFala = useCallback(() => {
+    const rec = getRecognition();
+    if (!rec || !q?.target) return;
+    rec.lang = "ja-JP";
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    setOuvindo(true);
+    rec.onresult = (e) => {
+      const txt = e.results[0]?.[0]?.transcript ?? "";
+      setFalado(txt);
+      setCertoManual(limpar(txt) === limpar(q.target ?? ""));
+      setChecked(true);
+      if (limpar(txt) === limpar(q.target ?? "")) setAcertos((a) => a + 1);
+      else setVidas((v) => Math.max(0, v - 1));
+    };
+    rec.onerror = () => setOuvindo(false);
+    rec.onend = () => setOuvindo(false);
+    rec.start();
+  }, [q]);
+
   if (!q) return null;
 
-  const correto = selected === q.answer;
+  const podeVerificar =
+    kind === "montar" ? montado.length === tokens.length : kind === "fala" ? false : selected !== null;
+
+  const correto =
+    kind === "montar"
+      ? fraseMontada === q.target
+      : kind === "fala"
+        ? certoManual
+        : selected === q.answer;
 
   const verificar = () => {
-    if (selected === null) return;
+    const ok =
+      kind === "montar" ? fraseMontada === q.target : selected !== null && selected === q.answer;
     setChecked(true);
-    if (selected === q.answer) setAcertos((a) => a + 1);
+    if (ok) setAcertos((a) => a + 1);
     else setVidas((v) => Math.max(0, v - 1));
   };
 
-  const continuar = () => {
-    if (vidas === 0 || index + 1 >= total) {
+  const continuar = (pular = false) => {
+    if ((!pular && vidas === 0) || index + 1 >= total) {
       onFinish(acertos / total);
       return;
     }
     setIndex((i) => i + 1);
     setSelected(null);
     setChecked(false);
+    setMontado([]);
+    setFalado("");
+    setCertoManual(false);
   };
 
   return (
@@ -78,19 +141,28 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
 
       <div className="flex items-center gap-2">
         {q.tag && <Badge variant="outline">{q.tag}</Badge>}
+        <Badge variant="accent">
+          {kind === "escuta"
+            ? "Escuta"
+            : kind === "fala"
+              ? "Fala"
+              : kind === "montar"
+                ? "Montar frase"
+                : "Escolha"}
+        </Badge>
         <span className="text-xs text-muted-foreground">
           {index + 1} de {total}
           {titulo ? ` · ${titulo}` : ""}
         </span>
       </div>
 
-      {/* pergunta */}
+      {/* enunciado */}
       <div className="space-y-3">
         <div className="flex items-start gap-3">
           <h2 className="font-display text-2xl leading-snug font-bold tracking-tight">
             {q.question}
           </h2>
-          {audio && ttsDisponivel() && (
+          {audio && ttsDisponivel() && kind !== "montar" && (
             <button
               type="button"
               onClick={() => speakJa(audio)}
@@ -101,34 +173,106 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
             </button>
           )}
         </div>
-        {q.sub && !checked && <p className="text-sm text-muted-foreground">{q.sub}</p>}
+        {kind === "escuta" && audio && ttsDisponivel() && (
+          <button
+            type="button"
+            onClick={() => speakJa(audio, 0.7)}
+            className="inline-flex items-center gap-2 rounded-2xl border-2 border-b-4 border-primary/40 bg-primary/5 px-5 py-4 font-display font-semibold text-primary"
+          >
+            <Volume2 className="h-6 w-6" />
+            Ouvir devagar
+          </button>
+        )}
+        {q.sub && !checked && kind !== "escuta" && kind !== "fala" && (
+          <p className="text-sm text-muted-foreground">{q.sub}</p>
+        )}
       </div>
 
+      {/* exercício de fala */}
+      {kind === "fala" && (
+        <div className="space-y-4">
+          <div className="rounded-2xl border-2 border-border p-5">
+            <div className="font-display text-2xl font-bold">{q.target}</div>
+            {q.sub && <div className="mt-1 text-sm text-muted-foreground">{q.sub}</div>}
+          </div>
+          {getRecognition() ? (
+            <Button size="lg" disabled={ouvindo || checked} onClick={ouvirFala}>
+              <Mic className="mr-2 h-5 w-5" />
+              {ouvindo ? "Ouvindo..." : "Falar"}
+            </Button>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Seu navegador não suporta reconhecimento de fala. Repita em voz alta e continue.
+            </p>
+          )}
+          {falado && <p className="text-sm text-muted-foreground">Você disse: {falado}</p>}
+        </div>
+      )}
+
+      {/* montar frase */}
+      {kind === "montar" && (
+        <div className="space-y-4">
+          <div className="min-h-16 rounded-2xl border-2 border-dashed border-border p-4">
+            <div className="flex flex-wrap gap-2">
+              {montado.map((t, pos) => (
+                <button
+                  key={`sel-${t}-${pos}`}
+                  type="button"
+                  disabled={checked}
+                  onClick={() => setMontado((m) => m.filter((_, i) => i !== pos))}
+                  className="rounded-xl border-2 border-b-4 border-primary/40 bg-primary/10 px-3 py-2 font-display text-lg"
+                >
+                  {tokens[t]}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {tokens.map((t, i) => (
+              <button
+                key={`tok-${t}-${i}`}
+                type="button"
+                disabled={checked || montado.includes(i)}
+                onClick={() => setMontado((m) => [...m, i])}
+                className={cn(
+                  "rounded-xl border-2 border-b-4 border-border bg-card px-3 py-2 font-display text-lg transition-colors hover:bg-accent",
+                  montado.includes(i) && "opacity-30",
+                )}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* alternativas */}
-      <div className="grid gap-3 sm:grid-cols-2">
-        {q.options.map((opt, i) => {
-          const isSel = i === selected;
-          const isAns = i === q.answer;
-          return (
-            <button
-              key={`${opt}-${i}`}
-              type="button"
-              disabled={checked}
-              onClick={() => setSelected(i)}
-              className={cn(
-                "rounded-2xl border-2 border-b-4 p-4 text-left font-medium transition-all",
-                checked && isAns && "border-primary bg-primary/10 text-foreground",
-                checked && isSel && !isAns && "border-destructive bg-destructive/10",
-                !checked && isSel && "border-primary bg-primary/10",
-                !checked && !isSel && "border-border bg-card hover:bg-accent",
-                checked && !isAns && !isSel && "opacity-60",
-              )}
-            >
-              {opt}
-            </button>
-          );
-        })}
-      </div>
+      {(kind === "escolha" || kind === "escuta") && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {q.options.map((opt, i) => {
+            const isSel = i === selected;
+            const isAns = i === q.answer;
+            return (
+              <button
+                key={`${opt}-${i}`}
+                type="button"
+                disabled={checked}
+                onClick={() => setSelected(i)}
+                className={cn(
+                  "rounded-2xl border-2 border-b-4 p-4 text-left font-medium transition-all",
+                  checked && isAns && "border-primary bg-primary/10 text-foreground",
+                  checked && isSel && !isAns && "border-destructive bg-destructive/10",
+                  !checked && isSel && "border-primary bg-primary/10",
+                  !checked && !isSel && "border-border bg-card hover:bg-accent",
+                  checked && !isAns && !isSel && "opacity-60",
+                )}
+              >
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* barra de feedback */}
       <div
@@ -151,18 +295,29 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                 {correto ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
                 {correto ? "Muito bem!" : "Resposta certa:"}
               </div>
-              {!correto && <p className="mt-1 font-medium">{q.options[q.answer]}</p>}
+              {!correto && (
+                <p className="mt-1 font-medium">
+                  {kind === "montar" || kind === "fala" ? q.target : q.options[q.answer]}
+                </p>
+              )}
               {q.sub && <p className="mt-1 text-sm text-muted-foreground">{q.sub}</p>}
             </div>
-            <Button size="lg" onClick={continuar}>
+            <Button size="lg" onClick={() => continuar()}>
               {vidas === 0 ? "Ver resultado" : index + 1 >= total ? "Finalizar" : "Continuar"}
             </Button>
           </div>
         ) : (
-          <div className="flex justify-end">
-            <Button size="lg" disabled={selected === null} onClick={verificar}>
-              Verificar
-            </Button>
+          <div className="flex justify-end gap-3">
+            {kind === "fala" && (
+              <Button size="lg" variant="outline" onClick={() => continuar(true)}>
+                Pular
+              </Button>
+            )}
+            {kind !== "fala" && (
+              <Button size="lg" disabled={!podeVerificar} onClick={verificar}>
+                Verificar
+              </Button>
+            )}
           </div>
         )}
       </div>
