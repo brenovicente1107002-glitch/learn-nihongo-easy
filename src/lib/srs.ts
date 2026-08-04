@@ -3,7 +3,7 @@ import { vocabulario } from "@/data/vocabulario";
 import { gramatica } from "@/data/gramatica";
 import type { Licao } from "@/data/licoes";
 import type { Question } from "@/data/japanese";
-import { frase } from "@/lib/sentences";
+import { frase, tokenizarJa } from "@/lib/sentences";
 
 /** Estado de repetição espaçada (SM-2) de uma lição. */
 export type SrsCard = {
@@ -165,7 +165,7 @@ const makeQuestion = (
   };
 };
 
-const speakQuestion = (jp: string, pt: string, tag: QuizQuestion["tag"]): QuizQuestion => ({
+const speakQuestion = (jp: string, pt: string, tag: NonNullable<QuizQuestion["tag"]>): QuizQuestion => ({
   kind: "fala",
   question: "Fale esta frase em voz alta",
   options: [],
@@ -181,7 +181,7 @@ const buildQuestion = (
   jp: string,
   pt: string,
   seed: number,
-  tag: QuizQuestion["tag"],
+  tag: NonNullable<QuizQuestion["tag"]>,
 ): QuizQuestion | null => {
   const limpos = tokens.filter(Boolean);
   if (limpos.length < 3) return null;
