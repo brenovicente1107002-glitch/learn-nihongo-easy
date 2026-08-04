@@ -7,6 +7,8 @@ export type Frase = {
   lacuna: string;
   /** tradução em português */
   pt: string;
+  /** pedaços da frase, para o exercício de montar frase */
+  tokens: string[];
 };
 
 const BLANK = "＿＿＿";
@@ -19,33 +21,40 @@ export function frase(v: VocabItem): Frase {
   const w = v.word;
   const m = v.meaning.split(/[;,/]/)[0]?.trim() || v.meaning;
 
-  const build = (jp: string, pt: string): Frase => ({
-    jp,
-    lacuna: jp.replace(w, BLANK),
-    pt,
-  });
+  const build = (tokens: string[], pt: string): Frase => {
+    const jp = tokens.join("");
+    return { jp, lacuna: jp.replace(w, BLANK), pt, tokens };
+  };
 
   switch (v.type) {
     case "verbo":
-      return build(`毎日${w}。`, `${m} todos os dias.`);
+      return build(["毎日", w, "。"], `${m} todos os dias.`);
     case "adjetivo":
-      return build(`これはとても${w}です。`, `Isto é muito ${m}.`);
+      return build(["これは", "とても", w, "です", "。"], `Isto é muito ${m}.`);
     case "advérbio":
-      return build(`${w}わかりました。`, `${m}, entendi.`);
+      return build([w, "わかりました", "。"], `${m}, entendi.`);
     case "saudação":
     case "expressão":
-      return build(`${w}と言いました。`, `Disse "${m}".`);
+      return build([w, "と", "言いました", "。"], `Disse "${m}".`);
     case "pronome":
-      return build(`${w}は学生です。`, `${m} é estudante.`);
+      return build([w, "は", "学生", "です", "。"], `${m} é estudante.`);
     case "contador":
-      return build(`${w}あります。`, `Há ${m}.`);
+      return build([w, "あります", "。"], `Há ${m}.`);
     case "conector":
     case "partícula":
       return build(
-        `これは本です。${w}、ノートもあります。`,
+        ["これは", "本", "です", "。", w, "、", "ノート", "も", "あります", "。"],
         `Isto é um livro. ${m}, há um caderno também.`,
       );
     default:
-      return build(`これは${w}です。`, `Isto é ${m}.`);
+      return build(["これは", w, "です", "。"], `Isto é ${m}.`);
   }
+}
+
+/** Divide uma frase japonesa em pedaços aproveitáveis para montar a frase. */
+export function tokenizarJa(jp: string): string[] {
+  const limpo = jp.trim();
+  const partes = limpo.match(/[一-龯ヶ]+[ぁ-ん]*|[ァ-ヴー]+|[ぁ-ん]{1,3}|[^\s]/g);
+  if (!partes) return [limpo];
+  return partes;
 }
