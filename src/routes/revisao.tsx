@@ -36,10 +36,23 @@ const SESSAO = 15;
 function RevisaoPage() {
   const { dueIds, cards, scheduledCount, review } = useSrs();
   const [level, setLevel] = useState<JlptLevel>("N5");
+  const [modo, setModo] = useState<ExercicioKind | "misto">("misto");
   const [sessao, setSessao] = useState<{ ids: string[]; questions: QuizQuestion[] } | null>(null);
   const [resultado, setResultado] = useState<number | null>(null);
 
   const proximas = useMemo(() => Object.values(cards).sort((a, b) => a.due - b.due), [cards]);
+
+  /** Revisão inteligente: primeiro o que está mais atrasado e com pior desempenho. */
+  const prioridade = useMemo(() => {
+    const agora = Date.now();
+    return [...dueIds].sort((a, b) => {
+      const ca = cards[a];
+      const cb = cards[b];
+      const pa = (agora - (ca?.due ?? agora)) / 3600000 + (100 - (ca?.lastScore ?? 0));
+      const pb = (agora - (cb?.due ?? agora)) / 3600000 + (100 - (cb?.lastScore ?? 0));
+      return pb - pa;
+    });
+  }, [dueIds, cards]);
 
   const iniciar = (ids: string[]) => {
     const usados: string[] = [];
@@ -47,7 +60,7 @@ function RevisaoPage() {
     for (const id of ids) {
       const l = licaoPorId(id);
       if (!l) continue;
-      const qs = lessonQuestions(l).slice(0, 5);
+      const qs = filtrarPorModo(lessonQuestions(l), modo).slice(0, 5);
       if (!qs.length) continue;
       usados.push(id);
       questions.push(...qs);
@@ -60,9 +73,10 @@ function RevisaoPage() {
 
   const treinoLivre = () => {
     const doNivel = licoes.filter((l) => l.level === level);
-    const escolhidas = doNivel.slice(0, 3).map((l) => l.id);
+    const escolhidas = doNivel.slice(0, 4).map((l) => l.id);
     iniciar(escolhidas);
   };
+
 
   if (sessao) {
     return (
