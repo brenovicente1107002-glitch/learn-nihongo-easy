@@ -85,7 +85,6 @@ function RevisaoPage() {
     iniciar(escolhidas);
   };
 
-
   if (sessao) {
     return (
       <div className="mx-auto max-w-2xl">

@@ -165,7 +165,11 @@ const makeQuestion = (
   };
 };
 
-const speakQuestion = (jp: string, pt: string, tag: NonNullable<QuizQuestion["tag"]>): QuizQuestion => ({
+const speakQuestion = (
+  jp: string,
+  pt: string,
+  tag: NonNullable<QuizQuestion["tag"]>,
+): QuizQuestion => ({
   kind: "fala",
   question: "Fale esta frase em voz alta",
   options: [],
@@ -325,4 +329,3 @@ export function filtrarPorModo(
   const alvo = questions.filter((q) => q.kind === modo);
   return alvo.length ? alvo : questions;
 }
-

@@ -85,7 +85,11 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   if (!q) return null;
 
   const podeVerificar =
-    kind === "montar" ? montado.length === tokens.length : kind === "fala" ? false : selected !== null;
+    kind === "montar"
+      ? montado.length === tokens.length
+      : kind === "fala"
+        ? false
+        : selected !== null;
 
   const correto =
     kind === "montar"

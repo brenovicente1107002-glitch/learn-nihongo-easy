@@ -248,7 +248,6 @@ function LicaoPage() {
               </CardContent>
             </Card>
           ))}
-
         </>
       )}
 

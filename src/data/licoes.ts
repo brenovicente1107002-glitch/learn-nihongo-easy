@@ -23,7 +23,6 @@ export type LicaoConteudo =
       points: GrammarPoint[];
     };
 
-
 export type Licao = {
   id: string;
   title: string;
@@ -94,7 +93,6 @@ const porNivel: Licao[] = jlptLevels.flatMap((level) => {
     };
   });
 });
-
 
 export const licoes: Licao[] = [...escrita, ...porNivel];
 
