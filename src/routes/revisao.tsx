@@ -126,6 +126,32 @@ function RevisaoPage() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Tipo de exercício</CardTitle>
+          <CardDescription>
+            {modosRevisao.find((m) => m.id === modo)?.desc ?? "Todos os tipos de exercício"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          {modosRevisao.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setModo(m.id)}
+              className={cn(
+                "rounded-full border-2 border-b-4 px-4 py-2 font-display text-sm font-semibold transition-colors",
+                modo === m.id
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+              )}
+            >
+              {m.label}
+            </button>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
             {dueIds.length > 0 ? `${dueIds.length} lição(ões) prontas` : "Nada vencido agora"}
@@ -133,16 +159,17 @@ function RevisaoPage() {
           <CardDescription>
             {scheduledCount === 0
               ? "Faça uma lição para que ela entre no agendamento automático."
-              : `${scheduledCount} lições no seu calendário de revisão.`}
+              : `${scheduledCount} lições no seu calendário de revisão — as mais esquecidas vêm primeiro.`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button size="lg" disabled={dueIds.length === 0} onClick={() => iniciar(dueIds)}>
+          <Button size="lg" disabled={dueIds.length === 0} onClick={() => iniciar(prioridade)}>
             Revisar agora
           </Button>
-          {dueIds.slice(0, 6).map((id) => {
+          {prioridade.slice(0, 6).map((id) => {
             const l = licaoPorId(id);
             if (!l) return null;
+
             return (
               <div
                 key={id}
