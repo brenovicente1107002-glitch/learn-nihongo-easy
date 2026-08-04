@@ -225,17 +225,17 @@ function LicaoPage() {
             </Card>
           )}
 
-          {licao.content.point && (
-            <Card>
+          {licao.content.points.map((point) => (
+            <Card key={point.title}>
               <CardHeader>
-                <CardTitle>Gramática: {licao.content.point.title}</CardTitle>
-                <CardDescription>{licao.content.point.explanation}</CardDescription>
+                <CardTitle>Gramática: {point.title}</CardTitle>
+                <CardDescription>{point.explanation}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="rounded-xl bg-secondary p-4 font-display text-lg font-semibold">
-                  {licao.content.point.pattern}
+                  {point.pattern}
                 </div>
-                {licao.content.point.examples.map((ex, i) => (
+                {point.examples.map((ex, i) => (
                   <div key={i} className="rounded-xl border border-border p-4">
                     <div className="flex items-center gap-2">
                       <span className="font-display text-lg font-semibold">{ex.jp}</span>
@@ -247,7 +247,7 @@ function LicaoPage() {
                 ))}
               </CardContent>
             </Card>
-          )}
+          ))}
         </>
       )}
 

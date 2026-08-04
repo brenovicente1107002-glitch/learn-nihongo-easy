@@ -20,7 +20,7 @@ export type LicaoConteudo =
       kind: "mista";
       vocab: VocabItem[];
       kanji: Kanji[];
-      point: GrammarPoint | undefined;
+      points: GrammarPoint[];
     };
 
 export type Licao = {
@@ -65,18 +65,19 @@ const porNivel: Licao[] = jlptLevels.flatMap((level) => {
   const kanjiL = kanji.filter((k) => k.level === level);
   const gramL = gramatica.filter((g) => g.level === level);
 
-  const vChunks = chunk(vocabL, 5);
+  const vChunks = chunk(vocabL, 6);
   const kChunks = chunk(kanjiL, 3);
-  const total = Math.max(vChunks.length, kChunks.length, gramL.length);
+  const gChunks = chunk(gramL, 2);
+  const total = Math.max(vChunks.length, kChunks.length, gChunks.length);
 
   return Array.from({ length: total }, (_, i): Licao => {
     const vocab = vChunks.length ? (vChunks[i % vChunks.length] ?? []) : [];
     const kanjiGroup = kChunks.length ? (kChunks[i % kChunks.length] ?? []) : [];
-    const point = gramL.length ? gramL[i % gramL.length] : undefined;
+    const points = gChunks.length ? (gChunks[i % gChunks.length] ?? []) : [];
     const resumo = [
       vocab.map((v) => v.word).join(" · "),
       kanjiGroup.map((k) => k.char).join(" · "),
-      point?.title,
+      points.map((p) => p.title).join(" · "),
     ]
       .filter(Boolean)
       .join("  |  ");
@@ -88,7 +89,7 @@ const porNivel: Licao[] = jlptLevels.flatMap((level) => {
       duration: "5 min",
       category: "Lição completa" as const,
       level,
-      content: { kind: "mista" as const, vocab, kanji: kanjiGroup, point },
+      content: { kind: "mista" as const, vocab, kanji: kanjiGroup, points },
     };
   });
 });

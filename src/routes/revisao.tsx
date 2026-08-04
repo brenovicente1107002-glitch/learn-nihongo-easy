@@ -6,7 +6,15 @@ import { LevelTabs } from "@/components/level-tabs";
 import { LessonPlayer } from "@/components/lesson-player";
 import { licaoPorId, licoes, type JlptLevel } from "@/data/japanese";
 import { useSrs } from "@/hooks/use-srs";
-import { formatDue, lessonQuestions, type QuizQuestion } from "@/lib/srs";
+import {
+  filtrarPorModo,
+  formatDue,
+  lessonQuestions,
+  modosRevisao,
+  type ExercicioKind,
+  type QuizQuestion,
+} from "@/lib/srs";
+
 import { cn } from "@/lib/utils";
 import { CalendarClock, Flame, Zap } from "lucide-react";
 
@@ -36,10 +44,23 @@ const SESSAO = 15;
 function RevisaoPage() {
   const { dueIds, cards, scheduledCount, review } = useSrs();
   const [level, setLevel] = useState<JlptLevel>("N5");
+  const [modo, setModo] = useState<ExercicioKind | "misto">("misto");
   const [sessao, setSessao] = useState<{ ids: string[]; questions: QuizQuestion[] } | null>(null);
   const [resultado, setResultado] = useState<number | null>(null);
 
   const proximas = useMemo(() => Object.values(cards).sort((a, b) => a.due - b.due), [cards]);
+
+  /** Revisão inteligente: primeiro o que está mais atrasado e com pior desempenho. */
+  const prioridade = useMemo(() => {
+    const agora = Date.now();
+    return [...dueIds].sort((a, b) => {
+      const ca = cards[a];
+      const cb = cards[b];
+      const pa = (agora - (ca?.due ?? agora)) / 3600000 + (100 - (ca?.lastScore ?? 0));
+      const pb = (agora - (cb?.due ?? agora)) / 3600000 + (100 - (cb?.lastScore ?? 0));
+      return pb - pa;
+    });
+  }, [dueIds, cards]);
 
   const iniciar = (ids: string[]) => {
     const usados: string[] = [];
@@ -47,7 +68,7 @@ function RevisaoPage() {
     for (const id of ids) {
       const l = licaoPorId(id);
       if (!l) continue;
-      const qs = lessonQuestions(l).slice(0, 5);
+      const qs = filtrarPorModo(lessonQuestions(l), modo).slice(0, 5);
       if (!qs.length) continue;
       usados.push(id);
       questions.push(...qs);
@@ -60,7 +81,7 @@ function RevisaoPage() {
 
   const treinoLivre = () => {
     const doNivel = licoes.filter((l) => l.level === level);
-    const escolhidas = doNivel.slice(0, 3).map((l) => l.id);
+    const escolhidas = doNivel.slice(0, 4).map((l) => l.id);
     iniciar(escolhidas);
   };
 
@@ -104,6 +125,32 @@ function RevisaoPage() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Tipo de exercício</CardTitle>
+          <CardDescription>
+            {modosRevisao.find((m) => m.id === modo)?.desc ?? "Todos os tipos de exercício"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          {modosRevisao.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => setModo(m.id)}
+              className={cn(
+                "rounded-full border-2 border-b-4 px-4 py-2 font-display text-sm font-semibold transition-colors",
+                modo === m.id
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+              )}
+            >
+              {m.label}
+            </button>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
             {dueIds.length > 0 ? `${dueIds.length} lição(ões) prontas` : "Nada vencido agora"}
@@ -111,16 +158,17 @@ function RevisaoPage() {
           <CardDescription>
             {scheduledCount === 0
               ? "Faça uma lição para que ela entre no agendamento automático."
-              : `${scheduledCount} lições no seu calendário de revisão.`}
+              : `${scheduledCount} lições no seu calendário de revisão — as mais esquecidas vêm primeiro.`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button size="lg" disabled={dueIds.length === 0} onClick={() => iniciar(dueIds)}>
+          <Button size="lg" disabled={dueIds.length === 0} onClick={() => iniciar(prioridade)}>
             Revisar agora
           </Button>
-          {dueIds.slice(0, 6).map((id) => {
+          {prioridade.slice(0, 6).map((id) => {
             const l = licaoPorId(id);
             if (!l) return null;
+
             return (
               <div
                 key={id}
