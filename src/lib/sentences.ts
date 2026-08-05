@@ -17,9 +17,11 @@ const BLANK = "＿＿＿";
  * Monta uma frase de contexto para a palavra, para que o vocabulário
  * seja sempre aprendido dentro de uma sentença.
  */
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 export function frase(v: VocabItem): Frase {
   const w = v.word;
-  const m = v.meaning.split(/[;,/]/)[0]?.trim() || v.meaning;
+  const m = (v.meaning.split(/[;,/]/)[0] ?? v.meaning).trim() || v.meaning;
 
   const build = (tokens: string[], pt: string): Frase => {
     const jp = tokens.join("");
@@ -28,28 +30,29 @@ export function frase(v: VocabItem): Frase {
 
   switch (v.type) {
     case "verbo":
-      return build(["毎日", w, "。"], `${m} todos os dias.`);
+      return build(["毎日", w, "。"], `${cap(m)} todos os dias.`);
     case "adjetivo":
       return build(["これは", "とても", w, "です", "。"], `Isto é muito ${m}.`);
     case "advérbio":
-      return build([w, "わかりました", "。"], `${m}, entendi.`);
+      return build([w, "わかりました", "。"], `${cap(m)}, entendi.`);
     case "saudação":
     case "expressão":
-      return build([w, "と", "言いました", "。"], `Disse "${m}".`);
+      return build([w, "と", "言いました", "。"], `Ele disse "${m}".`);
     case "pronome":
-      return build([w, "は", "学生", "です", "。"], `${m} é estudante.`);
+      return build([w, "は", "学生", "です", "。"], `${cap(m)} é estudante.`);
     case "contador":
       return build([w, "あります", "。"], `Há ${m}.`);
     case "conector":
     case "partícula":
       return build(
         ["これは", "本", "です", "。", w, "、", "ノート", "も", "あります", "。"],
-        `Isto é um livro. ${m}, há um caderno também.`,
+        `Isto é um livro. ${cap(m)}, há um caderno também.`,
       );
     default:
       return build(["これは", w, "です", "。"], `Isto é ${m}.`);
   }
 }
+
 
 /** Divide uma frase japonesa em pedaços aproveitáveis para montar a frase. */
 export function tokenizarJa(jp: string): string[] {
