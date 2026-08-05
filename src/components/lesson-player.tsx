@@ -59,7 +59,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
     // reexecuta a cada questão, mesmo que o texto do áudio se repita
   }, [index, audio, kind]);
 
-
   const progresso = useMemo(() => Math.round((index / Math.max(total, 1)) * 100), [index, total]);
 
   const tokens = q?.tokens ?? [];

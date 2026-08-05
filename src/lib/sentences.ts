@@ -53,7 +53,6 @@ export function frase(v: VocabItem): Frase {
   }
 }
 
-
 /** Divide uma frase japonesa em pedaços aproveitáveis para montar a frase. */
 export function tokenizarJa(jp: string): string[] {
   const limpo = jp.trim();

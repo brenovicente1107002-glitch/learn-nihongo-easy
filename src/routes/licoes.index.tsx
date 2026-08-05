@@ -174,9 +174,7 @@ function LicoesPage() {
               <div
                 className={cn(
                   "flex items-center justify-between rounded-2xl border-2 border-b-4 px-4 py-3",
-                  unidadeFeita
-                    ? "border-primary/40 bg-primary/10"
-                    : "border-border bg-card",
+                  unidadeFeita ? "border-primary/40 bg-primary/10" : "border-border bg-card",
                 )}
               >
                 <div>
@@ -196,8 +194,11 @@ function LicoesPage() {
               <div className="flex flex-col items-center gap-6">
                 {grupo.map((l, i) => {
                   const idx = inicio + i;
-                  const estado =
-                    feitas.has(l.id) ? "feito" : idx <= atualIndex ? "atual" : "bloqueado";
+                  const estado = feitas.has(l.id)
+                    ? "feito"
+                    : idx <= atualIndex
+                      ? "atual"
+                      : "bloqueado";
                   return <No key={l.id} licao={l} posicao={idx} estado={estado} />;
                 })}
               </div>
