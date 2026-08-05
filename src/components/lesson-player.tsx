@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { speakJa, ttsDisponivel } from "@/lib/tts";
+import { pararAudio, speakJa, ttsDisponivel } from "@/lib/tts";
 import type { QuizQuestion } from "@/lib/srs";
 import { Check, Heart, Mic, Volume2, X } from "lucide-react";
 
@@ -55,7 +55,10 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
 
   useEffect(() => {
     if (audio && kind !== "montar") speakJa(audio);
-  }, [audio, kind]);
+    return () => pararAudio();
+    // reexecuta a cada questão, mesmo que o texto do áudio se repita
+  }, [index, audio, kind]);
+
 
   const progresso = useMemo(() => Math.round((index / Math.max(total, 1)) * 100), [index, total]);
 
