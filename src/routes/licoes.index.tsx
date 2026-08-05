@@ -191,7 +191,7 @@ function LicoesPage() {
                 />
               </div>
 
-              <div className="flex flex-col items-center gap-6">
+              <div className="flex flex-col items-center gap-6 overflow-hidden py-2">
                 {grupo.map((l, i) => {
                   const idx = inicio + i;
                   const estado = feitas.has(l.id)
