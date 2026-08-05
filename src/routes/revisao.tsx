@@ -62,18 +62,37 @@ function RevisaoPage() {
     });
   }, [dueIds, cards]);
 
+  /** Monta sempre uma sessão de 15 exercícios, completando com lições vizinhas. */
   const iniciar = (ids: string[]) => {
     const usados: string[] = [];
     const questions: QuizQuestion[] = [];
-    for (const id of ids) {
+    const vistas = new Set<string>();
+
+    const puxar = (id: string, max: number) => {
       const l = licaoPorId(id);
-      if (!l) continue;
-      const qs = filtrarPorModo(lessonQuestions(l), modo).slice(0, 5);
-      if (!qs.length) continue;
-      usados.push(id);
+      if (!l) return;
+      const qs = filtrarPorModo(lessonQuestions(l), modo)
+        .filter((q) => !vistas.has(q.question + q.target))
+        .slice(0, max);
+      if (!qs.length) return;
+      qs.forEach((q) => vistas.add(q.question + q.target));
+      if (!usados.includes(id)) usados.push(id);
       questions.push(...qs);
-      if (questions.length >= SESSAO) break;
+    };
+
+    ids.forEach((id) => {
+      if (questions.length < SESSAO) puxar(id, 5);
+    });
+
+    // completa até 15 com outras lições do mesmo nível das vencidas
+    if (questions.length < SESSAO) {
+      const extras = licoes.filter((l) => !ids.includes(l.id));
+      for (const l of extras) {
+        if (questions.length >= SESSAO) break;
+        puxar(l.id, SESSAO - questions.length);
+      }
     }
+
     if (!questions.length) return;
     setResultado(null);
     setSessao({ ids: usados, questions: questions.slice(0, SESSAO) });
@@ -81,9 +100,10 @@ function RevisaoPage() {
 
   const treinoLivre = () => {
     const doNivel = licoes.filter((l) => l.level === level);
-    const escolhidas = doNivel.slice(0, 4).map((l) => l.id);
+    const escolhidas = doNivel.slice(0, 6).map((l) => l.id);
     iniciar(escolhidas);
   };
+
 
   if (sessao) {
     return (
