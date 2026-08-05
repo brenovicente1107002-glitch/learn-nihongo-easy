@@ -8,6 +8,37 @@ export type VocabItem = {
   level: JlptLevel;
 };
 
+/** Fica só com a primeira forma escrita da palavra (evita "川; 河" e prefixos "～"). */
+const limparPalavra = (raw: string): string =>
+  (raw.split(/[;；/]/)[0] ?? raw).replace(/[～~]/g, "").trim();
+
+/**
+ * Limpa a tradução: remove repetições, cortes em inglês e listas longas,
+ * deixando no máximo duas acepções em português.
+ */
+const limparSignificado = (raw: string): string => {
+  const partes = raw
+    .split(/[;；,/]/)
+    .map((p) =>
+      p
+        .replace(/\(.*?\)/g, "")
+        .replace(/\s+/g, " ")
+        .trim(),
+    )
+    .filter(Boolean);
+
+  const vistos = new Set<string>();
+  const unicos = partes.filter((p) => {
+    const chave = p.toLowerCase();
+    if (vistos.has(chave)) return false;
+    vistos.add(chave);
+    return true;
+  });
+
+  const texto = unicos.slice(0, 2).join(", ") || raw.trim();
+  return texto.charAt(0).toLowerCase() + texto.slice(1);
+};
+
 const parse = (level: JlptLevel, raw: string): VocabItem[] =>
   raw
     .trim()
@@ -17,13 +48,14 @@ const parse = (level: JlptLevel, raw: string): VocabItem[] =>
     .map((line) => {
       const [word = "", reading = "", meaning = "", type = "substantivo"] = line.split("|");
       return {
-        word: word.trim(),
-        reading: reading.trim(),
-        meaning: meaning.trim(),
+        word: limparPalavra(word),
+        reading: limparPalavra(reading),
+        meaning: limparSignificado(meaning),
         type: type.trim(),
         level,
       };
-    });
+    })
+    .filter((v) => v.word.length > 0 && v.meaning.length > 0);
 
 const n5 = `
 ～がる|～がる|sentir|verbo
