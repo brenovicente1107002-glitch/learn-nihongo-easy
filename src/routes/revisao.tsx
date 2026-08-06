@@ -39,7 +39,19 @@ export const Route = createFileRoute("/revisao")({
   component: RevisaoPage,
 });
 
-const SESSAO = 15;
+const TAMANHOS = [15, 25, 40];
+
+/** Embaralha ids para gerar revisões extras sempre diferentes. */
+const shuffleIds = (ids: string[]): string[] => {
+  const a = [...ids];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = a[i]!;
+    a[i] = a[j]!;
+    a[j] = tmp;
+  }
+  return a;
+};
 
 function RevisaoPage() {
   const { dueIds, cards, scheduledCount, review } = useSrs();
@@ -47,6 +59,7 @@ function RevisaoPage() {
   const [modo, setModo] = useState<ExercicioKind | "misto">("misto");
   const [sessao, setSessao] = useState<{ ids: string[]; questions: QuizQuestion[] } | null>(null);
   const [resultado, setResultado] = useState<number | null>(null);
+  const [SESSAO, setSessaoTam] = useState(15);
 
   const proximas = useMemo(() => Object.values(cards).sort((a, b) => a.due - b.due), [cards]);
 
@@ -126,7 +139,7 @@ function RevisaoPage() {
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Revisão</h1>
         <p className="mt-1 text-muted-foreground">
-          Sessões curtas de 15 exercícios, no momento certo para não esquecer.
+          Sessões no seu ritmo — escolha o tamanho e revise quantas vezes quiser.
         </p>
       </div>
 
@@ -165,6 +178,24 @@ function RevisaoPage() {
               {m.label}
             </button>
           ))}
+          <div className="mt-2 flex w-full flex-wrap items-center gap-2">
+            <span className="text-sm text-muted-foreground">Questões por sessão:</span>
+            {TAMANHOS.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setSessaoTam(t)}
+                className={cn(
+                  "rounded-full border-2 border-b-4 px-3 py-1.5 font-display text-sm font-semibold transition-colors",
+                  SESSAO === t
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                )}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
@@ -181,9 +212,21 @@ function RevisaoPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button size="lg" disabled={dueIds.length === 0} onClick={() => iniciar(prioridade)}>
-            Revisar agora
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="lg"
+              onClick={() => iniciar(prioridade.length ? prioridade : licoes.slice(0, 8).map((l) => l.id))}
+            >
+              Revisar agora
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => iniciar(shuffleIds(licoes.map((l) => l.id)).slice(0, 10))}
+            >
+              Revisão extra
+            </Button>
+          </div>
           {prioridade.slice(0, 6).map((id) => {
             const l = licaoPorId(id);
             if (!l) return null;

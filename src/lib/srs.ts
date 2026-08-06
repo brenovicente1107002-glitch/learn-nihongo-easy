@@ -119,13 +119,14 @@ const shuffle = <T>(arr: T[], seed: number): T[] => {
 };
 
 /** Modalidades de exercício disponíveis. */
-export type ExercicioKind = "escolha" | "escuta" | "fala" | "montar";
+export type ExercicioKind = "escolha" | "escuta" | "fala" | "montar" | "escrita";
 
 export const modosRevisao: { id: ExercicioKind | "misto"; label: string; desc: string }[] = [
   { id: "misto", label: "Mistura", desc: "Todos os tipos de exercício" },
   { id: "escuta", label: "Escuta", desc: "Ouça o áudio e escolha o que foi dito" },
   { id: "fala", label: "Fala", desc: "Repita a frase em voz alta" },
   { id: "montar", label: "Montar frase", desc: "Ordene as palavras para formar a frase" },
+  { id: "escrita", label: "Escrever", desc: "Desenhe o kanji ou katakana com o dedo" },
 ];
 
 /** Pergunta de lição, com áudio nativo e legenda opcional. */
@@ -180,6 +181,21 @@ const speakQuestion = (
   tag,
 });
 
+/** Exercício de escrita à mão: aparece o significado/leitura e o aluno desenha. */
+const writeQuestion = (
+  char: string,
+  dica: string,
+  tag: NonNullable<QuizQuestion["tag"]>,
+): QuizQuestion => ({
+  kind: "escrita",
+  question: `Escreva à mão: ${dica}`,
+  options: [],
+  answer: 0,
+  audio: char,
+  target: char,
+  tag,
+});
+
 const buildQuestion = (
   tokens: string[],
   jp: string,
@@ -224,6 +240,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
         { kind: "escuta", audio: k.char, tag: "Kana" },
       );
       if (escuta) out.push(escuta);
+      out.push(writeQuestion(k.char, `o kana lido como "${k.romaji}"`, "Kana"));
     });
     return shuffle(out, 71).slice(0, 15);
   }
@@ -277,6 +294,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
       tag: "Kanji",
     });
     if (q) out.push(q);
+    out.push(writeQuestion(k.char, `o kanji de "${k.meaning}"`, "Kanji"));
   });
 
   // 4) gramática
