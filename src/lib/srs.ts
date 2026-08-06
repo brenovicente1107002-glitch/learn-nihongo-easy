@@ -278,7 +278,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
   // 2) significado das palavras
   content.vocab.forEach((v, i) => {
     const wrong = pick(vocabPool, 3, i + 61, (o) => o.meaning === v.meaning).map((o) => o.meaning);
-    const q = makeQuestion(`O que significa ${v.word} (${v.reading})?`, v.meaning, wrong, i + 67, {
+    const q = makeQuestion(`O que significa ${v.word}?`, v.meaning, wrong, i + 67, {
       audio: v.word,
       tag: "Vocabulário",
     });

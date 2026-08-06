@@ -17,6 +17,7 @@ import { Route as KanjiRouteImport } from './routes/kanji'
 import { Route as KatakanaRouteImport } from './routes/katakana'
 import { Route as LicoesRouteImport } from './routes/licoes'
 import { Route as RevisaoRouteImport } from './routes/revisao'
+import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as LicoesIndexRouteImport } from './routes/licoes.index'
 import { Route as LicoesIdRouteImport } from './routes/licoes.$id'
 
@@ -60,6 +61,11 @@ const RevisaoRoute = RevisaoRouteImport.update({
   path: '/revisao',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTtsRoute = ApiTtsRouteImport.update({
+  id: '/api/tts',
+  path: '/api/tts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LicoesIndexRoute = LicoesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/katakana': typeof KatakanaRoute
   '/licoes': typeof LicoesRouteWithChildren
   '/revisao': typeof RevisaoRoute
+  '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
   '/licoes/': typeof LicoesIndexRoute
 }
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/kanji': typeof KanjiRoute
   '/katakana': typeof KatakanaRoute
   '/revisao': typeof RevisaoRoute
+  '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
   '/licoes': typeof LicoesIndexRoute
 }
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/katakana': typeof KatakanaRoute
   '/licoes': typeof LicoesRouteWithChildren
   '/revisao': typeof RevisaoRoute
+  '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
   '/licoes/': typeof LicoesIndexRoute
 }
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/katakana'
     | '/licoes'
     | '/revisao'
+    | '/api/tts'
     | '/licoes/$id'
     | '/licoes/'
   fileRoutesByTo: FileRoutesByTo
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/kanji'
     | '/katakana'
     | '/revisao'
+    | '/api/tts'
     | '/licoes/$id'
     | '/licoes'
   id:
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/katakana'
     | '/licoes'
     | '/revisao'
+    | '/api/tts'
     | '/licoes/$id'
     | '/licoes/'
   fileRoutesById: FileRoutesById
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   KatakanaRoute: typeof KatakanaRoute
   LicoesRoute: typeof LicoesRouteWithChildren
   RevisaoRoute: typeof RevisaoRoute
+  ApiTtsRoute: typeof ApiTtsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RevisaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/tts': {
+      id: '/api/tts'
+      path: '/api/tts'
+      fullPath: '/api/tts'
+      preLoaderRoute: typeof ApiTtsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/licoes/': {
       id: '/licoes/'
       path: '/'
@@ -253,6 +273,7 @@ const rootRouteChildren: RootRouteChildren = {
   KatakanaRoute: KatakanaRoute,
   LicoesRoute: LicoesRouteWithChildren,
   RevisaoRoute: RevisaoRoute,
+  ApiTtsRoute: ApiTtsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

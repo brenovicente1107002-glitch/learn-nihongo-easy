@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { pararAudio, speakJa, ttsDisponivel } from "@/lib/tts";
 import { DrawCanvas } from "@/components/draw-canvas";
+import { JaText } from "@/components/furigana";
 import type { QuizQuestion } from "@/lib/srs";
 import { Check, Heart, Mic, Volume2, X } from "lucide-react";
 
@@ -170,8 +171,8 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
       {/* enunciado */}
       <div className="space-y-3">
         <div className="flex items-start gap-3">
-          <h2 className="font-display text-2xl leading-snug font-bold tracking-tight">
-            {q.question}
+          <h2 className="font-display text-2xl leading-[1.6] font-bold tracking-tight">
+            <JaText text={q.question} />
           </h2>
           {audio && ttsDisponivel() && kind !== "montar" && (
             <button
@@ -203,7 +204,9 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
       {kind === "fala" && (
         <div className="space-y-4">
           <div className="rounded-2xl border-2 border-border p-5">
-            <div className="font-display text-2xl font-bold">{q.target}</div>
+            <div className="font-display text-2xl font-bold">
+              <JaText text={q.target ?? ""} />
+            </div>
             {q.sub && <div className="mt-1 text-sm text-muted-foreground">{q.sub}</div>}
           </div>
           {getRecognition() ? (
@@ -245,7 +248,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                   onClick={() => setMontado((m) => m.filter((_, i) => i !== pos))}
                   className="rounded-xl border-2 border-b-4 border-primary/40 bg-primary/10 px-3 py-2 font-display text-lg"
                 >
-                  {tokens[t]}
+                  <JaText text={tokens[t] ?? ""} />
                 </button>
               ))}
             </div>
@@ -262,7 +265,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                   montado.includes(i) && "opacity-30",
                 )}
               >
-                {t}
+                <JaText text={t} />
               </button>
             ))}
           </div>
@@ -290,7 +293,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                   checked && !isAns && !isSel && "opacity-60",
                 )}
               >
-                {opt}
+                <JaText text={opt} />
               </button>
             );
           })}
@@ -321,8 +324,8 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
               {!correto && (
                 <p className="mt-1 font-medium">
                   {kind === "montar" || kind === "fala" || kind === "escrita"
-                    ? q.target
-                    : q.options[q.answer]}
+                    ? <JaText text={q.target ?? ""} />
+                    : <JaText text={q.options[q.answer] ?? ""} />}
                 </p>
               )}
               {q.sub && <p className="mt-1 text-sm text-muted-foreground">{q.sub}</p>}
