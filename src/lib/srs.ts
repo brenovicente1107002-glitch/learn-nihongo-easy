@@ -193,7 +193,6 @@ const writeQuestion = (
   answer: 0,
   audio: char,
   target: char,
-  sub: char,
   tag,
 });
 

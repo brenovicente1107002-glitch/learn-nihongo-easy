@@ -35,7 +35,14 @@ const limparSignificado = (raw: string): string => {
     return true;
   });
 
-  const texto = unicos.slice(0, 2).join(", ") || raw.trim();
+  const texto = (unicos.slice(0, 2).join(", ") || raw.trim())
+    // tira artigos iniciais ("uma passagem" -> "passagem")
+    .replace(/^(um|uma|o|a|os|as)\s+/i, "")
+    // resíduos de inglês/anotações que sobraram da base original
+    .replace(/\b(v\.?i\.?|v\.?t\.?|n\.?|adj\.?|etc\.?)\b/gi, "")
+    .replace(/\s*,\s*$/, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
   return texto.charAt(0).toLowerCase() + texto.slice(1);
 };
 
