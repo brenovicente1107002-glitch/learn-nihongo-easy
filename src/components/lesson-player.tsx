@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { pararAudio, speakJa, ttsDisponivel } from "@/lib/tts";
+import { DrawCanvas } from "@/components/draw-canvas";
 import type { QuizQuestion } from "@/lib/srs";
 import { Check, Heart, Mic, Volume2, X } from "lucide-react";
 
@@ -48,6 +49,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   const [ouvindo, setOuvindo] = useState(false);
   const [falado, setFalado] = useState("");
   const [certoManual, setCertoManual] = useState(false);
+  const [desenhou, setDesenhou] = useState(false);
 
   const q = questions[index];
   const audio = q?.audio;
@@ -89,14 +91,14 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   const podeVerificar =
     kind === "montar"
       ? montado.length === tokens.length
-      : kind === "fala"
+      : kind === "fala" || kind === "escrita"
         ? false
         : selected !== null;
 
   const correto =
     kind === "montar"
       ? fraseMontada === q.target
-      : kind === "fala"
+      : kind === "fala" || kind === "escrita"
         ? certoManual
         : selected === q.answer;
 
@@ -119,6 +121,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
     setMontado([]);
     setFalado("");
     setCertoManual(false);
+    setDesenhou(false);
   };
 
   return (
@@ -154,7 +157,9 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
               ? "Fala"
               : kind === "montar"
                 ? "Montar frase"
-                : "Escolha"}
+                : kind === "escrita"
+                  ? "Escrever"
+                  : "Escolha"}
         </Badge>
         <span className="text-xs text-muted-foreground">
           {index + 1} de {total}
@@ -212,6 +217,18 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
             </p>
           )}
           {falado && <p className="text-sm text-muted-foreground">Você disse: {falado}</p>}
+        </div>
+      )}
+
+      {/* escrita à mão */}
+      {kind === "escrita" && q.target && (
+        <div className="space-y-4">
+          <DrawCanvas char={q.target} resetKey={index} onDraw={setDesenhou} />
+          {!checked && (
+            <p className="text-center text-sm text-muted-foreground">
+              Siga o guia com o dedo e depois esconda o guia para tentar de memória.
+            </p>
+          )}
         </div>
       )}
 
@@ -303,7 +320,9 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
               </div>
               {!correto && (
                 <p className="mt-1 font-medium">
-                  {kind === "montar" || kind === "fala" ? q.target : q.options[q.answer]}
+                  {kind === "montar" || kind === "fala" || kind === "escrita"
+                    ? q.target
+                    : q.options[q.answer]}
                 </p>
               )}
               {q.sub && <p className="mt-1 text-sm text-muted-foreground">{q.sub}</p>}
@@ -319,7 +338,33 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                 Pular
               </Button>
             )}
-            {kind !== "fala" && (
+            {kind === "escrita" && (
+              <>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => {
+                    setCertoManual(false);
+                    setChecked(true);
+                    setVidas((v) => Math.max(0, v - 1));
+                  }}
+                >
+                  Errei
+                </Button>
+                <Button
+                  size="lg"
+                  disabled={!desenhou}
+                  onClick={() => {
+                    setCertoManual(true);
+                    setChecked(true);
+                    setAcertos((a) => a + 1);
+                  }}
+                >
+                  Acertei
+                </Button>
+              </>
+            )}
+            {kind !== "fala" && kind !== "escrita" && (
               <Button size="lg" disabled={!podeVerificar} onClick={verificar}>
                 Verificar
               </Button>
