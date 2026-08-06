@@ -293,7 +293,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                   checked && !isAns && !isSel && "opacity-60",
                 )}
               >
-                {opt}
+                <JaText text={opt} />
               </button>
             );
           })}
