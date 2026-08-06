@@ -32,6 +32,23 @@ export type Kanji = {
   level: JlptLevel;
 };
 
+/** Deixa no máximo duas acepções em português, sem barras e sem duplicatas. */
+const limparSignificado = (raw: string): string => {
+  const partes = raw
+    .split(/[;/,]/)
+    .map((p) => p.replace(/\(.*?\)/g, "").replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+  const vistos = new Set<string>();
+  const unicos = partes.filter((p) => {
+    const k = p.toLowerCase();
+    if (vistos.has(k)) return false;
+    vistos.add(k);
+    return true;
+  });
+  const texto = unicos.slice(0, 2).join(", ") || raw.trim();
+  return texto.charAt(0).toLowerCase() + texto.slice(1);
+};
+
 const parse = (level: JlptLevel, raw: string): Kanji[] =>
   raw
     .trim()
@@ -42,7 +59,7 @@ const parse = (level: JlptLevel, raw: string): Kanji[] =>
       const [char = "", meaning = "", readings = ""] = line.split("|");
       return {
         char: char.trim(),
-        meaning: meaning.trim(),
+        meaning: limparSignificado(meaning),
         readings: readings.split(",").map((r) => r.trim()),
         level,
       };
