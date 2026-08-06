@@ -171,7 +171,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
       {/* enunciado */}
       <div className="space-y-3">
         <div className="flex items-start gap-3">
-          <h2 className="font-display text-2xl leading-snug font-bold tracking-tight">
+          <h2 className="font-display text-2xl leading-[1.6] font-bold tracking-tight">
             <JaText text={q.question} />
           </h2>
           {audio && ttsDisponivel() && kind !== "montar" && (
