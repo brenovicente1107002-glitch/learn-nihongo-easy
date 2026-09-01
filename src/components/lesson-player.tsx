@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { pararAudio, speakJa, ttsDisponivel } from "@/lib/tts";
 import { DrawCanvas } from "@/components/draw-canvas";
 import { JaText } from "@/components/furigana";
+import { AomaruAvatar, conselhos } from "@/components/mascot";
+
 import type { QuizQuestion } from "@/lib/srs";
 import { Check, Heart, Mic, Volume2, X } from "lucide-react";
 
@@ -329,7 +331,17 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                 </p>
               )}
               {q.sub && <p className="mt-1 text-sm text-muted-foreground">{q.sub}</p>}
+              {!correto && (
+                <div className="mt-3 flex items-center gap-2">
+                  <AomaruAvatar className="h-10 w-10 shrink-0" />
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium text-primary">Aomaru: </span>
+                    {conselhos[index % conselhos.length]}
+                  </p>
+                </div>
+              )}
             </div>
+
             <Button size="lg" onClick={() => continuar()}>
               {vidas === 0 ? "Ver resultado" : index + 1 >= total ? "Finalizar" : "Continuar"}
             </Button>
