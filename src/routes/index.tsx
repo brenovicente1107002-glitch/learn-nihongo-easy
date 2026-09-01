@@ -8,6 +8,8 @@ import { useProgress } from "@/hooks/use-progress";
 import { useSrs } from "@/hooks/use-srs";
 import { formatDue } from "@/lib/srs";
 import { licaoPorId } from "@/data/japanese";
+import { AomaruTip } from "@/components/mascot";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,6 +46,10 @@ function Dashboard() {
           </Badge>
         </div>
       </div>
+
+      <AomaruTip />
+
+
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
