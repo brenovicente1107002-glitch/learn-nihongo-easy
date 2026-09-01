@@ -14,7 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import {
   BookOpen,
-  Flame,
+  
   GraduationCap,
   Home,
   Layers,
@@ -28,6 +28,8 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { AomaruAvatar, AomaruTip } from "../components/mascot";
+
 
 function NotFoundComponent() {
   return (
@@ -110,7 +112,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@nihongoquest" },
-      { name: "theme-color", content: "#c8102e" },
+      { name: "theme-color", content: "#2f62c4" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Nihongo Quest" },
     ],
@@ -186,9 +188,10 @@ function AppShell({ children }: { children: ReactNode }) {
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border bg-card lg:flex">
         <div className="flex h-16 items-center gap-2 border-b border-border px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="font-display text-lg font-bold">日</span>
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+            <AomaruAvatar className="h-8 w-8" />
           </div>
+
           <span className="font-display text-lg font-semibold tracking-tight">Nihongo Quest</span>
         </div>
         <nav className="flex-1 space-y-1 p-4">
@@ -212,25 +215,18 @@ function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
         <div className="border-t border-border p-4">
-          <div className="rounded-lg bg-secondary p-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-secondary-foreground">Sequência</span>
-              <span className="text-xs font-semibold text-primary">5 dias</span>
-            </div>
-            <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-              <Flame className="h-4 w-4 text-japan-red" />
-              <span>Continue aprendendo hoje!</span>
-            </div>
-          </div>
+          <AomaruTip size="sm" className="p-3" />
         </div>
+
       </aside>
 
       {/* Mobile header */}
       <div className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="font-display text-base font-bold">日</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+            <AomaruAvatar className="h-7 w-7" />
           </div>
+
           <span className="font-display text-base font-semibold">Nihongo Quest</span>
         </div>
         <button
@@ -252,9 +248,10 @@ function AppShell({ children }: { children: ReactNode }) {
           <div className="absolute inset-y-0 left-0 w-64 bg-card shadow-2xl">
             <div className="flex h-16 items-center justify-between border-b border-border px-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <span className="font-display text-base font-bold">日</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                  <AomaruAvatar className="h-7 w-7" />
                 </div>
+
                 <span className="font-display text-base font-semibold">Nihongo Quest</span>
               </div>
               <button
