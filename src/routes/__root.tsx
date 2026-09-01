@@ -186,9 +186,10 @@ function AppShell({ children }: { children: ReactNode }) {
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border bg-card lg:flex">
         <div className="flex h-16 items-center gap-2 border-b border-border px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="font-display text-lg font-bold">日</span>
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+            <AomaruAvatar className="h-8 w-8" />
           </div>
+
           <span className="font-display text-lg font-semibold tracking-tight">Nihongo Quest</span>
         </div>
         <nav className="flex-1 space-y-1 p-4">
@@ -212,17 +213,9 @@ function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
         <div className="border-t border-border p-4">
-          <div className="rounded-lg bg-secondary p-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-secondary-foreground">Sequência</span>
-              <span className="text-xs font-semibold text-primary">5 dias</span>
-            </div>
-            <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-              <Flame className="h-4 w-4 text-japan-red" />
-              <span>Continue aprendendo hoje!</span>
-            </div>
-          </div>
+          <AomaruTip size="sm" className="p-3" />
         </div>
+
       </aside>
 
       {/* Mobile header */}
