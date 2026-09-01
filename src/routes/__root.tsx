@@ -28,6 +28,8 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { AomaruAvatar, AomaruTip } from "../components/mascot";
+
 
 function NotFoundComponent() {
   return (
@@ -221,9 +223,10 @@ function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile header */}
       <div className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <span className="font-display text-base font-bold">日</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+            <AomaruAvatar className="h-7 w-7" />
           </div>
+
           <span className="font-display text-base font-semibold">Nihongo Quest</span>
         </div>
         <button
@@ -245,9 +248,10 @@ function AppShell({ children }: { children: ReactNode }) {
           <div className="absolute inset-y-0 left-0 w-64 bg-card shadow-2xl">
             <div className="flex h-16 items-center justify-between border-b border-border px-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <span className="font-display text-base font-bold">日</span>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                  <AomaruAvatar className="h-7 w-7" />
                 </div>
+
                 <span className="font-display text-base font-semibold">Nihongo Quest</span>
               </div>
               <button
