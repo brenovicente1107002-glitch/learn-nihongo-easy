@@ -333,10 +333,13 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
               {q.sub && <p className="mt-1 text-sm text-muted-foreground">{q.sub}</p>}
               {!correto && (
                 <div className="mt-3 flex items-center gap-2">
-                  <AomaruAvatar className="h-10 w-10 shrink-0" />
+                  <AomaruAvatar
+                    className="h-10 w-10 shrink-0"
+                    expressao={conselhos[index % conselhos.length]!.expressao}
+                  />
                   <p className="text-sm text-muted-foreground">
                     <span className="font-medium text-primary">Aomaru: </span>
-                    {conselhos[index % conselhos.length]}
+                    {conselhos[index % conselhos.length]!.texto}
                   </p>
                 </div>
               )}
