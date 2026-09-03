@@ -82,7 +82,7 @@ const GLOSS: Record<string, string> = {
   会: "encontrar",
   って: "(citação)",
   学生: "estudante",
-  、: ",",
+  "、": ",",
   "。": ".",
 };
 
