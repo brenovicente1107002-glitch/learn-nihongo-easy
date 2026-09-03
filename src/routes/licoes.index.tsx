@@ -110,7 +110,15 @@ function LicoesPage() {
     return i === -1 ? doNivel.length : i;
   }, [doNivel, feitas]);
 
-  const unidades = useMemo(() => unidadesPorNivel(level), [level]);
+  const posicoes = useMemo(() => new Map(doNivel.map((l, i) => [l.id, i])), [doNivel]);
+  const todasUnidades = useMemo(() => unidadesPorNivel(level), [level]);
+
+  /** mostra as unidades aos poucos: a trilha completa tem centenas delas */
+  const [visiveis, setVisiveis] = useState(6);
+  const unidades = useMemo(
+    () => todasUnidades.slice(0, visiveis),
+    [todasUnidades, visiveis],
+  );
 
   const concluidasNivel = doNivel.filter((l) => feitas.has(l.id)).length;
   const progressoNivel = Math.round((concluidasNivel / Math.max(doNivel.length, 1)) * 100);
@@ -131,7 +139,10 @@ function LicoesPage() {
           <button
             key={n}
             type="button"
-            onClick={() => setLevel(n)}
+            onClick={() => {
+              setLevel(n);
+              setVisiveis(6);
+            }}
             className={cn(
               "shrink-0 rounded-full border-2 border-b-4 px-4 py-2 font-display text-sm font-bold transition-colors",
               level === n
@@ -208,7 +219,7 @@ function LicoesPage() {
                   </div>
                   <div className="flex flex-col items-center gap-6 overflow-hidden py-1">
                     {cap.licoes.map((l) => {
-                      const idx = doNivel.indexOf(l);
+                      const idx = posicoes.get(l.id) ?? 0;
                       const estado = feitas.has(l.id)
                         ? "feito"
                         : idx <= atualIndex
@@ -222,6 +233,16 @@ function LicoesPage() {
             </section>
           );
         })}
+
+        {visiveis < todasUnidades.length && (
+          <button
+            type="button"
+            onClick={() => setVisiveis((v) => v + 6)}
+            className="w-full rounded-2xl border-2 border-b-4 border-border bg-card py-3 font-display text-sm font-bold text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          >
+            Ver mais unidades ({todasUnidades.length - visiveis} restantes)
+          </button>
+        )}
       </div>
     </div>
   );
