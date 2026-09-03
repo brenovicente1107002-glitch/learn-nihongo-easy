@@ -4,7 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/hooks/use-progress";
-import { jlptInfo, licoes, niveisDeLicao, type LicaoNivel, type Licao } from "@/data/japanese";
+import {
+  jlptInfo,
+  licoes,
+  niveisDeLicao,
+  unidadesPorNivel,
+  type LicaoNivel,
+  type Licao,
+} from "@/data/japanese";
 import { Check, Crown, Lock, Star } from "lucide-react";
 
 export const Route = createFileRoute("/licoes/")({
@@ -28,7 +35,6 @@ export const Route = createFileRoute("/licoes/")({
   component: LicoesPage,
 });
 
-const UNIDADE = 10;
 /** deslocamento horizontal de cada nó, formando o zigue-zague da trilha */
 const OFFSETS = [0, 56, 84, 56, 0, -56, -84, -56];
 
@@ -104,11 +110,7 @@ function LicoesPage() {
     return i === -1 ? doNivel.length : i;
   }, [doNivel, feitas]);
 
-  const unidades = useMemo(() => {
-    const out: Licao[][] = [];
-    for (let i = 0; i < doNivel.length; i += UNIDADE) out.push(doNivel.slice(i, i + UNIDADE));
-    return out;
-  }, [doNivel]);
+  const unidades = useMemo(() => unidadesPorNivel(level), [level]);
 
   const concluidasNivel = doNivel.filter((l) => feitas.has(l.id)).length;
   const progressoNivel = Math.round((concluidasNivel / Math.max(doNivel.length, 1)) * 100);
@@ -164,23 +166,27 @@ function LicoesPage() {
         </CardContent>
       </Card>
 
-      {/* trilha */}
-      <div className="space-y-10">
-        {unidades.map((grupo, u) => {
-          const inicio = u * UNIDADE;
-          const unidadeFeita = grupo.every((l) => feitas.has(l.id));
+      {/* trilha por unidades temáticas */}
+      <div className="space-y-12">
+        {unidades.map((unidade) => {
+          const unidadeFeita = unidade.licoes.every((l) => feitas.has(l.id));
           return (
-            <section key={`unidade-${u}`} className="space-y-6">
+            <section key={unidade.id} className="space-y-6">
               <div
                 className={cn(
                   "flex items-center justify-between rounded-2xl border-2 border-b-4 px-4 py-3",
                   unidadeFeita ? "border-primary/40 bg-primary/10" : "border-border bg-card",
                 )}
               >
-                <div>
-                  <div className="font-display text-sm font-bold">Unidade {u + 1}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {grupo.length} lições · {level}
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{unidade.emoji}</span>
+                  <div>
+                    <div className="font-display text-sm font-bold">
+                      Unidade {unidade.numero} · {unidade.titulo}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {unidade.capitulos.length} capítulos · {unidade.licoes.length} lições
+                    </div>
                   </div>
                 </div>
                 <Crown
@@ -191,17 +197,28 @@ function LicoesPage() {
                 />
               </div>
 
-              <div className="flex flex-col items-center gap-6 overflow-hidden py-2">
-                {grupo.map((l, i) => {
-                  const idx = inicio + i;
-                  const estado = feitas.has(l.id)
-                    ? "feito"
-                    : idx <= atualIndex
-                      ? "atual"
-                      : "bloqueado";
-                  return <No key={l.id} licao={l} posicao={idx} estado={estado} />;
-                })}
-              </div>
+              {unidade.capitulos.map((cap) => (
+                <div key={`${unidade.id}-c${cap.numero}`} className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <span className="h-px flex-1 bg-border" />
+                    <span className="font-display text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                      Capítulo {cap.numero} · {cap.titulo}
+                    </span>
+                    <span className="h-px flex-1 bg-border" />
+                  </div>
+                  <div className="flex flex-col items-center gap-6 overflow-hidden py-1">
+                    {cap.licoes.map((l) => {
+                      const idx = doNivel.indexOf(l);
+                      const estado = feitas.has(l.id)
+                        ? "feito"
+                        : idx <= atualIndex
+                          ? "atual"
+                          : "bloqueado";
+                      return <No key={l.id} licao={l} posicao={idx} estado={estado} />;
+                    })}
+                  </div>
+                </div>
+              ))}
             </section>
           );
         })}
