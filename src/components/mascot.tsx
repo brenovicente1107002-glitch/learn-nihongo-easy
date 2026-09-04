@@ -114,7 +114,6 @@ export function AomaruTip({ texto, expressao, className, size = "md" }: Props) {
       />
       <div className="relative rounded-xl bg-card px-4 py-3 text-sm text-card-foreground shadow-sm">
         <span className="absolute top-1/2 -left-1.5 h-3 w-3 -translate-y-1/2 rotate-45 bg-card" />
-        <span className="relative font-medium text-primary">Aomaru diz: </span>
         <span className="relative">{conselho.texto}</span>
       </div>
     </div>
