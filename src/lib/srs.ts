@@ -3,7 +3,7 @@ import { vocabulario } from "@/data/vocabulario";
 import { gramatica } from "@/data/gramatica";
 import type { Licao } from "@/data/licoes";
 import type { Question } from "@/data/japanese";
-import { frase, tokenizarJa } from "@/lib/sentences";
+import { frase, frases, glossario, tokenizarJa } from "@/lib/sentences";
 
 /** Estado de repetição espaçada (SM-2) de uma lição. */
 export type SrsCard = {
@@ -248,41 +248,53 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
   const vocabPool = vocabulario.filter((v) => v.level === licao.level);
   const kanjiPool = kanji.filter((k) => k.level === licao.level);
 
-  // 1) vocabulário dentro de frases
-  content.vocab.forEach((v, i) => {
-    const f = frase(v);
-    const wrong = pick(vocabPool, 3, i + 31, (o) => o.word === v.word).map((o) => o.word);
-    const q = makeQuestion(`Complete a frase: ${f.lacuna}`, v.word, wrong, i + 37, {
-      audio: f.jp,
-      sub: f.pt,
-      tag: "Frase",
-    });
-    if (q) out.push(q);
-
-    // escuta: ouvir a frase e escolher a tradução
-    const wrongPt = pick(vocabPool, 3, i + 41, (o) => o.word === v.word).map((o) => frase(o).pt);
-    const escuta = makeQuestion("Ouça e escolha a tradução", f.pt, wrongPt, i + 43, {
-      kind: "escuta",
-      audio: f.jp,
-      tag: "Frase",
-    });
-    if (escuta) out.push(escuta);
-
-    // montar frase
-    const montar = buildQuestion(f.tokens, f.jp, f.pt, i + 47, "Frase");
-    if (montar) out.push(montar);
-
-    if (i % 3 === 0) out.push(speakQuestion(f.jp, f.pt, "Frase"));
-  });
-
-  // 2) significado das palavras
+  // 0) apresentação: cada palavra aparece sozinha antes de entrar nas frases
+  const intro: QuizQuestion[] = [];
   content.vocab.forEach((v, i) => {
     const wrong = pick(vocabPool, 3, i + 61, (o) => o.meaning === v.meaning).map((o) => o.meaning);
     const q = makeQuestion(`O que significa ${v.word}?`, v.meaning, wrong, i + 67, {
       audio: v.word,
+      sub: `${v.word} (${v.reading}) = ${v.meaning}`,
       tag: "Vocabulário",
     });
-    if (q) out.push(q);
+    if (q) intro.push(q);
+  });
+
+  // capítulos de revisão trazem vários exemplos de frase por palavra
+  const porPalavra = licao.modo === "revisao" ? 3 : 1;
+
+  // 1) vocabulário dentro de frases
+  content.vocab.forEach((v, i) => {
+    frases(v, porPalavra).forEach((f, n) => {
+      const seed = i * 13 + n * 5;
+      const gloss = glossario(f);
+      const wrong = pick(vocabPool, 3, seed + 31, (o) => o.word === v.word).map((o) => o.word);
+      const q = makeQuestion(`Complete a frase: ${f.lacuna}`, v.word, wrong, seed + 37, {
+        audio: f.jp,
+        sub: `${f.pt}  —  ${gloss}`,
+        tag: "Frase",
+      });
+      if (q) out.push(q);
+
+      const wrongPt = pick(vocabPool, 3, seed + 41, (o) => o.word === v.word).map(
+        (o) => frase(o, n).pt,
+      );
+      const escuta = makeQuestion("Ouça e escolha a tradução", f.pt, wrongPt, seed + 43, {
+        kind: "escuta",
+        audio: f.jp,
+        sub: gloss,
+        tag: "Frase",
+      });
+      if (escuta) out.push(escuta);
+
+      const montar = buildQuestion(f.tokens, f.jp, f.pt, seed + 47, "Frase");
+      if (montar) out.push({ ...montar, sub: `${f.pt}  —  ${gloss}` });
+
+      if ((i + n) % 3 === 0) {
+        const fala = speakQuestion(f.jp, f.pt, "Frase");
+        out.push({ ...fala, sub: `${f.pt}  —  ${gloss}` });
+      }
+    });
   });
 
   // 3) kanji
@@ -335,7 +347,8 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
     });
   });
 
-  return shuffle(out, 71).slice(0, 15);
+  // as palavras vêm primeiro, depois as frases e o restante
+  return [...shuffle(intro, 59), ...shuffle(out, 71)].slice(0, 15);
 }
 
 /** Filtra as perguntas por modalidade, com sobra do tipo mais próximo. */

@@ -148,10 +148,10 @@ function significado(meaning: string): string {
  * Monta uma frase curta (cerca de 5 palavras) com contexto adequado ao sentido
  * da palavra, acompanhada da explicação palavra por palavra.
  */
-export function frase(v: VocabItem): Frase {
+export function frase(v: VocabItem, variante = 0): Frase {
   const w = v.word;
   const m = significado(v.meaning);
-  const s = hash(w);
+  const s = hash(w) + variante * 17;
 
   const build = (tokens: string[], pt: string): Frase => {
     const jp = tokens.join("");
@@ -243,4 +243,22 @@ export function tokenizarJa(jp: string): string[] {
   const partes = limpo.match(/[一-龯ヶ]+[ぁ-ん]*|[ァ-ヴー]+|[ぁ-ん]{1,3}|[^\s]/g);
   if (!partes) return [limpo];
   return partes;
+}
+
+/** Várias frases diferentes com a mesma palavra (para revisar a unidade). */
+export function frases(v: VocabItem, n = 3): Frase[] {
+  const out: Frase[] = [];
+  for (let i = 0; out.length < n && i < n * 4; i++) {
+    const f = frase(v, i);
+    if (!out.some((o) => o.jp === f.jp)) out.push(f);
+  }
+  return out;
+}
+
+/** Explicação curta "palavra = sentido" de tudo o que aparece na frase. */
+export function glossario(f: Frase): string {
+  return f.palavras
+    .filter((p) => p.pt)
+    .map((p) => `${p.jp} = ${p.pt}`)
+    .join("  ·  ");
 }

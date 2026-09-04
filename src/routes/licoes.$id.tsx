@@ -8,7 +8,7 @@ import { useProgress } from "@/hooks/use-progress";
 import { useSrs } from "@/hooks/use-srs";
 import { LessonPlayer } from "@/components/lesson-player";
 import { formatDue, lessonQuestions } from "@/lib/srs";
-import { frase } from "@/lib/sentences";
+import { frases, glossario } from "@/lib/sentences";
 import { speakJa, ttsDisponivel } from "@/lib/tts";
 import { licaoPorId, licoes } from "@/data/japanese";
 import { ArrowLeft, ArrowRight, CalendarClock, Play, Volume2 } from "lucide-react";
@@ -179,11 +179,13 @@ function LicaoPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Vocabulário em frases</CardTitle>
-                <CardDescription>Cada palavra aparece dentro de uma sentença real.</CardDescription>
+                <CardDescription>
+                  Veja o sentido de cada pedaço antes de ler a frase completa.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {licao.content.vocab.map((v) => {
-                  const f = frase(v);
+                  const lista = frases(v, licao.modo === "revisao" ? 3 : 2);
                   return (
                     <div key={v.word} className="rounded-xl border border-border p-4">
                       <div className="flex items-center gap-2">
@@ -192,11 +194,18 @@ function LicaoPage() {
                         <AudioButton text={v.word} />
                       </div>
                       <div className="text-sm text-muted-foreground">{v.meaning}</div>
-                      <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
-                        <span className="font-display text-lg">{f.jp}</span>
-                        <AudioButton text={f.jp} />
-                      </div>
-                      <div className="text-sm text-muted-foreground">{f.pt}</div>
+                      {lista.map((f) => (
+                        <div key={f.jp} className="mt-3 border-t border-border pt-3">
+                          <div className="mb-1 text-xs text-muted-foreground">
+                            Palavras da frase: {glossario(f)}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-display text-lg">{f.jp}</span>
+                            <AudioButton text={f.jp} />
+                          </div>
+                          <div className="text-sm text-muted-foreground">{f.pt}</div>
+                        </div>
+                      ))}
                     </div>
                   );
                 })}

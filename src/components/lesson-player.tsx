@@ -338,7 +338,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                     expressao={conselhos[index % conselhos.length]!.expressao}
                   />
                   <p className="text-sm text-muted-foreground">
-                    <span className="font-medium text-primary">Aomaru: </span>
                     {conselhos[index % conselhos.length]!.texto}
                   </p>
                 </div>
