@@ -16,6 +16,7 @@ import { Route as HiraganaRouteImport } from './routes/hiragana'
 import { Route as KanjiRouteImport } from './routes/kanji'
 import { Route as KatakanaRouteImport } from './routes/katakana'
 import { Route as LicoesRouteImport } from './routes/licoes'
+import { Route as PalavrasRouteImport } from './routes/palavras'
 import { Route as RevisaoRouteImport } from './routes/revisao'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as LicoesIndexRouteImport } from './routes/licoes.index'
@@ -56,6 +57,11 @@ const LicoesRoute = LicoesRouteImport.update({
   path: '/licoes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PalavrasRoute = PalavrasRouteImport.update({
+  id: '/palavras',
+  path: '/palavras',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RevisaoRoute = RevisaoRouteImport.update({
   id: '/revisao',
   path: '/revisao',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/kanji': typeof KanjiRoute
   '/katakana': typeof KatakanaRoute
   '/licoes': typeof LicoesRouteWithChildren
+  '/palavras': typeof PalavrasRoute
   '/revisao': typeof RevisaoRoute
   '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/hiragana': typeof HiraganaRoute
   '/kanji': typeof KanjiRoute
   '/katakana': typeof KatakanaRoute
+  '/palavras': typeof PalavrasRoute
   '/revisao': typeof RevisaoRoute
   '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/kanji': typeof KanjiRoute
   '/katakana': typeof KatakanaRoute
   '/licoes': typeof LicoesRouteWithChildren
+  '/palavras': typeof PalavrasRoute
   '/revisao': typeof RevisaoRoute
   '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/kanji'
     | '/katakana'
     | '/licoes'
+    | '/palavras'
     | '/revisao'
     | '/api/tts'
     | '/licoes/$id'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/hiragana'
     | '/kanji'
     | '/katakana'
+    | '/palavras'
     | '/revisao'
     | '/api/tts'
     | '/licoes/$id'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/kanji'
     | '/katakana'
     | '/licoes'
+    | '/palavras'
     | '/revisao'
     | '/api/tts'
     | '/licoes/$id'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   KanjiRoute: typeof KanjiRoute
   KatakanaRoute: typeof KatakanaRoute
   LicoesRoute: typeof LicoesRouteWithChildren
+  PalavrasRoute: typeof PalavrasRoute
   RevisaoRoute: typeof RevisaoRoute
   ApiTtsRoute: typeof ApiTtsRoute
 }
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LicoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/palavras': {
+      id: '/palavras'
+      path: '/palavras'
+      fullPath: '/palavras'
+      preLoaderRoute: typeof PalavrasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/revisao': {
       id: '/revisao'
       path: '/revisao'
@@ -272,6 +292,7 @@ const rootRouteChildren: RootRouteChildren = {
   KanjiRoute: KanjiRoute,
   KatakanaRoute: KatakanaRoute,
   LicoesRoute: LicoesRouteWithChildren,
+  PalavrasRoute: PalavrasRoute,
   RevisaoRoute: RevisaoRoute,
   ApiTtsRoute: ApiTtsRoute,
 }
