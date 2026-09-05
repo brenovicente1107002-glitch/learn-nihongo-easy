@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Flame, GraduationCap, Layers, RefreshCw, Sparkles, Target } from "lucide-react";
+import { BookOpen, Flame, GraduationCap, Layers, NotebookPen, RefreshCw, Sparkles, Target } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -226,7 +226,19 @@ function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Link
+          to="/palavras"
+          className="group flex items-center gap-4 rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/30 hover:bg-primary/5"
+        >
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <NotebookPen className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="font-display font-semibold">Minhas palavras</div>
+            <div className="text-sm text-muted-foreground">Status de lições e revisões</div>
+          </div>
+        </Link>
         <Link
           to="/flashcards"
           className="group flex items-center gap-4 rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/30 hover:bg-primary/5"

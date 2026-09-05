@@ -166,6 +166,7 @@ function RootComponent() {
 const navItems = [
   { to: "/", label: "Início", icon: Home },
   { to: "/licoes", label: "Lições", icon: GraduationCap },
+  { to: "/palavras", label: "Palavras", icon: NotebookPen },
   { to: "/revisao", label: "Revisão", icon: RefreshCw },
   { to: "/flashcards", label: "Flashcards", icon: Layers },
   { to: "/hiragana", label: "Hiragana", icon: ScrollText },
