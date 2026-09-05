@@ -57,8 +57,8 @@ type EntradaPalavra = EntradaBase & {
   revisoesFeitas: number;
   totalRevisoes: number;
   progresso: number;
-  proximaRevisao?: number;
-  ultimoScore?: number;
+  proximaRevisao: number | undefined;
+  ultimoScore: number | undefined;
   proximaLicao: Licao;
 };
 
