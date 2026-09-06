@@ -273,8 +273,8 @@ function PalavrasPage() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={busca}
-                onChange={(event) => {
-                  setBusca(event.target.value);
+                onInput={(event) => {
+                  setBusca(event.currentTarget.value);
                   resetLimite();
                 }}
                 placeholder="Buscar palavra, leitura ou significado"
@@ -315,7 +315,11 @@ function PalavrasPage() {
             </div>
           ) : (
             visiveis.map((entrada) => (
-              <PalavraCard key={`${entrada.item.level}-${entrada.item.word}-${entrada.item.reading}`} entrada={entrada} agora={agora} />
+              <PalavraCard
+                key={`${entrada.item.level}-${entrada.item.word}-${entrada.item.reading}-${entrada.item.meaning}-${entrada.proximaLicao.id}`}
+                entrada={entrada}
+                agora={agora}
+              />
             ))
           )}
 
