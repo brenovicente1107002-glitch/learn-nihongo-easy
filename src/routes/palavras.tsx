@@ -315,7 +315,11 @@ function PalavrasPage() {
             </div>
           ) : (
             visiveis.map((entrada) => (
-              <PalavraCard key={`${entrada.item.level}-${entrada.item.word}-${entrada.item.reading}`} entrada={entrada} agora={agora} />
+              <PalavraCard
+                key={`${entrada.item.level}-${entrada.item.word}-${entrada.item.reading}-${entrada.item.meaning}-${entrada.proximaLicao.id}`}
+                entrada={entrada}
+                agora={agora}
+              />
             ))
           )}
 
