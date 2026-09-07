@@ -7975,12 +7975,16 @@ const n1 = `
 秘書|ひしょ|secretário(a) particular|substantivo
 `;
 
+import { vocabularioExtra } from "./vocabulario-extra";
+
 export const vocabulario: VocabItem[] = [
   ...parse("N5", n5),
   ...parse("N4", n4),
   ...parse("N3", n3),
   ...parse("N2", n2),
   ...parse("N1", n1),
+  // aprofundamento: palavras extras por nível
+  ...vocabularioExtra,
 ];
 
 export const vocabByLevel = (level: JlptLevel) => vocabulario.filter((v) => v.level === level);
