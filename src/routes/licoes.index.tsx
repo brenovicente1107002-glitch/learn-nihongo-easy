@@ -76,7 +76,14 @@ function No({
   return (
     <div
       className="flex flex-col items-center gap-1"
-      style={{ transform: `translateX(${offset}px)` }}
+      style={
+        {
+          "--offset-mobile": `${offsetMobile}px`,
+          "--offset-desktop": `${offset}px`,
+          transform: "translateX(var(--offset-mobile))",
+        } as React.CSSProperties
+      }
+      data-offset
     >
       {bloqueado ? (
         <span aria-disabled className="cursor-not-allowed opacity-70">
