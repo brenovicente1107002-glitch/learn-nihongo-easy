@@ -37,6 +37,7 @@ export const Route = createFileRoute("/licoes/")({
 
 /** deslocamento horizontal de cada nó, formando o zigue-zague da trilha */
 const OFFSETS = [0, 56, 84, 56, 0, -56, -84, -56];
+const OFFSETS_MOBILE = [0, 36, 52, 36, 0, -36, -52, -36];
 
 function No({
   licao,
