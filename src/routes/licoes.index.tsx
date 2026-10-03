@@ -94,7 +94,7 @@ function No({
       )}
       <span
         className={cn(
-          "max-w-[140px] truncate text-center text-[11px] font-medium",
+          "max-w-[104px] truncate text-center text-[10px] font-medium sm:max-w-[140px] sm:text-[11px]",
           bloqueado ? "text-muted-foreground/70" : "text-muted-foreground",
         )}
       >
