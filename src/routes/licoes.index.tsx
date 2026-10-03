@@ -131,10 +131,10 @@ function LicoesPage() {
   const progressoNivel = Math.round((concluidasNivel / Math.max(doNivel.length, 1)) * 100);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl space-y-4 sm:space-y-6">
       <div>
-        <h1 className="font-display text-3xl font-bold tracking-tight">Trilha de aprendizado</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">Trilha de aprendizado</h1>
+        <p className="mt-1 text-sm text-muted-foreground sm:text-base">
           {licoes.length} micro-lições com 15 exercícios cada — vocabulário em frases, kanji e
           gramática juntos, com áudio nativo.
         </p>
@@ -185,7 +185,7 @@ function LicoesPage() {
       </Card>
 
       {/* trilha por unidades temáticas */}
-      <div className="space-y-12">
+      <div className="space-y-8 sm:space-y-12">
         {unidades.map((unidade) => {
           const unidadeFeita = unidade.licoes.every((l) => feitas.has(l.id));
           return (
