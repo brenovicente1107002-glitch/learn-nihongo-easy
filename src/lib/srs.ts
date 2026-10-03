@@ -242,7 +242,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
       if (escuta) out.push(escuta);
       out.push(writeQuestion(k.char, `o kana lido como "${k.romaji}"`, "Kana"));
     });
-    return shuffle(out, 71).slice(0, 15);
+    return shuffle(out, 71).slice(0, 22);
   }
 
   const vocabPool = vocabulario.filter((v) => v.level === licao.level);
@@ -348,7 +348,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
   });
 
   // as palavras vêm primeiro, depois as frases e o restante
-  return [...shuffle(intro, 59), ...shuffle(out, 71)].slice(0, 15);
+  return [...shuffle(intro, 59), ...shuffle(out, 71)].slice(0, 22);
 }
 
 /** Filtra as perguntas por modalidade, com sobra do tipo mais próximo. */

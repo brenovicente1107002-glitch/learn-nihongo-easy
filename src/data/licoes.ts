@@ -97,8 +97,8 @@ const CAPITULOS_REVISAO = [
   "Desafio da unidade",
 ];
 
-/** palavras por unidade: 3 lições de palavras novas com 4 palavras cada */
-const PALAVRAS_POR_UNIDADE = 12;
+/** palavras por unidade: 3 lições de palavras novas com 6 palavras cada */
+const PALAVRAS_POR_UNIDADE = 18;
 
 const unidadesDoNivel = (level: JlptLevel): Unidade[] => {
   const vocabL = vocabulario.filter((v) => v.level === level);
