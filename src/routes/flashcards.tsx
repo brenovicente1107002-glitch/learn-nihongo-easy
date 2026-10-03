@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { LevelTabs } from "@/components/level-tabs";
 import { flashcards, kanjiFlashcards, type JlptLevel } from "@/data/japanese";
-import { ArrowLeft, ArrowRight, RotateCw } from "lucide-react";
+import { speakJa } from "@/lib/tts";
+import { cn } from "@/lib/utils";
+import { RotateCcw, Shuffle, Volume2 } from "lucide-react";
 
 export const Route = createFileRoute("/flashcards")({
   head: () => ({
@@ -27,105 +28,147 @@ export const Route = createFileRoute("/flashcards")({
   component: FlashcardsPage,
 });
 
+type Card = { front: string; back: string; level: JlptLevel };
+const TAMANHO = 20;
+
+const embaralhar = <T,>(arr: T[]) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
+};
+
 function FlashcardsPage() {
   const [level, setLevel] = useState<JlptLevel>("N5");
   const [mode, setMode] = useState<"vocab" | "kanji">("vocab");
-  const [index, setIndex] = useState(0);
+  const [seed, setSeed] = useState(0);
+  const [fila, setFila] = useState<Card[] | null>(null);
   const [flipped, setFlipped] = useState(false);
+  const [stats, setStats] = useState({ sabia: 0, quase: 0, nao: 0 });
 
-  const deck = useMemo(
+  const base = useMemo(
     () => (mode === "vocab" ? flashcards : kanjiFlashcards).filter((c) => c.level === level),
     [mode, level],
   );
+  const deck = useMemo(() => {
+    void seed;
+    return embaralhar(base).slice(0, TAMANHO) as Card[];
+  }, [base, seed]);
 
-  const card = deck[index];
-  const progress = deck.length ? Math.round(((index + 1) / deck.length) * 100) : 0;
+  const atual = fila ?? deck;
+  const card = atual[0];
+  const feitos = stats.sabia + stats.quase + stats.nao;
+  const total = feitos + atual.length;
 
-  function reset(fn: () => void) {
-    fn();
-    setIndex(0);
+  function novaSessao() {
+    setFila(null);
+    setFlipped(false);
+    setStats({ sabia: 0, quase: 0, nao: 0 });
+    setSeed((s) => s + 1);
+  }
+
+  function responder(r: "sabia" | "quase" | "nao") {
+    if (!card) return;
+    const resto = atual.slice(1);
+    // não sabia → volta logo; quase → volta no fim; sabia → sai
+    const proxima =
+      r === "nao" ? [...resto.slice(0, 2), card, ...resto.slice(2)] : r === "quase" ? [...resto, card] : resto;
+    setFila(proxima);
+    setStats((s) => ({ ...s, [r]: s[r] + 1 }));
     setFlipped(false);
   }
 
-  function next() {
-    setIndex((i) => (i + 1) % deck.length);
-    setFlipped(false);
-  }
-
-  function prev() {
-    setIndex((i) => (i - 1 + deck.length) % deck.length);
-    setFlipped(false);
-  }
+  const [leitura, significado] = card ? card.back.split(" — ") : ["", ""];
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-xl space-y-5">
       <div>
         <h1 className="font-display text-3xl font-bold tracking-tight">Flashcards</h1>
-        <p className="mt-1 text-muted-foreground">Clique no cartão para ver a resposta.</p>
+        <p className="mt-1 text-muted-foreground">Toque no cartão, depois diga o quanto você lembrou.</p>
       </div>
 
-      <LevelTabs value={level} onChange={(l) => reset(() => setLevel(l))} />
+      <LevelTabs value={level} onChange={(l) => { setLevel(l); novaSessao(); }} />
 
-      <div className="flex gap-2">
-        <Button
-          variant={mode === "vocab" ? "default" : "outline"}
-          onClick={() => reset(() => setMode("vocab"))}
-        >
-          Vocabulário
-        </Button>
-        <Button
-          variant={mode === "kanji" ? "default" : "outline"}
-          onClick={() => reset(() => setMode("kanji"))}
-        >
-          Kanji
-        </Button>
+      <div className="grid grid-cols-2 gap-2 rounded-2xl bg-muted p-1">
+        {(["vocab", "kanji"] as const).map((m) => (
+          <button
+            key={m}
+            onClick={() => { setMode(m); novaSessao(); }}
+            className={cn(
+              "rounded-xl py-2 text-sm font-semibold transition-colors",
+              mode === m ? "bg-card text-primary shadow-sm" : "text-muted-foreground",
+            )}
+          >
+            {m === "vocab" ? "Vocabulário" : "Kanji"}
+          </button>
+        ))}
       </div>
 
       {!card ? (
-        <Card>
-          <CardContent className="p-8 text-center text-muted-foreground">
-            Nenhum cartão disponível para este nível.
-          </CardContent>
-        </Card>
+        <div className="space-y-4 rounded-3xl border-2 border-border bg-card p-8 text-center">
+          <div className="text-5xl">🎉</div>
+          <h2 className="font-display text-2xl font-bold">Sessão concluída!</h2>
+          <div className="grid grid-cols-3 gap-2 text-sm">
+            <div className="rounded-xl bg-emerald-100 p-3 text-emerald-700"><b className="block text-xl">{stats.sabia}</b>Sabia</div>
+            <div className="rounded-xl bg-amber-100 p-3 text-amber-700"><b className="block text-xl">{stats.quase}</b>Quase</div>
+            <div className="rounded-xl bg-destructive/10 p-3 text-destructive"><b className="block text-xl">{stats.nao}</b>Não sabia</div>
+          </div>
+          <Button size="lg" className="w-full" onClick={novaSessao}>
+            <RotateCcw className="mr-2 h-4 w-4" /> Nova sessão
+          </Button>
+        </div>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              Cartão {index + 1} de {deck.length}
-            </CardTitle>
-            <CardDescription>Memorize a leitura e o significado.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <Progress value={progress} />
+        <>
+          <div className="flex items-center gap-3">
+            <Progress value={total ? (feitos / total) * 100 : 0} className="h-3" />
+            <span className="shrink-0 text-xs font-semibold text-muted-foreground">
+              {atual.length} restantes
+            </span>
+            <button onClick={novaSessao} aria-label="Embaralhar" className="text-muted-foreground hover:text-primary">
+              <Shuffle className="h-4 w-4" />
+            </button>
+          </div>
 
+          <div className="[perspective:1200px]">
             <button
               onClick={() => setFlipped((f) => !f)}
-              className="relative w-full rounded-2xl border border-border bg-card p-12 text-center transition-all hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-ring"
+              className={cn(
+                "relative h-72 w-full transition-transform duration-500 [transform-style:preserve-3d]",
+                flipped && "[transform:rotateY(180deg)]",
+              )}
             >
-              <div className="font-display text-4xl font-bold text-foreground sm:text-5xl">
-                {flipped ? card.back : card.front}
+              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-3xl border-2 border-b-[6px] border-border bg-card [backface-visibility:hidden]">
+                <span className="font-display text-6xl font-bold">{card.front}</span>
+                <span className="mt-6 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Toque para virar
+                </span>
               </div>
-              <div className="mt-4 text-sm text-muted-foreground">
-                {flipped ? "Verso" : "Frente"} — clique para virar
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-3xl border-2 border-b-[6px] border-primary/50 bg-primary/5 p-6 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                <span className="font-display text-3xl font-bold">{card.front}</span>
+                <span className="text-lg font-semibold text-primary">{leitura}</span>
+                <span className="text-center text-base text-muted-foreground">{significado}</span>
               </div>
             </button>
+          </div>
 
-            <div className="flex items-center justify-between gap-3">
-              <Button variant="outline" onClick={prev}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Anterior
-              </Button>
-              <Button variant="secondary" onClick={() => setFlipped((f) => !f)}>
-                <RotateCw className="mr-2 h-4 w-4" />
-                Virar
-              </Button>
-              <Button onClick={next}>
-                Próximo
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+          <div className="flex justify-center">
+            <Button variant="outline" size="sm" onClick={() => void speakJa(card.front)}>
+              <Volume2 className="mr-2 h-4 w-4" /> Ouvir
+            </Button>
+          </div>
+
+          {flipped ? (
+            <div className="grid grid-cols-3 gap-2">
+              <button onClick={() => responder("nao")} className="rounded-2xl border-2 border-b-4 border-destructive/40 bg-destructive/10 py-3 text-sm font-bold text-destructive">Não sabia</button>
+              <button onClick={() => responder("quase")} className="rounded-2xl border-2 border-b-4 border-amber-300 bg-amber-100 py-3 text-sm font-bold text-amber-700">Quase</button>
+              <button onClick={() => responder("sabia")} className="rounded-2xl border-2 border-b-4 border-emerald-300 bg-emerald-100 py-3 text-sm font-bold text-emerald-700">Sabia!</button>
             </div>
-          </CardContent>
-        </Card>
+          ) : (
+            <Button size="lg" className="w-full" onClick={() => setFlipped(true)}>Mostrar resposta</Button>
+          )}
+        </>
       )}
     </div>
   );

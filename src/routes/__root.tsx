@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
   useLocation,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 
@@ -53,7 +54,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -222,49 +223,33 @@ function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Mobile header */}
-      <div className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card px-4 lg:hidden">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <AomaruAvatar className="h-7 w-7" />
-          </div>
-
-          <span className="font-display text-base font-semibold">Nihongo Quest</span>
+      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-card px-4 lg:hidden">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+          <AomaruAvatar className="h-7 w-7" />
         </div>
-        <button
-          onClick={() => setMobileOpen(true)}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-accent"
-          aria-label="Abrir menu"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        <span className="font-display text-base font-semibold">Nihongo Quest</span>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile "Mais" sheet */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
             className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute inset-y-0 left-0 w-64 bg-card shadow-2xl">
-            <div className="flex h-16 items-center justify-between border-b border-border px-4">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                  <AomaruAvatar className="h-7 w-7" />
-                </div>
-
-                <span className="font-display text-base font-semibold">Nihongo Quest</span>
-              </div>
+          <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-card p-4 pb-8 shadow-2xl">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="font-display text-lg font-semibold">Mais</span>
               <button
                 onClick={() => setMobileOpen(false)}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
-                aria-label="Fechar menu"
+                aria-label="Fechar"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <nav className="space-y-1 p-4">
-              {navItems.map((item) => {
+            <div className="grid grid-cols-3 gap-3">
+              {navItems.slice(4).map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
@@ -272,25 +257,74 @@ function AppShell({ children }: { children: ReactNode }) {
                     to={item.to}
                     onClick={() => setMobileOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      "flex flex-col items-center gap-2 rounded-2xl border-2 p-4 text-sm font-semibold transition-colors",
                       isActive(item.to)
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground",
                     )}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-7 w-7" strokeWidth={2.2} />
                     {item.label}
                   </Link>
                 );
               })}
-            </nav>
+            </div>
           </div>
         </div>
       )}
 
+      {/* Mobile bottom tab bar */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-border bg-card pb-[env(safe-area-inset-bottom)] lg:hidden">
+        <div className="mx-auto flex max-w-lg items-stretch justify-around px-1">
+          {navItems.slice(0, 4).map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.to);
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="flex flex-1 flex-col items-center gap-0.5 py-2"
+                aria-label={item.label}
+              >
+                <span
+                  className={cn(
+                    "flex h-10 w-12 items-center justify-center rounded-xl border-2 transition-all",
+                    active
+                      ? "border-primary/60 bg-primary/10 text-primary scale-105"
+                      : "border-transparent text-muted-foreground",
+                  )}
+                >
+                  <Icon className="h-6 w-6" strokeWidth={active ? 2.6 : 2} />
+                </span>
+                <span className={cn("text-[10px] font-semibold", active ? "text-primary" : "text-muted-foreground")}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="flex flex-1 flex-col items-center gap-0.5 py-2"
+            aria-label="Mais"
+          >
+            <span
+              className={cn(
+                "flex h-10 w-12 items-center justify-center rounded-xl border-2 transition-all",
+                navItems.slice(4).some((i) => isActive(i.to))
+                  ? "border-primary/60 bg-primary/10 text-primary"
+                  : "border-transparent text-muted-foreground",
+              )}
+            >
+              <Menu className="h-6 w-6" />
+            </span>
+            <span className="text-[10px] font-semibold text-muted-foreground">Mais</span>
+          </button>
+        </div>
+      </nav>
+
       {/* Main content */}
       <main className="flex-1 lg:pl-64">
-        <div className="min-h-screen pt-16 lg:pt-0">
+        <div className="min-h-screen pt-14 pb-24 lg:pt-0 lg:pb-0">
           <div className="mx-auto max-w-7xl p-4 lg:p-8">{children}</div>
         </div>
       </main>
