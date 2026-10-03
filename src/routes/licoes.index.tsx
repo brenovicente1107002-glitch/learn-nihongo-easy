@@ -216,15 +216,15 @@ function LicoesPage() {
               </div>
 
               {unidade.capitulos.map((cap) => (
-                <div key={`${unidade.id}-c${cap.numero}`} className="space-y-4">
-                  <div className="flex items-center gap-3">
+                <div key={`${unidade.id}-c${cap.numero}`} className="space-y-3 sm:space-y-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <span className="h-px flex-1 bg-border" />
-                    <span className="font-display text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                    <span className="max-w-[70%] truncate font-display text-[10px] font-bold uppercase tracking-wide text-muted-foreground sm:max-w-none sm:text-[11px]">
                       Capítulo {cap.numero} · {cap.titulo}
                     </span>
                     <span className="h-px flex-1 bg-border" />
                   </div>
-                  <div className="flex flex-col items-center gap-6 overflow-hidden py-1">
+                  <div className="flex flex-col items-center gap-4 overflow-hidden py-1 sm:gap-6">
                     {cap.licoes.map((l) => {
                       const idx = posicoes.get(l.id) ?? 0;
                       const estado = feitas.has(l.id)
