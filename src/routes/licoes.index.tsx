@@ -189,17 +189,17 @@ function LicoesPage() {
         {unidades.map((unidade) => {
           const unidadeFeita = unidade.licoes.every((l) => feitas.has(l.id));
           return (
-            <section key={unidade.id} className="space-y-6">
+            <section key={unidade.id} className="space-y-4 sm:space-y-6">
               <div
                 className={cn(
-                  "flex items-center justify-between rounded-2xl border-2 border-b-4 px-4 py-3",
+                  "flex items-center justify-between rounded-2xl border-2 border-b-4 px-3 py-2 sm:px-4 sm:py-3",
                   unidadeFeita ? "border-primary/40 bg-primary/10" : "border-border bg-card",
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{unidade.emoji}</span>
-                  <div>
-                    <div className="font-display text-sm font-bold">
+                <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl">{unidade.emoji}</span>
+                  <div className="min-w-0">
+                    <div className="truncate font-display text-xs font-bold sm:text-sm">
                       Unidade {unidade.numero} · {unidade.titulo}
                     </div>
                     <div className="text-xs text-muted-foreground">
