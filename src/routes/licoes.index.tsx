@@ -49,12 +49,13 @@ function No({
   estado: "feito" | "atual" | "bloqueado";
 }) {
   const offset = OFFSETS[posicao % OFFSETS.length] ?? 0;
+  const offsetMobile = OFFSETS_MOBILE[posicao % OFFSETS_MOBILE.length] ?? 0;
   const bloqueado = estado === "bloqueado";
 
   const conteudo = (
     <span
       className={cn(
-        "relative flex h-[68px] w-[68px] items-center justify-center rounded-full border-b-[6px] transition-transform",
+        "relative flex h-14 w-14 items-center justify-center rounded-full border-b-4 transition-transform sm:h-[68px] sm:w-[68px] sm:border-b-[6px]",
         estado === "feito" && "border-primary/60 bg-primary text-primary-foreground",
         estado === "atual" &&
           "animate-pulse border-primary/60 bg-primary text-primary-foreground shadow-lg shadow-primary/30",
@@ -63,11 +64,11 @@ function No({
       )}
     >
       {estado === "feito" ? (
-        <Check className="h-7 w-7" />
+        <Check className="h-6 w-6 sm:h-7 sm:w-7" />
       ) : bloqueado ? (
-        <Lock className="h-6 w-6" />
+        <Lock className="h-5 w-5 sm:h-6 sm:w-6" />
       ) : (
-        <Star className="h-7 w-7 fill-current" />
+        <Star className="h-6 w-6 fill-current sm:h-7 sm:w-7" />
       )}
     </span>
   );
