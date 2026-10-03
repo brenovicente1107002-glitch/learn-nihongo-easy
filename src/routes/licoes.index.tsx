@@ -37,6 +37,7 @@ export const Route = createFileRoute("/licoes/")({
 
 /** deslocamento horizontal de cada nó, formando o zigue-zague da trilha */
 const OFFSETS = [0, 56, 84, 56, 0, -56, -84, -56];
+const OFFSETS_MOBILE = [0, 36, 52, 36, 0, -36, -52, -36];
 
 function No({
   licao,
@@ -48,12 +49,13 @@ function No({
   estado: "feito" | "atual" | "bloqueado";
 }) {
   const offset = OFFSETS[posicao % OFFSETS.length] ?? 0;
+  const offsetMobile = OFFSETS_MOBILE[posicao % OFFSETS_MOBILE.length] ?? 0;
   const bloqueado = estado === "bloqueado";
 
   const conteudo = (
     <span
       className={cn(
-        "relative flex h-[68px] w-[68px] items-center justify-center rounded-full border-b-[6px] transition-transform",
+        "relative flex h-14 w-14 items-center justify-center rounded-full border-b-4 transition-transform sm:h-[68px] sm:w-[68px] sm:border-b-[6px]",
         estado === "feito" && "border-primary/60 bg-primary text-primary-foreground",
         estado === "atual" &&
           "animate-pulse border-primary/60 bg-primary text-primary-foreground shadow-lg shadow-primary/30",
@@ -62,19 +64,24 @@ function No({
       )}
     >
       {estado === "feito" ? (
-        <Check className="h-7 w-7" />
+        <Check className="h-6 w-6 sm:h-7 sm:w-7" />
       ) : bloqueado ? (
-        <Lock className="h-6 w-6" />
+        <Lock className="h-5 w-5 sm:h-6 sm:w-6" />
       ) : (
-        <Star className="h-7 w-7 fill-current" />
+        <Star className="h-6 w-6 fill-current sm:h-7 sm:w-7" />
       )}
     </span>
   );
 
   return (
     <div
-      className="flex flex-col items-center gap-1"
-      style={{ transform: `translateX(${offset}px)` }}
+      className="trilha-no flex flex-col items-center gap-1"
+      style={
+        {
+          "--offset-mobile": `${offsetMobile}px`,
+          "--offset-desktop": `${offset}px`,
+        } as React.CSSProperties
+      }
     >
       {bloqueado ? (
         <span aria-disabled className="cursor-not-allowed opacity-70">
@@ -87,7 +94,7 @@ function No({
       )}
       <span
         className={cn(
-          "max-w-[140px] truncate text-center text-[11px] font-medium",
+          "max-w-[104px] truncate text-center text-[10px] font-medium sm:max-w-[140px] sm:text-[11px]",
           bloqueado ? "text-muted-foreground/70" : "text-muted-foreground",
         )}
       >
@@ -124,10 +131,10 @@ function LicoesPage() {
   const progressoNivel = Math.round((concluidasNivel / Math.max(doNivel.length, 1)) * 100);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl space-y-4 sm:space-y-6">
       <div>
-        <h1 className="font-display text-3xl font-bold tracking-tight">Trilha de aprendizado</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">Trilha de aprendizado</h1>
+        <p className="mt-1 text-sm text-muted-foreground sm:text-base">
           {licoes.length} micro-lições com 15 exercícios cada — vocabulário em frases, kanji e
           gramática juntos, com áudio nativo.
         </p>
@@ -178,21 +185,21 @@ function LicoesPage() {
       </Card>
 
       {/* trilha por unidades temáticas */}
-      <div className="space-y-12">
+      <div className="space-y-8 sm:space-y-12">
         {unidades.map((unidade) => {
           const unidadeFeita = unidade.licoes.every((l) => feitas.has(l.id));
           return (
-            <section key={unidade.id} className="space-y-6">
+            <section key={unidade.id} className="space-y-4 sm:space-y-6">
               <div
                 className={cn(
-                  "flex items-center justify-between rounded-2xl border-2 border-b-4 px-4 py-3",
+                  "flex items-center justify-between rounded-2xl border-2 border-b-4 px-3 py-2 sm:px-4 sm:py-3",
                   unidadeFeita ? "border-primary/40 bg-primary/10" : "border-border bg-card",
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{unidade.emoji}</span>
-                  <div>
-                    <div className="font-display text-sm font-bold">
+                <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl">{unidade.emoji}</span>
+                  <div className="min-w-0">
+                    <div className="truncate font-display text-xs font-bold sm:text-sm">
                       Unidade {unidade.numero} · {unidade.titulo}
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -209,15 +216,15 @@ function LicoesPage() {
               </div>
 
               {unidade.capitulos.map((cap) => (
-                <div key={`${unidade.id}-c${cap.numero}`} className="space-y-4">
-                  <div className="flex items-center gap-3">
+                <div key={`${unidade.id}-c${cap.numero}`} className="space-y-3 sm:space-y-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <span className="h-px flex-1 bg-border" />
-                    <span className="font-display text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                    <span className="max-w-[70%] truncate font-display text-[10px] font-bold uppercase tracking-wide text-muted-foreground sm:max-w-none sm:text-[11px]">
                       Capítulo {cap.numero} · {cap.titulo}
                     </span>
                     <span className="h-px flex-1 bg-border" />
                   </div>
-                  <div className="flex flex-col items-center gap-6 overflow-hidden py-1">
+                  <div className="flex flex-col items-center gap-4 overflow-hidden py-1 sm:gap-6">
                     {cap.licoes.map((l) => {
                       const idx = posicoes.get(l.id) ?? 0;
                       const estado = feitas.has(l.id)
