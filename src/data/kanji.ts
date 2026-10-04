@@ -45,7 +45,7 @@ const limparSignificado = (raw: string): string => {
     vistos.add(k);
     return true;
   });
-  const texto = unicos.slice(0, 2).join(", ") || raw.trim();
+  const texto = unicos.slice(0, 1).join(", ") || raw.trim();
   return texto.charAt(0).toLowerCase() + texto.slice(1);
 };
 
