@@ -273,7 +273,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
       const lr = makeQuestion(`Qual a leitura de ${v.word}?`, v.reading, wrongR, i + 83, {
         audio: v.word,
         sub: v.meaning,
-        tag: "Leitura",
+        tag: "Vocabulário",
       });
       if (lr) out.push(lr);
     }
