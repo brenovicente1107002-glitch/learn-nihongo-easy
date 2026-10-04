@@ -258,10 +258,38 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
       tag: "Vocabulário",
     });
     if (q) intro.push(q);
+
+    // inverso: significado -> palavra
+    const wrongW = pick(vocabPool, 3, i + 71, (o) => o.word === v.word).map((o) => o.word);
+    const inv = makeQuestion(`Como se diz "${v.meaning}"?`, v.word, wrongW, i + 73, {
+      sub: `${v.word} (${v.reading})`,
+      tag: "Vocabulário",
+    });
+    if (inv) out.push(inv);
+
+    // leitura
+    if (v.reading && v.reading !== v.word) {
+      const wrongR = pick(vocabPool, 3, i + 79, (o) => o.reading === v.reading).map((o) => o.reading);
+      const lr = makeQuestion(`Qual a leitura de ${v.word}?`, v.reading, wrongR, i + 83, {
+        audio: v.word,
+        sub: v.meaning,
+        tag: "Vocabulário",
+      });
+      if (lr) out.push(lr);
+    }
+
+    // escuta da palavra isolada
+    const ew = makeQuestion("Ouça e escolha o significado", v.meaning, wrong, i + 89, {
+      kind: "escuta",
+      audio: v.word,
+      sub: `${v.word} (${v.reading})`,
+      tag: "Vocabulário",
+    });
+    if (ew) out.push(ew);
   });
 
   // capítulos de revisão trazem vários exemplos de frase por palavra
-  const porPalavra = licao.modo === "revisao" ? 3 : 1;
+  const porPalavra = licao.modo === "revisao" ? 3 : 2;
 
   // 1) vocabulário dentro de frases
   content.vocab.forEach((v, i) => {
