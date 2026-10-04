@@ -323,7 +323,7 @@ function AppShell({ children }: { children: ReactNode }) {
       </nav>
 
       {/* Main content */}
-      <main className="flex-1 lg:pl-64">
+      <main className="min-w-0 flex-1 lg:pl-64">
         <div className="min-h-screen pt-14 pb-24 lg:pt-0 lg:pb-0">
           <div className="mx-auto max-w-7xl p-4 lg:p-8">{children}</div>
         </div>
