@@ -3,7 +3,7 @@ import { vocabulario } from "@/data/vocabulario";
 import { gramatica } from "@/data/gramatica";
 import type { Licao } from "@/data/licoes";
 import type { Question } from "@/data/japanese";
-import { frase, frases, glossario, tokenizarJa } from "@/lib/sentences";
+import { frase, frases, tokenizarJa } from "@/lib/sentences";
 
 /** Estado de repetição espaçada (SM-2) de uma lição. */
 export type SrsCard = {
@@ -254,7 +254,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
     const wrong = pick(vocabPool, 3, i + 61, (o) => o.meaning === v.meaning).map((o) => o.meaning);
     const q = makeQuestion(`O que significa ${v.word}?`, v.meaning, wrong, i + 67, {
       audio: v.word,
-      sub: `${v.word} (${v.reading}) = ${v.meaning}`,
+      sub: `${v.word} (${v.reading})`,
       tag: "Vocabulário",
     });
     if (q) intro.push(q);
@@ -295,11 +295,10 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
   content.vocab.forEach((v, i) => {
     frases(v, porPalavra).forEach((f, n) => {
       const seed = i * 13 + n * 5;
-      const gloss = glossario(f);
       const wrong = pick(vocabPool, 3, seed + 31, (o) => o.word === v.word).map((o) => o.word);
       const q = makeQuestion(`Complete a frase: ${f.lacuna}`, v.word, wrong, seed + 37, {
         audio: f.jp,
-        sub: `${f.pt}  —  ${gloss}`,
+        sub: f.pt,
         tag: "Frase",
       });
       if (q) out.push(q);
@@ -310,17 +309,17 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
       const escuta = makeQuestion("Ouça e escolha a tradução", f.pt, wrongPt, seed + 43, {
         kind: "escuta",
         audio: f.jp,
-        sub: gloss,
+        sub: f.pt,
         tag: "Frase",
       });
       if (escuta) out.push(escuta);
 
       const montar = buildQuestion(f.tokens, f.jp, f.pt, seed + 47, "Frase");
-      if (montar) out.push({ ...montar, sub: `${f.pt}  —  ${gloss}` });
+      if (montar) out.push({ ...montar, sub: f.pt });
 
       if ((i + n) % 3 === 0) {
         const fala = speakQuestion(f.jp, f.pt, "Frase");
-        out.push({ ...fala, sub: `${f.pt}  —  ${gloss}` });
+        out.push({ ...fala, sub: f.pt });
       }
     });
   });
