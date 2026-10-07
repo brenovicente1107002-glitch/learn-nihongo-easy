@@ -8,7 +8,8 @@ import { useProgress } from "@/hooks/use-progress";
 import { useSrs } from "@/hooks/use-srs";
 import { LessonPlayer } from "@/components/lesson-player";
 import { formatDue, lessonQuestions } from "@/lib/srs";
-import { frases, glossario } from "@/lib/sentences";
+import { frases } from "@/lib/sentences";
+import { JaText } from "@/components/furigana";
 import { speakJa, ttsDisponivel } from "@/lib/tts";
 import { licaoPorId, licoes } from "@/data/japanese";
 import { ArrowLeft, ArrowRight, CalendarClock, Play, Volume2 } from "lucide-react";
@@ -180,7 +181,7 @@ function LicaoPage() {
               <CardHeader>
                 <CardTitle>Vocabulário em frases</CardTitle>
                 <CardDescription>
-                  Veja o sentido de cada pedaço antes de ler a frase completa.
+                  Toque no áudio e leia com furigana sobre os kanjis.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -189,18 +190,17 @@ function LicaoPage() {
                   return (
                     <div key={v.word} className="rounded-xl border border-border p-4">
                       <div className="flex items-center gap-2">
-                        <span className="font-display text-xl font-bold">{v.word}</span>
-                        <span className="text-sm text-primary">{v.reading}</span>
+                        <span className="font-display text-xl font-bold">
+                          <JaText text={v.word} />
+                        </span>
                         <AudioButton text={v.word} />
                       </div>
-                      <div className="text-sm text-muted-foreground">{v.meaning}</div>
                       {lista.map((f) => (
                         <div key={f.jp} className="mt-3 border-t border-border pt-3">
-                          <div className="mb-1 text-xs text-muted-foreground">
-                            Palavras da frase: {glossario(f)}
-                          </div>
                           <div className="flex items-center gap-2">
-                            <span className="font-display text-lg">{f.jp}</span>
+                            <span className="font-display text-lg">
+                              <JaText text={f.jp} />
+                            </span>
                             <AudioButton text={f.jp} />
                           </div>
                           <div className="text-sm text-muted-foreground">{f.pt}</div>
