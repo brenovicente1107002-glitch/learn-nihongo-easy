@@ -187,3 +187,22 @@
     transform: translateX(var(--offset-desktop, 0px));
   }
 }
+
+/* ---- animações para deixar o app mais vivo ---- */
+@keyframes nq-fade-slide { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes nq-slide-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes nq-pop { 0% { opacity: 0; transform: scale(.6); } 70% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes nq-shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+@keyframes nq-heart { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes nq-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.fade-slide { animation: nq-fade-slide .35s ease-out both; }
+.slide-up { animation: nq-slide-up .3s ease-out both; }
+.slide-up.shake { animation: nq-slide-up .3s ease-out both, nq-shake .4s ease-in-out .3s; }
+.pop-in { animation: nq-pop .35s cubic-bezier(.34,1.56,.64,1) both; }
+.heart-beat { animation: nq-heart .4s ease-out; }
+.float { animation: nq-float 3s ease-in-out infinite; }
+main > * { animation: nq-slide-up .4s ease-out both; }
+button:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) {
+  .fade-slide, .slide-up, .pop-in, .heart-beat, .float, main > * { animation: none !important; }
+}

@@ -146,7 +146,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
           />
         </div>
         <div className="flex items-center gap-1 text-primary">
-          <Heart className="h-5 w-5 fill-current" />
+          <Heart key={vidas} className="heart-beat h-5 w-5 fill-current" />
           <span className="font-display text-sm font-bold">{vidas}</span>
         </div>
       </div>
@@ -171,7 +171,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
       </div>
 
       {/* enunciado */}
-      <div className="space-y-3">
+      <div key={index} className="fade-slide space-y-3">
         <div className="flex items-start gap-3">
           <h2 className="font-display text-2xl leading-[1.6] font-bold tracking-tight">
             <JaText text={q.question} />
@@ -307,8 +307,8 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
         className={cn(
           "rounded-2xl border-2 p-5 transition-colors",
           !checked && "border-transparent",
-          checked && correto && "border-primary/40 bg-primary/10",
-          checked && !correto && "border-destructive/40 bg-destructive/10",
+          checked && correto && "slide-up border-primary/40 bg-primary/10",
+          checked && !correto && "slide-up shake border-destructive/40 bg-destructive/10",
         )}
       >
         {checked ? (
@@ -320,7 +320,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                   correto ? "text-primary" : "text-destructive",
                 )}
               >
-                {correto ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
+                {correto ? <Check className="pop-in h-5 w-5" /> : <X className="pop-in h-5 w-5" />}
                 {correto ? "Muito bem!" : "Resposta certa:"}
               </div>
               {!correto && (
@@ -331,6 +331,29 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                 </p>
               )}
               {q.sub && <p className="mt-1 text-sm text-muted-foreground">{q.sub}</p>}
+              {q.palavras && q.palavras.length > 0 && (
+                <div className="mt-3">
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Palavra por palavra
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {q.palavras.map((p, i) => (
+                      <button
+                        type="button"
+                        key={i}
+                        onClick={() => speakJa(p.jp)}
+                        style={{ animationDelay: `${i * 60}ms` }}
+                        className="pop-in rounded-xl border border-border bg-card px-2.5 py-1 text-left transition-transform hover:-translate-y-0.5"
+                      >
+                        <div className="font-display text-base font-bold leading-tight">
+                          <JaText text={p.jp} />
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">{p.pt || "—"}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {!correto && (
                 <div className="mt-3 flex items-center gap-2">
                   <AomaruAvatar

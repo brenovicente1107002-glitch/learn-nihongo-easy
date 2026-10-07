@@ -121,9 +121,12 @@ const shuffle = <T>(arr: T[], seed: number): T[] => {
 /** Modalidades de exercício disponíveis. */
 export type ExercicioKind = "escolha" | "escuta" | "fala" | "montar" | "escrita";
 
-export const modosRevisao: { id: ExercicioKind | "misto"; label: string; desc: string }[] = [
+export type ModoRevisao = ExercicioKind | "misto" | "palavras" | "audio";
+export const modosRevisao: { id: ModoRevisao; label: string; desc: string }[] = [
   { id: "misto", label: "Mistura", desc: "Todos os tipos de exercício" },
-  { id: "escuta", label: "Escuta", desc: "Ouça o áudio e escolha o que foi dito" },
+  { id: "palavras", label: "Só palavras", desc: "Pratique apenas as palavras, sem frases" },
+  { id: "audio", label: "Áudio", desc: "Ouça palavras soltas e diga o significado" },
+  { id: "escuta", label: "Escuta de frases", desc: "Ouça frases inteiras e escolha a tradução" },
   { id: "fala", label: "Fala", desc: "Repita a frase em voz alta" },
   { id: "montar", label: "Montar frase", desc: "Ordene as palavras para formar a frase" },
   { id: "escrita", label: "Escrever", desc: "Desenhe o kanji ou katakana com o dedo" },
@@ -143,6 +146,8 @@ export type QuizQuestion = Question & {
   target?: string;
   /** etiqueta do tipo de exercício */
   tag?: "Kana" | "Kanji" | "Vocabulário" | "Frase" | "Gramática";
+  /** explicação palavra por palavra da frase */
+  palavras?: { jp: string; pt: string }[];
 };
 
 const makeQuestion = (
@@ -300,6 +305,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
         audio: f.jp,
         sub: f.pt,
         tag: "Frase",
+        palavras: f.palavras,
       });
       if (q) out.push(q);
 
@@ -311,15 +317,16 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
         audio: f.jp,
         sub: f.pt,
         tag: "Frase",
+        palavras: f.palavras,
       });
       if (escuta) out.push(escuta);
 
       const montar = buildQuestion(f.tokens, f.jp, f.pt, seed + 47, "Frase");
-      if (montar) out.push({ ...montar, sub: f.pt });
+      if (montar) out.push({ ...montar, sub: f.pt, palavras: f.palavras });
 
       if ((i + n) % 3 === 0) {
         const fala = speakQuestion(f.jp, f.pt, "Frase");
-        out.push({ ...fala, sub: f.pt });
+        out.push({ ...fala, sub: f.pt, palavras: f.palavras });
       }
     });
   });
@@ -381,9 +388,21 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
 /** Filtra as perguntas por modalidade, com sobra do tipo mais próximo. */
 export function filtrarPorModo(
   questions: QuizQuestion[],
-  modo: ExercicioKind | "misto",
+  modo: ModoRevisao,
 ): QuizQuestion[] {
   if (modo === "misto") return questions;
+  if (modo === "palavras") {
+    const alvo = questions.filter((q) => q.tag === "Vocabulário" || q.tag === "Kanji");
+    return alvo.length ? alvo : questions;
+  }
+  if (modo === "audio") {
+    const alvo = questions.filter((q) => q.kind === "escuta" && q.tag !== "Frase");
+    return alvo.length ? alvo : questions.filter((q) => q.kind === "escuta");
+  }
+  if (modo === "escuta") {
+    const alvo = questions.filter((q) => q.kind === "escuta" && q.tag === "Frase");
+    if (alvo.length) return alvo;
+  }
   const alvo = questions.filter((q) => q.kind === modo);
   return alvo.length ? alvo : questions;
 }

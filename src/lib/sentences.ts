@@ -153,7 +153,16 @@ export function frase(v: VocabItem, variante = 0): Frase {
   const m = significado(v.meaning);
   const s = hash(w) + variante * 17;
 
-  const build = (tokens: string[], pt: string): Frase => {
+  const tempoExtra = pick(tempos, s, 3);
+  const build = (tokens0: string[], pt0: string): Frase => {
+    let tokens = tokens0;
+    let pt = pt0;
+    const conta = tokens.filter((t) => t !== "。" && t !== "、").length;
+    const temTempo = tempos.some((c) => tokens.includes(c.jp[0]!));
+    if (conta < 6 && !temTempo && tokens.length < 9) {
+      tokens = [...tempoExtra.jp, ...tokens];
+      pt = `${cap(tempoExtra.pt)}, ${pt.charAt(0).toLowerCase()}${pt.slice(1)}`;
+    }
     const jp = tokens.join("");
     const palavras = tokens
       .filter((t) => t !== "。" && t !== "、")

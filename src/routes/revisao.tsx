@@ -12,6 +12,7 @@ import {
   lessonQuestions,
   modosRevisao,
   type ExercicioKind,
+  type ModoRevisao,
   type QuizQuestion,
 } from "@/lib/srs";
 
@@ -56,7 +57,7 @@ const shuffleIds = (ids: string[]): string[] => {
 function RevisaoPage() {
   const { dueIds, cards, scheduledCount, review } = useSrs();
   const [level, setLevel] = useState<JlptLevel>("N5");
-  const [modo, setModo] = useState<ExercicioKind | "misto">("misto");
+  const [modo, setModo] = useState<ModoRevisao>("misto");
   const [sessao, setSessao] = useState<{ ids: string[]; questions: QuizQuestion[] } | null>(null);
   const [resultado, setResultado] = useState<number | null>(null);
   const [SESSAO, setSessaoTam] = useState(15);
