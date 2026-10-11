@@ -210,7 +210,7 @@ function AppShell({ children }: { children: ReactNode }) {
                     : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
               >
-                <Icon className="h-5 w-5" />
+                    <Icon className="app-nav-icon h-5 w-5" />
                 {item.label}
               </Link>
             );
@@ -237,7 +237,7 @@ function AppShell({ children }: { children: ReactNode }) {
             className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-card p-4 pb-8 shadow-2xl">
+          <div className="slide-up absolute inset-x-0 bottom-0 rounded-t-3xl bg-card p-4 pb-8 shadow-2xl">
             <div className="mb-3 flex items-center justify-between">
               <span className="font-display text-lg font-semibold">Mais</span>
               <button
@@ -285,6 +285,7 @@ function AppShell({ children }: { children: ReactNode }) {
                 to={item.to}
                 className="flex flex-1 flex-col items-center gap-0.5 py-2"
                 aria-label={item.label}
+                aria-current={active ? "page" : undefined}
               >
                 <span
                   className={cn(
@@ -294,7 +295,7 @@ function AppShell({ children }: { children: ReactNode }) {
                       : "border-transparent text-muted-foreground",
                   )}
                 >
-                  <Icon className="h-6 w-6" strokeWidth={active ? 2.6 : 2} />
+                  <Icon className="app-nav-icon h-6 w-6" strokeWidth={active ? 2.6 : 2} />
                 </span>
                 <span className={cn("text-[10px] font-semibold", active ? "text-primary" : "text-muted-foreground")}>
                   {item.label}

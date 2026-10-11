@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system: vermelho japonês + branco, fontes Sora e Manrope.
+ * Design system: azul Aomaru, fontes Sora e Manrope.
  */
 
 @theme inline {
@@ -34,6 +34,9 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-trail-mint: var(--trail-mint);
+  --color-trail-blossom: var(--trail-blossom);
+  --color-trail-gold: var(--trail-gold);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -66,6 +69,9 @@
 
 :root {
   --radius: 0.75rem;
+  --trail-mint: oklch(0.55 0.12 165);
+  --trail-blossom: oklch(0.67 0.15 355);
+  --trail-gold: oklch(0.7 0.15 80);
 
   /* Azul Aomaru (mascote) */
   --japan-red: oklch(0.55 0.17 255);
@@ -113,6 +119,9 @@
 
 
 .dark {
+  --trail-mint: oklch(0.75 0.12 165);
+  --trail-blossom: oklch(0.78 0.12 355);
+  --trail-gold: oklch(0.82 0.13 80);
   --background: oklch(0.18 0.03 260);
   --foreground: oklch(0.97 0.01 250);
   --card: oklch(0.22 0.03 260);
@@ -205,4 +214,37 @@ main > * { animation: nq-slide-up .4s ease-out both; }
 button:active { transform: scale(.97); }
 @media (prefers-reduced-motion: reduce) {
   .fade-slide, .slide-up, .pop-in, .heart-beat, .float, main > * { animation: none !important; }
+}
+
+/* Playful accents stay outside reading and exercise areas. */
+@keyframes nq-nod {
+  0%, 100% { transform: rotate(-6deg) translateY(0); }
+  50% { transform: rotate(6deg) translateY(-5px); }
+}
+@keyframes nq-ring {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--primary) 12%, transparent); }
+  50% { box-shadow: 0 0 0 8px color-mix(in oklch, var(--primary) 6%, transparent); }
+}
+.trail-decor { animation: nq-nod 6s ease-in-out infinite; }
+.trail-decor-late { animation-delay: -3s; }
+.trail-current { animation: nq-ring 3s ease-in-out infinite; }
+.trail-callout { animation: nq-float 3s ease-in-out infinite; }
+.trail-circle { transition: transform .2s ease, background-color .2s ease; }
+.trail-circle:hover { transform: translateY(-3px); }
+.trail-unit { animation: nq-slide-up .45s ease-out both; }
+.trail-unit:nth-child(2) { animation-delay: .06s; }
+.trail-unit:nth-child(3) { animation-delay: .12s; }
+.unit-banner { border-left-color: var(--trail-mint); }
+.trail-unit:nth-child(3n + 2) .unit-banner { border-left-color: var(--trail-blossom); }
+.trail-unit:nth-child(3n + 3) .unit-banner { border-left-color: var(--trail-gold); }
+.app-nav-icon { transition: transform .25s ease; }
+a:hover .app-nav-icon { transform: translateY(-2px) rotate(-5deg); }
+a[aria-current="page"] .app-nav-icon { animation: nq-pop .4s ease-out; }
+.home-stat { transition: transform .2s ease, border-color .2s ease; }
+.home-stat:hover { transform: translateY(-3px); border-color: var(--primary); }
+.home-stat:nth-child(2) .stat-icon { color: var(--trail-mint); background: color-mix(in oklch, var(--trail-mint) 12%, transparent); }
+.home-stat:nth-child(3) .stat-icon { color: var(--trail-blossom); background: color-mix(in oklch, var(--trail-blossom) 12%, transparent); }
+.home-stat:nth-child(4) .stat-icon { color: var(--trail-gold); background: color-mix(in oklch, var(--trail-gold) 12%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
