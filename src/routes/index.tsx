@@ -18,6 +18,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Acompanhe seu progresso no aprendizado de japonês." },
       { property: "og:title", content: "Nihongo Quest — Dashboard" },
       { property: "og:description", content: "Acompanhe seu progresso no aprendizado de japonês." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
@@ -34,7 +36,8 @@ function Dashboard() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
+        <div className="relative">
+          <Sparkles aria-hidden="true" className="trail-decor absolute -top-2 right-0 h-5 w-5 text-trail-gold md:-right-8" />
           <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
             Olá, estudante!
           </h1>
@@ -278,9 +281,9 @@ function StatsCard({
   value: string;
 }) {
   return (
-    <Card>
+    <Card className="home-stat">
       <CardContent className="flex items-center gap-4 p-6">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="stat-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Icon className="h-5 w-5" />
         </div>
         <div>

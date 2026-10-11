@@ -5,3 +5,6 @@
 - [x] Remover o prefixo "Aomaru:" dos conselhos
 - [x] Criar tela de palavras aprendidas com status de lições e revisões
 - [x] Verificar typecheck, build e preview
+- [x] Melhorar decorações e animações preservando a identidade Aomaru
+- [x] Agrupar três lições nas bolinhas com progresso individual
+- [x] Verificar a abertura de lições e a trilha em telas pequenas
