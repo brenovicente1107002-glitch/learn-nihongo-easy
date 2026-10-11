@@ -15,10 +15,19 @@ export type Frase = {
 
 const BLANK = "＿＿＿";
 
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 
 /** Significado de cada pedacinho usado nas frases (partículas, verbos, complementos). */
 const GLOSS: Record<string, string> = {
+  私: "eu", 言葉: "palavra", という: "chamada", 使います: "uso",
+  読みます: "leio", 書きます: "escrevo", 来ます: "venho", 働きます: "trabalho", 勉強します: "estudo",
+  終わって: "terminar (ligação)", 終わった: "terminou", 帰って: "voltar (ligação)",
+  する: "fazer", 前に: "antes de", 時間: "tempo", ある: "há / ter", 今: "agora",
+  忙しい: "ocupado", ため: "porque", 仕事: "trabalho", にもかかわらず: "apesar de",
+  予定: "planos", 変わった: "mudaram", ものの: "embora", 限られている: "é limitado",
+  とはいえ: "embora", こと: "fato", 踏まえ: "levando em conta", 相談した: "conversei / consultei",
+  上で: "depois de", 生活: "vida cotidiana", リズム: "ritmo", 保つ: "manter", べく: "para / a fim de",
+  中: "em meio a", 見直した: "reavaliei",
   は: "(tópico)",
   が: "(sujeito)",
   を: "(objeto)",
@@ -28,7 +37,7 @@ const GLOSS: Record<string, string> = {
   で: "em / de",
   の: "de",
   も: "também",
-  から: "depois de",
+  から: "a partir de / depois de",
   ので: "porque",
   て: "",
   食べます: "como",
@@ -89,54 +98,13 @@ const GLOSS: Record<string, string> = {
 /** Complementos simples (1–2 palavras) que entram em algumas frases. */
 type Comp = { jp: string[]; pt: string };
 
-const tempos: Comp[] = [
-  { jp: ["毎朝"], pt: "toda manhã" },
-  { jp: ["今日", "は"], pt: "hoje" },
-  { jp: ["明日", "は"], pt: "amanhã" },
-  { jp: ["夜", "に"], pt: "à noite" },
-];
-
-const lugares: Comp[] = [
-  { jp: ["家", "で"], pt: "em casa" },
-  { jp: ["学校", "で"], pt: "na escola" },
-  { jp: ["公園", "で"], pt: "no parque" },
-];
-
-const pessoas: Comp[] = [
-  { jp: ["友達", "と"], pt: "com um amigo" },
-  { jp: ["家族", "と"], pt: "com a família" },
-  { jp: ["一人", "で"], pt: "sozinho" },
-];
-
 /** Escolha determinística: a mesma palavra gera sempre a mesma frase. */
 function hash(s: string) {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
   return h;
 }
-const pick = <T,>(arr: T[], seed: number, salt = 0) => arr[(seed + salt) % arr.length]!;
 
-/** Palavras-chave em português que revelam o "assunto" da palavra. */
-const temas: { nome: string; re: RegExp }[] = [
-  { nome: "agradecer", re: /\b(obrigad|agradec|grat)/i },
-  { nome: "desculpa", re: /\b(desculp|perd(ã|a)o|sinto muito|licen(ç|c)a)/i },
-  { nome: "saudacaoManha", re: /\b(bom dia|bons dias)/i },
-  { nome: "saudacaoNoite", re: /\b(boa noite|boa tarde)/i },
-  { nome: "despedida", re: /\b(tchau|adeus|at(é|e) (logo|mais)|despedid)/i },
-  { nome: "comida", re: /\b(comida|arroz|p(ã|a)o|carne|peixe|sopa|macarr(ã|a)o|bolo|fruta|ma(ç|c)(ã|a)|legume|ovo|doce|refei(ç|c)(ã|a)o|almo(ç|c)o|jantar|caf(é|e) da manh(ã|a)|curry|sushi|ramen)\b/i },
-  { nome: "bebida", re: /\b(bebida|(á|a)gua|ch(á|a)\b|caf(é|e)|leite|suco|cerveja|sak(ê|e)|vinho)\b/i },
-  { nome: "lugar", re: /\b(loja|escola|esta(ç|c)(ã|a)o|hospital|banco|parque|cidade|casa|biblioteca|restaurante|mercado|universidade|escrit(ó|o)rio|templo|aeroporto|hotel|sala|quarto|rua|pa(í|i)s|montanha|rio|mar|praia)\b/i },
-  { nome: "pessoa", re: /\b(pessoa|amigo|professor|aluno|estudante|crian(ç|c)a|m(ã|a)e|pai|irm(ã|a)o|irm(ã|a)|fam(í|i)lia|m(é|e)dico|colega|vizinho|homem|mulher|senhor)\b/i },
-  { nome: "transporte", re: /\b(carro|trem|(ô|o)nibus|bicicleta|avi(ã|a)o|navio|metr(ô|o)|t(á|a)xi)\b/i },
-  { nome: "tempoClima", re: /\b(chuva|neve|vento|sol|tempo|clima|nublado|calor|frio)\b/i },
-  { nome: "roupa", re: /\b(roupa|camisa|sapato|cal(ç|c)a|casaco|chap(é|e)u|vestido|quimono|meia)\b/i },
-  { nome: "estudo", re: /\b(livro|caderno|aula|prova|li(ç|c)(ã|a)o|dicion(á|a)rio|palavra|kanji|estudo|l(á|a)pis|caneta|papel)\b/i },
-  { nome: "animal", re: /\b(cachorro|gato|p(á|a)ssaro|animal|peixe|cavalo|vaca|coelho)\b/i },
-  { nome: "sentimento", re: /\b(feliz|triste|alegr|medo|raiva|saudade|amor|cansa|preocupa|sentimento)\b/i },
-  { nome: "trabalho", re: /\b(trabalho|emprego|empresa|reuni(ã|a)o|dinheiro|pre(ç|c)o|cliente|chefe)\b/i },
-];
-
-const tema = (m: string): string => temas.find((t) => t.re.test(m))?.nome ?? "";
 
 /** Primeiro sentido da palavra, sem parênteses nem notas, para caber na frase. */
 function significado(meaning: string): string {
@@ -144,107 +112,80 @@ function significado(meaning: string): string {
   return primeiro.replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim();
 }
 
-/**
- * Monta uma frase curta (cerca de 5 palavras) com contexto adequado ao sentido
- * da palavra, acompanhada da explicação palavra por palavra.
- */
+/** Frases graduadas por nível; estruturas seguras evitam conjugar traduções portuguesas. */
 export function frase(v: VocabItem, variante = 0): Frase {
   const w = v.word;
   const m = significado(v.meaning);
   const s = hash(w) + variante * 17;
-
-  const tempoExtra = pick(tempos, s, 3);
-  const build = (tokens0: string[], pt0: string): Frase => {
-    let tokens = tokens0;
-    let pt = pt0;
-    const conta = tokens.filter((t) => t !== "。" && t !== "、").length;
-    const temTempo = tempos.some((c) => tokens.includes(c.jp[0]!));
-    if (conta < 6 && !temTempo && tokens.length < 9) {
-      tokens = [...tempoExtra.jp, ...tokens];
-      pt = `${cap(tempoExtra.pt)}, ${pt.charAt(0).toLowerCase()}${pt.slice(1)}`;
-    }
-    const jp = tokens.join("");
-    const palavras = tokens
-      .filter((t) => t !== "。" && t !== "、")
-      .map((t) => ({ jp: t, pt: t === w ? m : (GLOSS[t] ?? "") }));
-    return { jp, lacuna: jp.replace(w, BLANK), pt, tokens, palavras };
+  const contexto = contextos[v.level][s % contextos[v.level].length] ?? contextos.N5[0];
+  const prefixo = contexto ?? { jp: ["今日", "は"], pt: "Hoje" };
+  const alimentos = new Set(["ご飯", "パン", "肉", "魚", "卵", "果物", "りんご", "リンゴ", "寿司", "すし", "ラーメン", "野菜", "ケーキ"]);
+  const bebidas = new Set(["水", "お茶", "コーヒー", "牛乳", "ジュース", "ビール", "紅茶"]);
+  const destinos = new Set(["学校", "駅", "病院", "公園", "図書館", "空港", "ホテル", "銀行", "会社", "大学", "レストラン"]);
+  const acoes: Record<string, { jp: string; pt: string }> = {
+    食べる: { jp: "食べます", pt: "como" }, 飲む: { jp: "飲みます", pt: "bebo" },
+    行く: { jp: "行きます", pt: "vou" }, 来る: { jp: "来ます", pt: "venho" },
+    読む: { jp: "読みます", pt: "leio" }, 書く: { jp: "書きます", pt: "escrevo" },
+    寝る: { jp: "寝ます", pt: "durmo" }, 働く: { jp: "働きます", pt: "trabalho" },
+    勉強する: { jp: "勉強します", pt: "estudo" },
   };
-
-  const tempo = pick(tempos, s);
-  const lugar = pick(lugares, s, 1);
-  const pessoa = pick(pessoas, s, 2);
-
-  // 1) frases guiadas pelo sentido da palavra
-  switch (tema(m)) {
-    case "agradecer":
-      return build([w, "と", "言います", "。"], `Eu digo "${m}".`);
-    case "desculpa":
-      return build(["遅れた", "ので", w, "と", "言いました", "。"], `Como me atrasei, disse "${m}".`);
-    case "saudacaoManha":
-      return build(["毎朝", w, "と", "言います", "。"], `Toda manhã digo "${m}".`);
-    case "saudacaoNoite":
-      return build(["夜", w, "と", "言って", "寝ます", "。"], `À noite digo "${m}" e vou dormir.`);
-    case "despedida":
-      return build([w, "と", "言って", "帰りました", "。"], `Disse "${m}" e fui embora.`);
-    case "comida":
-      return s % 2 === 0
-        ? build([...tempo.jp, w, "を", "食べます", "。"], `${cap(tempo.pt)} como ${m}.`)
-        : build([w, "を", "食べます", "。"], `Como ${m}.`);
-    case "bebida":
-      return s % 2 === 0
-        ? build([...tempo.jp, w, "を", "飲みます", "。"], `${cap(tempo.pt)} bebo ${m}.`)
-        : build([w, "を", "飲みます", "。"], `Bebo ${m}.`);
-    case "lugar":
-      return s % 2 === 0
-        ? build([...pessoa.jp, w, "へ", "行きます", "。"], `Vou ${pessoa.pt} para ${m}.`)
-        : build([w, "へ", "行きます", "。"], `Vou para ${m}.`);
-    case "pessoa":
-      return build([w, "と", "話します", "。"], `Converso com ${m}.`);
-    case "transporte":
-      return build([w, "で", "行きます", "。"], `Vou de ${m}.`);
-    case "tempoClima":
-      return build(["今日", "は", w, "です", "。"], `Hoje está com ${m}.`);
-    case "roupa":
-      return build(["新しい", w, "を", "買いました", "。"], `Comprei ${m} novo(a).`);
-    case "estudo":
-      return build([w, "で", "勉強", "します", "。"], `Estudo com ${m}.`);
-    case "animal":
-      return build([...lugar.jp, w, "が", "います", "。"], `Há ${m} ${lugar.pt}.`);
-    case "sentimento":
-      return build(["とても", w, "です", "。"], `Estou muito ${m}.`);
-    case "trabalho":
-      return build([w, "の", "話", "を", "しました", "。"], `Falei sobre ${m}.`);
-    default:
-      break;
+  let corpo: string[];
+  let traducao: string;
+  let alvo = w;
+  if (alimentos.has(w)) {
+    corpo = [w, "を", "食べます"];
+    traducao = `como ${m}`;
+  } else if (bebidas.has(w)) {
+    corpo = [w, "を", "飲みます"];
+    traducao = `bebo ${m}`;
+  } else if (destinos.has(w)) {
+    corpo = [w, "へ", "行きます"];
+    traducao = `vou para ${m}`;
+  } else if (acoes[w]) {
+    const acao = acoes[w];
+    alvo = acao.jp;
+    corpo = ["私", "は", acao.jp];
+    traducao = `eu ${acao.pt}`;
+  } else {
+    // A citação permite praticar qualquer classe sem inventar usos ou flexões.
+    corpo = ["「", w, "」", "という", "言葉", "を", "使います"];
+    traducao = `uso a palavra “${w}” (${m})`;
   }
-
-  // 2) sem tema claro: usa a classe gramatical
-  switch (v.type) {
-    case "verbo":
-      return s % 2 === 0
-        ? build([...tempo.jp, w, "。"], `${cap(tempo.pt)} eu ${m}.`)
-        : build([w, "。"], `Eu ${m}.`);
-    case "adjetivo":
-      return build(["これ", "は", "とても", w, "です", "。"], `Isto é muito ${m}.`);
-    case "advérbio":
-      return build(["日本語", "を", w, "勉強", "します", "。"], `Eu estudo japonês ${m}.`);
-    case "saudação":
-    case "expressão":
-      return build([w, "と", "言いました", "。"], `Eu disse "${m}".`);
-    case "pronome":
-      return build([w, "は", "学生", "です", "。"], `${cap(m)} é estudante.`);
-    case "contador":
-      return build([w, "あります", "。"], `Há ${m}.`);
-    case "conector":
-    case "partícula":
-      return build(
-        ["これ", "は", "本", "です", "。", w, "、", "ノート", "も", "あります", "。"],
-        `Isto é um livro. ${cap(m)}, também há um caderno.`,
-      );
-    default:
-      return build([w, "を", "見ました", "。"], `Eu vi ${m}.`);
-  }
+  const tokens = [...prefixo.jp, ...corpo, "。"];
+  const jp = tokens.join("");
+  const palavras = tokens.filter((t) => !["。", "、", "「", "」"].includes(t))
+    .map((t) => ({ jp: t, pt: t === w ? m : (GLOSS[t] ?? "") }));
+  return { jp, lacuna: jp.replace(alvo, BLANK), pt: `${prefixo.pt}, ${traducao}.`, tokens, palavras };
 }
+
+/** Complexidade crescente: tempo → sequência → motivo → concessão → ponderação. */
+const contextos: Record<VocabItem["level"], Comp[]> = {
+  N5: [
+    { jp: ["今日", "は"], pt: "Hoje" },
+    { jp: ["明日", "は"], pt: "Amanhã" },
+    { jp: ["毎朝"], pt: "Toda manhã" },
+  ],
+  N4: [
+    { jp: ["授業", "が", "終わって", "から", "、"], pt: "Depois que a aula termina" },
+    { jp: ["家", "に", "帰って", "から", "、"], pt: "Depois que volto para casa" },
+    { jp: ["勉強", "を", "する", "前に", "、"], pt: "Antes de estudar" },
+  ],
+  N3: [
+    { jp: ["時間", "が", "ある", "ので", "、", "今日", "は"], pt: "Como tenho tempo, hoje" },
+    { jp: ["授業", "が", "終わった", "ので", "、", "今", "から"], pt: "Como a aula terminou, a partir de agora" },
+    { jp: ["明日", "は", "忙しい", "ため", "、", "今日", "は"], pt: "Como amanhã estarei ocupado, hoje" },
+  ],
+  N2: [
+    { jp: ["仕事", "が", "忙しい", "にもかかわらず", "、", "今日", "も"], pt: "Apesar de estar ocupado com o trabalho, hoje também" },
+    { jp: ["予定", "が", "変わった", "ものの", "、", "今日", "も"], pt: "Embora os planos tenham mudado, hoje também" },
+    { jp: ["時間", "が", "限られている", "とはいえ", "、", "今日", "も"], pt: "Embora o tempo seja limitado, hoje também" },
+  ],
+  N1: [
+    { jp: ["予定", "が", "変わった", "こと", "を", "踏まえ", "、", "家族", "と", "相談した", "上で", "、", "今日", "は"], pt: "Levando em conta a mudança de planos e depois de conversar com a família, hoje" },
+    { jp: ["仕事", "が", "忙しい", "とはいえ", "、", "生活", "の", "リズム", "を", "保つ", "べく", "、", "今日", "も"], pt: "Embora esteja ocupado com o trabalho, para manter o ritmo de vida, hoje também" },
+    { jp: ["時間", "が", "限られている", "中", "、", "予定", "を", "見直した", "上で", "、", "今日", "は"], pt: "Com o tempo limitado e depois de reavaliar os planos, hoje" },
+  ],
+};
 
 /** Divide uma frase japonesa em pedaços aproveitáveis para montar a frase. */
 export function tokenizarJa(jp: string): string[] {
