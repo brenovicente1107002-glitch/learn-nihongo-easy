@@ -4,6 +4,7 @@ export type RubySeg = { text: string; ruby?: string };
 let dic: Map<string, string> | undefined;
 let maxLen = 1;
 const extras: Record<string, string> = {
+  休憩: "きゅうけい",
   私: "わたし", 言葉: "ことば", 使います: "つかいます",
   食べます: "たべます", 飲みます: "のみます", 行きます: "いきます", 来ます: "きます",
   読みます: "よみます", 書きます: "かきます", 寝ます: "ねます", 働きます: "はたらきます",
