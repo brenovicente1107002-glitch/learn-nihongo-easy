@@ -21,7 +21,7 @@ const BLANK = "＿＿＿";
 
 /** Significado de cada pedacinho usado nas frases (partículas, verbos, complementos). */
 const GLOSS: Record<string, string> = {
-  私: "eu", 言葉: "palavra", という: "chamada", 使います: "uso",
+  休憩: "intervalo / descanso", 私: "eu", 言葉: "palavra", という: "chamada", 使います: "uso",
   読みます: "leio", 書きます: "escrevo", 来ます: "venho", 働きます: "trabalho", 勉強します: "estudo",
   終わって: "terminar (ligação)", 終わった: "terminou", 帰って: "voltar (ligação)",
   する: "fazer", 前に: "antes de", 時間: "tempo", ある: "há / ter", 今: "agora",
