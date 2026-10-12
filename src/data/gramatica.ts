@@ -1,3 +1,4 @@
+import { gramaticaAprofundamento } from "./aprofundamento";
 import type { JlptLevel } from "./kanji";
 
 export type GrammarPoint = {
@@ -9,6 +10,7 @@ export type GrammarPoint = {
 };
 
 export const gramatica: GrammarPoint[] = [
+  ...gramaticaAprofundamento,
   {
     title: "〜は",
     explanation:
@@ -419,7 +421,7 @@ export const gramatica: GrammarPoint[] = [
       },
       {
         jp: "コーヒーを飲みながら話しましょう。",
-        romaji: "Kōhī o nomimagata hanashimashō.",
+        romaji: "Kōhī o nominagara hanashimashō.",
         pt: "Vamos conversar enquanto tomamos café.",
       },
     ],

@@ -1,3 +1,4 @@
+import { vocabularioAprofundamento, gramaticaAprofundamento } from "./aprofundamento";
 import { jlptLevels, kanji, type JlptLevel, type Kanji } from "./kanji";
 import { vocabulario, type VocabItem } from "./vocabulario";
 import { gramatica, type GrammarPoint } from "./gramatica";
@@ -101,9 +102,9 @@ const CAPITULOS_REVISAO = [
 const PALAVRAS_POR_UNIDADE = 18;
 
 const unidadesDoNivel = (level: JlptLevel): Unidade[] => {
-  const vocabL = vocabulario.filter((v) => v.level === level);
+  const vocabL = vocabulario.filter((v) => v.level === level && !vocabularioAprofundamento.includes(v));
   const kanjiL = kanji.filter((k) => k.level === level);
-  const gramL = gramatica.filter((g) => g.level === level);
+  const gramL = gramatica.filter((g) => g.level === level && !gramaticaAprofundamento.includes(g));
   const kChunks = chunk(kanjiL, 3);
   const gChunks = chunk(gramL, 2);
 
@@ -130,6 +131,12 @@ const unidadesDoNivel = (level: JlptLevel): Unidade[] => {
       const id = `${level}-${grupo.tema.slug}-${bloco + 1}`;
       const kanjiGroup = kChunks.length ? (kChunks[(u - 1) % kChunks.length] ?? []) : [];
       const points = gChunks.length ? (gChunks[(u - 1) % gChunks.length] ?? []) : [];
+      const extras = vocabularioAprofundamento.filter((v) => v.level === level);
+      const extra = extras[(u - 1) % extras.length];
+      const palavrasAmpliadas = extra && !palavras.some((v) => v.word === extra.word) ? [...palavras, extra] : palavras;
+      const aprofundar = gramaticaAprofundamento.filter((g) => g.level === level);
+      const pontoExtra = aprofundar[(u - 1) % aprofundar.length];
+      const pontosAmpliados = pontoExtra ? [...points, pontoExtra] : points;
       const resumo = palavras.map((v) => v.word).join(" · ");
 
       const base = {
@@ -148,7 +155,7 @@ const unidadesDoNivel = (level: JlptLevel): Unidade[] => {
           id: `${id}-c1-l${i + 1}`,
           title: `${grupo.tema.nome} — Palavras ${i + 1}`,
           description: parte.map((v) => `${v.word} (${v.meaning})`).join(" · "),
-          content: { kind: "mista" as const, vocab: parte, kanji: [], points: [] },
+          content: { kind: "mista" as const, vocab: extra && !parte.some((v) => v.word === extra.word) ? [...parte, extra] : parte, kanji: [], points: [] },
           capitulo: 1,
           capituloTitulo: "Palavras novas",
           modo: "novas" as const,
@@ -164,9 +171,9 @@ const unidadesDoNivel = (level: JlptLevel): Unidade[] => {
           description: resumo,
           content: {
             kind: "mista" as const,
-            vocab: palavras,
+            vocab: palavrasAmpliadas,
             kanji: i >= 4 ? kanjiGroup : [],
-            points: i >= 4 ? points : [],
+            points: i >= 4 ? pontosAmpliados : [],
           },
           capitulo: i + 2,
           capituloTitulo: titulo,

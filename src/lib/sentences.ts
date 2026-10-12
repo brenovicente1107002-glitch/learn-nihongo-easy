@@ -3,6 +3,8 @@ import type { VocabItem } from "@/data/vocabulario";
 export type Frase = {
   /** frase completa em japonês */
   jp: string;
+  /** Surface form expected in the gap, including conjugation. */
+  resposta: string;
   /** frase com lacuna no lugar da palavra */
   lacuna: string;
   /** tradução em português */
@@ -19,7 +21,7 @@ const BLANK = "＿＿＿";
 
 /** Significado de cada pedacinho usado nas frases (partículas, verbos, complementos). */
 const GLOSS: Record<string, string> = {
-  私: "eu", 言葉: "palavra", という: "chamada", 使います: "uso",
+  休憩: "intervalo / descanso", 私: "eu", 言葉: "palavra", という: "chamada", 使います: "uso",
   読みます: "leio", 書きます: "escrevo", 来ます: "venho", 働きます: "trabalho", 勉強します: "estudo",
   終わって: "terminar (ligação)", 終わった: "terminou", 帰って: "voltar (ligação)",
   する: "fazer", 前に: "antes de", 時間: "tempo", ある: "há / ter", 今: "agora",
@@ -155,7 +157,7 @@ export function frase(v: VocabItem, variante = 0): Frase {
   const jp = tokens.join("");
   const palavras = tokens.filter((t) => !["。", "、", "「", "」"].includes(t))
     .map((t) => ({ jp: t, pt: t === w ? m : (GLOSS[t] ?? "") }));
-  return { jp, lacuna: jp.replace(alvo, BLANK), pt: `${prefixo.pt}, ${traducao}.`, tokens, palavras };
+  return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: `${prefixo.pt} ${traducao}.`, tokens, palavras };
 }
 
 /** Complexidade crescente: tempo → sequência → motivo → concessão → ponderação. */
@@ -176,9 +178,9 @@ const contextos: Record<VocabItem["level"], Comp[]> = {
     { jp: ["明日", "は", "忙しい", "ため", "、", "今日", "は"], pt: "Como amanhã estarei ocupado, hoje" },
   ],
   N2: [
-    { jp: ["仕事", "が", "忙しい", "にもかかわらず", "、", "今日", "も"], pt: "Apesar de estar ocupado com o trabalho, hoje também" },
-    { jp: ["予定", "が", "変わった", "ものの", "、", "今日", "も"], pt: "Embora os planos tenham mudado, hoje também" },
-    { jp: ["時間", "が", "限られている", "とはいえ", "、", "今日", "も"], pt: "Embora o tempo seja limitado, hoje também" },
+    { jp: ["仕事", "が", "忙しい", "にもかかわらず", "、", "休憩", "の", "時間", "に", "、"], pt: "Apesar de estar ocupado com o trabalho, no horário do intervalo," },
+    { jp: ["予定", "が", "変わった", "ものの", "、", "休憩", "の", "時間", "に", "、"], pt: "Embora os planos tenham mudado, no horário do intervalo," },
+    { jp: ["時間", "が", "限られている", "とはいえ", "、", "休憩", "の", "時間", "に", "、"], pt: "Embora o tempo seja limitado, no horário do intervalo," },
   ],
   N1: [
     { jp: ["予定", "が", "変わった", "こと", "を", "踏まえ", "、", "家族", "と", "相談した", "上で", "、", "今日", "は"], pt: "Levando em conta a mudança de planos e depois de conversar com a família, hoje" },

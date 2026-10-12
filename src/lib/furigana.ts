@@ -1,17 +1,18 @@
-import { kanji } from "@/data/kanji";
 import { vocabulario } from "@/data/vocabulario";
-
 const KANJI = /[\u4e00-\u9faf\u3005]/;
-const KANA = /[ぁ-んー]/;
-
 export type RubySeg = { text: string; ruby?: string };
-
-let dic: Map<string, string> | null = null;
-let charDic: Map<string, string> | null = null;
+let dic: Map<string, string> | undefined;
 let maxLen = 1;
-
-/** Palavras extras que aparecem nas frases geradas. */
 const extras: Record<string, string> = {
+  休憩: "きゅうけい",
+  私: "わたし", 言葉: "ことば", 使います: "つかいます",
+  食べます: "たべます", 飲みます: "のみます", 行きます: "いきます", 来ます: "きます",
+  読みます: "よみます", 書きます: "かきます", 寝ます: "ねます", 働きます: "はたらきます",
+  勉強します: "べんきょうします", 終わって: "おわって", 終わった: "おわった", 帰って: "かえって",
+  時間: "じかん", 今: "いま", 忙しい: "いそがしい", 仕事: "しごと", 予定: "よてい",
+  変わった: "かわった", 限られている: "かぎられている", 踏まえ: "ふまえ",
+  相談した: "そうだんした", 上で: "うえで", 生活: "せいかつ", 保つ: "たもつ",
+  中: "なか", 見直した: "みなおした", 入口: "いりぐち", 出口: "でぐち",
   毎日: "まいにち",
   毎朝: "まいあさ",
   今日: "きょう",
@@ -48,97 +49,58 @@ const extras: Record<string, string> = {
   書く: "かく",
 };
 
-/** Normaliza leituras vindas da base (remove pontos, romaji e parênteses). */
-function limparLeitura(r: string | undefined): string | undefined {
-  if (!r) return undefined;
-  const base = r.split(".")[0]!.replace(/[^ぁ-んー]/g, "");
-  return base || undefined;
+
+/** Match kana anchors exactly; only kanji runs receive annotations. */
+export function alinharLeitura(word: string, reading: string): RubySeg[] {
+  const runs = word.match(/[一-龯々]+|[^一-龯々]+/g) ?? [];
+  const align = (index: number, cursor: number): RubySeg[] | undefined => {
+    const run = runs[index];
+    if (!run) return cursor === reading.length ? [] : undefined;
+    if (!KANJI.test(run)) {
+      if (!reading.startsWith(run, cursor)) return undefined;
+      const rest = align(index + 1, cursor + run.length);
+      return rest ? [{ text: run }, ...rest] : undefined;
+    }
+    for (let end = cursor + 1; end <= reading.length; end++) {
+      const rest = align(index + 1, end);
+      if (rest) return [{ text: run, ruby: reading.slice(cursor, end) }, ...rest];
+    }
+    return undefined;
+  };
+  return align(0, 0) ?? [{ text: word }];
 }
 
-function build() {
-  if (dic) return;
-  const m = new Map<string, string>();
-  for (const v of vocabulario) {
-    if (!v.reading || !KANJI.test(v.word) || v.word === v.reading) continue;
-    if (!m.has(v.word)) m.set(v.word, v.reading);
-    if (v.word.length > maxLen) maxLen = v.word.length;
-  }
-  for (const [k, r] of Object.entries(extras)) {
-    m.set(k, r);
-    if (k.length > maxLen) maxLen = k.length;
-  }
-  const c = new Map<string, string>();
-  for (const k of kanji) {
-    const r = k.readings.map(limparLeitura).find(Boolean);
-    if (r) c.set(k.char, r);
-  }
-  dic = m;
-  charDic = c;
-}
-
-/** Quebra o texto japonês em segmentos com leitura (furigana) sobre os kanji. */
 export function segmentarFurigana(texto: string): RubySeg[] {
-  build();
-  const segs: RubySeg[] = [];
-  const push = (text: string, ruby?: string) => {
-    const last = segs[segs.length - 1];
-    if (!ruby && last && !last.ruby) last.text += text;
-    else segs.push(ruby ? { text, ruby } : { text });
-  };
-
-  /**
-   * Coloca o furigana só sobre a parte em kanji: 新しい → 新(あたら)しい.
-   */
-  const pushPalavra = (trecho: string, leitura: string) => {
-    let cauda = 0;
-    while (
-      cauda < trecho.length - 1 &&
-      KANA.test(trecho[trecho.length - 1 - cauda]!) &&
-      leitura[leitura.length - 1 - cauda] === trecho[trecho.length - 1 - cauda]
-    ) {
-      cauda += 1;
+  if (!dic) {
+    dic = new Map();
+    for (const v of vocabulario) {
+      if (KANJI.test(v.word) && /^[ぁ-んー]+$/.test(v.reading) && !dic.has(v.word)) dic.set(v.word, v.reading);
     }
-    let inicio = 0;
-    while (
-      inicio < trecho.length - cauda - 1 &&
-      KANA.test(trecho[inicio]!) &&
-      leitura[inicio] === trecho[inicio]
-    ) {
-      inicio += 1;
-    }
-    const nucleo = trecho.slice(inicio, trecho.length - cauda);
-    const leituraNucleo = leitura.slice(inicio, leitura.length - cauda);
-    if (inicio > 0) push(trecho.slice(0, inicio));
-    if (nucleo && leituraNucleo) push(nucleo, leituraNucleo);
-    else push(nucleo);
-    if (cauda > 0) push(trecho.slice(trecho.length - cauda));
-  };
-
-  let i = 0;
-  while (i < texto.length) {
-    const ch = texto[i]!;
-    if (!KANJI.test(ch)) {
-      push(ch);
-      i += 1;
-      continue;
-    }
-    let achou = false;
-    for (let len = Math.min(maxLen, texto.length - i); len >= 2; len--) {
-      const trecho = texto.slice(i, i + len);
-      const leitura = dic!.get(trecho);
-      if (leitura) {
-        pushPalavra(trecho, leitura);
-        i += len;
-        achou = true;
-        break;
-      }
-    }
-    if (achou) continue;
-    const uni = limparLeitura(dic!.get(ch) ?? charDic!.get(ch));
-    push(ch, uni);
-    i += 1;
+    for (const [word, reading] of Object.entries(extras)) dic.set(word, reading);
+    maxLen = Math.max(1, ...Array.from(dic.keys(), (w) => w.length));
   }
-  return segs;
+  const dictionary = dic;
+  const result: RubySeg[] = [];
+  for (let i = 0; i < texto.length;) {
+    let matched = false;
+    // Match words starting in kana too (e.g. お祝い), not just kanji.
+    for (let length = Math.min(maxLen, texto.length - i); length >= 1; length--) {
+      const word = texto.slice(i, i + length);
+      const reading = dictionary.get(word);
+      if (!reading) continue;
+      // Never guess a compound reading from its individual characters.
+      if (/^[一-龯々]+$/.test(word) && KANJI.test(texto[i + length] ?? "")) continue;
+      result.push(...alinharLeitura(word, reading));
+      i += length;
+      matched = true;
+      break;
+    }
+    if (!matched) {
+      const unknown = texto.slice(i).match(/^[一-龯々]+/)?.[0] ?? texto[i] ?? "";
+      result.push({ text: unknown });
+      i += Math.max(1, unknown.length);
+    }
+  }
+  return result;
 }
-
 export const temKanji = (texto: string) => KANJI.test(texto);

@@ -146,7 +146,6 @@ function LicoesPage() {
               <div className="relative isolate">
                 <div aria-hidden="true" className="trail-decor pointer-events-none absolute left-3 top-14 text-trail-blossom/70 sm:left-20"><Flower2 className="h-9 w-9" /><span className="mt-2 block text-center text-lg">春</span></div>
                 <div aria-hidden="true" className="trail-decor trail-decor-late pointer-events-none absolute right-4 top-44 text-trail-gold/70 sm:right-20"><Sparkles className="h-8 w-8" /></div>
-                <div className="trail-path pointer-events-none absolute inset-y-8 left-1/2 -z-10 border-l-[5px] border-dotted border-border" aria-hidden="true" />
                 <div className="flex flex-col items-center gap-7 py-8 sm:gap-10">
                   {groups.map((group, i) => <TrailNode key={group[0]?.id ?? i} lessons={group} position={i} done={feitas} currentId={currentId} />)}
                 </div>

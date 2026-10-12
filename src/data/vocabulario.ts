@@ -1,3 +1,4 @@
+import { vocabularioAprofundamento } from "./aprofundamento";
 import type { JlptLevel } from "./kanji";
 
 export type VocabItem = {
@@ -7985,6 +7986,7 @@ export const vocabulario: VocabItem[] = [
   ...parse("N1", n1),
   // aprofundamento: palavras extras por nível
   ...vocabularioExtra,
+  ...vocabularioAprofundamento,
 ];
 
 export const vocabByLevel = (level: JlptLevel) => vocabulario.filter((v) => v.level === level);
