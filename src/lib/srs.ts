@@ -301,7 +301,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
     frases(v, porPalavra).forEach((f, n) => {
       const seed = i * 13 + n * 5;
       const wrong = pick(vocabPool, 3, seed + 31, (o) => o.word === v.word).map((o) => o.word);
-      const q = makeQuestion(`Complete a frase: ${f.lacuna}`, f.jp.replace(f.lacuna.split("＿＿＿")[0] ?? "", "").slice(0, (f.lacuna.split("＿＿＿")[1] ?? "").length ? -(f.lacuna.split("＿＿＿")[1] ?? "").length : undefined), wrong, seed + 37, {
+      const q = makeQuestion(`Complete a frase: ${f.lacuna}`, f.resposta, wrong, seed + 37, {
         audio: f.jp,
         sub: f.pt,
         tag: "Frase",

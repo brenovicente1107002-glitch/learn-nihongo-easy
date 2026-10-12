@@ -3,6 +3,8 @@ import type { VocabItem } from "@/data/vocabulario";
 export type Frase = {
   /** frase completa em japonês */
   jp: string;
+  /** Surface form expected in the gap, including conjugation. */
+  resposta: string;
   /** frase com lacuna no lugar da palavra */
   lacuna: string;
   /** tradução em português */
@@ -155,7 +157,7 @@ export function frase(v: VocabItem, variante = 0): Frase {
   const jp = tokens.join("");
   const palavras = tokens.filter((t) => !["。", "、", "「", "」"].includes(t))
     .map((t) => ({ jp: t, pt: t === w ? m : (GLOSS[t] ?? "") }));
-  return { jp, lacuna: jp.replace(alvo, BLANK), pt: `${prefixo.pt}, ${traducao}.`, tokens, palavras };
+  return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: `${prefixo.pt}, ${traducao}.`, tokens, palavras };
 }
 
 /** Complexidade crescente: tempo → sequência → motivo → concessão → ponderação. */
