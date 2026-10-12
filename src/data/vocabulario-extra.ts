@@ -7,7 +7,7 @@ import type { VocabItem } from "./vocabulario";
  */
 
 const n5 = `
-毎朝|まいあつ|toda manhã|advérbio
+毎朝|まいあさ|toda manhã|advérbio
 毎晩|まいばん|toda noite|advérbio
 毎週|まいしゅう|toda semana|advérbio
 毎月|まいつき|todo mês|advérbio
@@ -187,7 +187,7 @@ const n4 = `
 届ける|とどける|entregar|verbo
 預ける|あずける|deixar aos cuidados|verbo
 預かる|あずかる|ficar responsável|verbo
-借りる|かりる|emprestar de|verbo
+借りる|かりる|pedir emprestado|verbo
 返す|かえす|devolver|verbo
 払う|はらう|pagar|verbo
 貯める|ためる|economizar|verbo

@@ -301,7 +301,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
     frases(v, porPalavra).forEach((f, n) => {
       const seed = i * 13 + n * 5;
       const wrong = pick(vocabPool, 3, seed + 31, (o) => o.word === v.word).map((o) => o.word);
-      const q = makeQuestion(`Complete a frase: ${f.lacuna}`, v.word, wrong, seed + 37, {
+      const q = makeQuestion(`Complete a frase: ${f.lacuna}`, f.jp.replace(f.lacuna.split("＿＿＿")[0] ?? "", "").slice(0, (f.lacuna.split("＿＿＿")[1] ?? "").length ? -(f.lacuna.split("＿＿＿")[1] ?? "").length : undefined), wrong, seed + 37, {
         audio: f.jp,
         sub: f.pt,
         tag: "Frase",
@@ -382,7 +382,9 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
   });
 
   // as palavras vêm primeiro, depois as frases e o restante
-  return [...shuffle(intro, 59), ...shuffle(out, 71)].slice(0, 22);
+  const gramaticaPrioritaria = out.filter((q) => q.tag === "Gramática").slice(0, 6);
+  const restantes = out.filter((q) => !gramaticaPrioritaria.includes(q));
+  return [...shuffle(intro, 59), ...gramaticaPrioritaria, ...shuffle(restantes, 71)].slice(0, 30);
 }
 
 /** Filtra as perguntas por modalidade, com sobra do tipo mais próximo. */
