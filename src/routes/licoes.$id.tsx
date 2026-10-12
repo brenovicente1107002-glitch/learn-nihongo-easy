@@ -196,7 +196,7 @@ function LicaoPage() {
                         <AudioButton text={v.word} />
                       </div>
                       {lista.map((f) => (
-                        <div key={f.jp} className="mt-3 border-t border-border pt-3">
+                         <div key={f.jp} className="mt-3 pt-3">
                           <div className="flex items-center gap-2">
                             <span className="font-display text-lg">
                               <JaText text={f.jp} />
@@ -247,7 +247,7 @@ function LicaoPage() {
                 {point.examples.map((ex, i) => (
                   <div key={i} className="rounded-xl border border-border p-4">
                     <div className="flex items-center gap-2">
-                      <span className="font-display text-lg font-semibold">{ex.jp}</span>
+                       <span className="font-display text-lg font-semibold"><JaText text={ex.jp} /></span>
                       <AudioButton text={ex.jp} />
                     </div>
                     <div className="text-sm text-primary">{ex.romaji}</div>
