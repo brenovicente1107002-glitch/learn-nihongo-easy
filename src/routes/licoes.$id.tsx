@@ -10,7 +10,7 @@ import { LessonPlayer } from "@/components/lesson-player";
 import { formatDue, lessonQuestions } from "@/lib/srs";
 import { frases } from "@/lib/sentences";
 import { JaText } from "@/components/furigana";
-import { speakJa, ttsDisponivel } from "@/lib/tts";
+import { speakJa } from "@/lib/tts";
 import { licaoPorId, licoes } from "@/data/japanese";
 import { ArrowLeft, ArrowRight, CalendarClock, Play, Volume2 } from "lucide-react";
 
