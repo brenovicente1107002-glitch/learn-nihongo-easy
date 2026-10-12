@@ -96,8 +96,9 @@ export function segmentarFurigana(texto: string): RubySeg[] {
       break;
     }
     if (!matched) {
-      result.push({ text: texto[i] ?? "" });
-      i += 1;
+      const unknown = texto.slice(i).match(/^[一-龯々]+/)?.[0] ?? texto[i] ?? "";
+      result.push({ text: unknown });
+      i += Math.max(1, unknown.length);
     }
   }
   return result;

@@ -45,16 +45,15 @@ export const Route = createFileRoute("/licoes/$id")({
 });
 
 function AudioButton({ text, label }: { text: string; label?: string }) {
-  if (!ttsDisponivel()) return null;
   return (
-    <button
+    <Button variant="ghost" size="icon"
       type="button"
       onClick={() => speakJa(text)}
       aria-label={label ?? `Ouvir ${text}`}
       className="inline-flex h-8 w-8 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/10"
     >
       <Volume2 className="h-4 w-4" />
-    </button>
+    </Button>
   );
 }
 
