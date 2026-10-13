@@ -367,7 +367,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
         ) : (
           <div className="flex justify-end gap-3">
             {kind === "fala" && (
-              <Button size="lg" variant="outline" onClick={() => continuar(true)}>
+              <Button size="lg" variant="outline" onClick={() => continuar()}>
                 Pular
               </Button>
             )}
@@ -379,7 +379,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                   onClick={() => {
                     setCertoManual(false);
                     setChecked(true);
-                    setVidas((v) => Math.max(0, v - 1));
                   }}
                 >
                   Errei
