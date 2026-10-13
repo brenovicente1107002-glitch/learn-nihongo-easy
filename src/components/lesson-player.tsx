@@ -8,7 +8,7 @@ import { JaText } from "@/components/furigana";
 import { AomaruAvatar, conselhos } from "@/components/mascot";
 
 import type { QuizQuestion } from "@/lib/srs";
-import { Check, Heart, Mic, Volume2, X } from "lucide-react";
+import { Check, Mic, Volume2, X } from "lucide-react";
 
 type Props = {
   questions: QuizQuestion[];
@@ -47,7 +47,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   const [acertos, setAcertos] = useState(0);
-  const [vidas, setVidas] = useState(3);
   const [montado, setMontado] = useState<number[]>([]);
   const [ouvindo, setOuvindo] = useState(false);
   const [falado, setFalado] = useState("");
@@ -82,7 +81,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
       setCertoManual(limpar(txt) === limpar(q.target ?? ""));
       setChecked(true);
       if (limpar(txt) === limpar(q.target ?? "")) setAcertos((a) => a + 1);
-      else setVidas((v) => Math.max(0, v - 1));
     };
     rec.onerror = () => setOuvindo(false);
     rec.onend = () => setOuvindo(false);
@@ -110,11 +108,10 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
       kind === "montar" ? fraseMontada === q.target : selected !== null && selected === q.answer;
     setChecked(true);
     if (ok) setAcertos((a) => a + 1);
-    else setVidas((v) => Math.max(0, v - 1));
   };
 
-  const continuar = (pular = false) => {
-    if ((!pular && vidas === 0) || index + 1 >= total) {
+  const continuar = () => {
+    if (index + 1 >= total) {
       onFinish(acertos / total);
       return;
     }
