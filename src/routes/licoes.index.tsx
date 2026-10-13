@@ -14,7 +14,7 @@ import {
   unidadesPorNivel,
   type LicaoNivel,
 } from "@/data/japanese";
-import { Crown, Flower2, Sparkles, Star } from "lucide-react";
+import { Crown } from "lucide-react";
 
 export const Route = createFileRoute("/licoes/")({
   head: () => ({

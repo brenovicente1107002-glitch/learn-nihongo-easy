@@ -248,7 +248,7 @@ function AppShell({ children }: { children: ReactNode }) {
               </button>
             </div>
             <div className="grid grid-cols-3 gap-3">
-              {navItems.slice(4).map((item) => {
+              {navItems.slice(3).map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
@@ -275,7 +275,7 @@ function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile bottom tab bar */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-border bg-card pb-[env(safe-area-inset-bottom)] lg:hidden">
         <div className="mx-auto flex max-w-lg items-stretch justify-around px-1">
-          {navItems.slice(0, 4).map((item) => {
+          {navItems.slice(0, 3).map((item) => {
             const Icon = item.icon;
             const active = isActive(item.to);
             return (
@@ -310,7 +310,7 @@ function AppShell({ children }: { children: ReactNode }) {
             <span
               className={cn(
                 "flex h-10 w-12 items-center justify-center rounded-xl border-2 transition-all",
-                navItems.slice(4).some((i) => isActive(i.to))
+                navItems.slice(3).some((i) => isActive(i.to))
                   ? "border-primary/60 bg-primary/10 text-primary"
                   : "border-transparent text-muted-foreground",
               )}
