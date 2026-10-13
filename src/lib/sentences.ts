@@ -150,8 +150,8 @@ export function frase(v: VocabItem, variante = 0): Frase {
     traducao = `eu ${acao.pt}`;
   } else {
     // A citação permite praticar qualquer classe sem inventar usos ou flexões.
-    corpo = ["「", w, "」", "という", "言葉", "を", "使います"];
-    traducao = `uso a palavra “${w}” (${m})`;
+    corpo = ["「", w, "」", "を", "使います"];
+    traducao = `uso “${w}”`;
   }
   const tokens = [...prefixo.jp, ...corpo, "。"];
   const jp = tokens.join("");
