@@ -12,3 +12,6 @@
 - [x] Ampliar vocabulário e gramática integrados às lições
 - [x] Remover a linha da trilha e os separadores entre exemplos
 - [x] Verificar conteúdo, furigana e abertura dos exercícios
+- [x] Remover aba Início e decorações (flor, kanji, estrela) da trilha
+- [x] Remover corações e limite de erros das lições
+- [x] Mover estatísticas e ofensiva para a aba Conta
