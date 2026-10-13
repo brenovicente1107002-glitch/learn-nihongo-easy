@@ -88,7 +88,14 @@ function ContaPage() {
             <CardDescription>{user.email}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-xl border border-border p-4">
+                <div className="flex items-center gap-1 font-display text-2xl font-bold">
+                  <Flame className="h-5 w-5 text-primary" />
+                  {ofensiva}
+                </div>
+                <div className="text-xs text-muted-foreground">dias de ofensiva</div>
+              </div>
               <div className="rounded-xl border border-border p-4">
                 <div className="font-display text-2xl font-bold">{done.length}</div>
                 <div className="text-xs text-muted-foreground">lições concluídas</div>
