@@ -6,7 +6,31 @@ import { useAuth } from "@/hooks/use-auth";
 import { useProgress } from "@/hooks/use-progress";
 import { useSrs } from "@/hooks/use-srs";
 import { licoes } from "@/data/japanese";
-import { CloudCheck, LogOut } from "lucide-react";
+import { CloudCheck, Flame, LogOut } from "lucide-react";
+
+/** dias seguidos com estudo, contando a partir de hoje (ou de ontem) */
+function calcularOfensiva(cards: Record<string, { lastReview: number }>): number {
+  const dias = new Set(
+    Object.values(cards)
+      .map((c) => c.lastReview)
+      .filter((t) => t > 0)
+      .map((t) => {
+        const d = new Date(t);
+        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      }),
+  );
+  if (dias.size === 0) return 0;
+  let streak = 0;
+  const cursor = new Date();
+  const chave = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  // se hoje ainda não tem estudo, começa a contagem de ontem
+  if (!dias.has(chave(cursor))) cursor.setDate(cursor.getDate() - 1);
+  while (dias.has(chave(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
 
 export const Route = createFileRoute("/conta")({
   head: () => ({
@@ -31,8 +55,9 @@ export const Route = createFileRoute("/conta")({
 function ContaPage() {
   const { user, carregando, entrarComGoogle, sair } = useAuth();
   const { done } = useProgress();
-  const { scheduledCount } = useSrs();
+  const { cards, scheduledCount } = useSrs();
   const [erro, setErro] = useState<string | null>(null);
+  const ofensiva = calcularOfensiva(cards);
 
   const entrar = async () => {
     setErro(null);
