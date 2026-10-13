@@ -115,23 +115,50 @@ function ContaPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Entrar com o Google</CardTitle>
-            <CardDescription>
-              Suas lições concluídas e o calendário de revisão ficam salvos na sua conta.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button size="lg" onClick={() => void entrar()}>
-              Continuar com o Google
-            </Button>
-            {erro && <p className="text-sm text-destructive">{erro}</p>}
-            <p className="text-xs text-muted-foreground">
-              Sem conta, o progresso fica salvo só neste navegador.
-            </p>
-          </CardContent>
-        </Card>
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Seu progresso</CardTitle>
+              <CardDescription>Salvo neste navegador.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="rounded-xl border border-border p-4">
+                  <div className="flex items-center gap-1 font-display text-2xl font-bold">
+                    <Flame className="h-5 w-5 text-primary" />
+                    {ofensiva}
+                  </div>
+                  <div className="text-xs text-muted-foreground">dias de ofensiva</div>
+                </div>
+                <div className="rounded-xl border border-border p-4">
+                  <div className="font-display text-2xl font-bold">{done.length}</div>
+                  <div className="text-xs text-muted-foreground">lições concluídas</div>
+                </div>
+                <div className="rounded-xl border border-border p-4">
+                  <div className="font-display text-2xl font-bold">{scheduledCount}</div>
+                  <div className="text-xs text-muted-foreground">lições em revisão</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Entrar com o Google</CardTitle>
+              <CardDescription>
+                Suas lições concluídas e o calendário de revisão ficam salvos na sua conta.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button size="lg" onClick={() => void entrar()}>
+                Continuar com o Google
+              </Button>
+              {erro && <p className="text-sm text-destructive">{erro}</p>}
+              <p className="text-xs text-muted-foreground">
+                Sem conta, o progresso fica salvo só neste navegador.
+              </p>
+            </CardContent>
+          </Card>
+        </>
       )}
 
       <Link to="/licoes" className="inline-block text-sm text-primary hover:underline">
