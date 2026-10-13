@@ -21,6 +21,7 @@ const BLANK = "＿＿＿";
 
 /** Significado de cada pedacinho usado nas frases (partículas, verbos, complementos). */
 const GLOSS: Record<string, string> = {
+  午後: "à tarde", 後: "depois",
   休憩: "intervalo / descanso", 私: "eu", 言葉: "palavra", という: "chamada", 使います: "uso",
   読みます: "leio", 書きます: "escrevo", 来ます: "venho", 働きます: "trabalho", 勉強します: "estudo",
   終わって: "terminar (ligação)", 終わった: "terminou", 帰って: "voltar (ligação)",
@@ -150,42 +151,39 @@ export function frase(v: VocabItem, variante = 0): Frase {
     traducao = `eu ${acao.pt}`;
   } else {
     // A citação permite praticar qualquer classe sem inventar usos ou flexões.
-    corpo = ["「", w, "」", "という", "言葉", "を", "使います"];
-    traducao = `uso a palavra “${w}” (${m})`;
+    corpo = ["「", w, "」", "を", "使います"];
+    traducao = `uso “${w}”`;
   }
   const tokens = [...prefixo.jp, ...corpo, "。"];
   const jp = tokens.join("");
   const palavras = tokens.filter((t) => !["。", "、", "「", "」"].includes(t))
     .map((t) => ({ jp: t, pt: t === w ? m : (GLOSS[t] ?? "") }));
-  return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: `${prefixo.pt} ${traducao}.`, tokens, palavras };
+  return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: [prefixo.pt, traducao].filter(Boolean).join(" ") + ".", tokens, palavras };
 }
 
 /** Complexidade crescente: tempo → sequência → motivo → concessão → ponderação. */
 const contextos: Record<VocabItem["level"], Comp[]> = {
   N5: [
     { jp: ["今日", "は"], pt: "Hoje" },
-    { jp: ["明日", "は"], pt: "Amanhã" },
     { jp: ["毎朝"], pt: "Toda manhã" },
+    { jp: [], pt: "" },
   ],
   N4: [
-    { jp: ["授業", "が", "終わって", "から", "、"], pt: "Depois que a aula termina" },
-    { jp: ["家", "に", "帰って", "から", "、"], pt: "Depois que volto para casa" },
-    { jp: ["勉強", "を", "する", "前に", "、"], pt: "Antes de estudar" },
+    { jp: ["午後", "は"], pt: "À tarde" },
+    { jp: ["夜", "は"], pt: "À noite" },
+    { jp: ["週末", "に"], pt: "No fim de semana" },
   ],
   N3: [
-    { jp: ["時間", "が", "ある", "ので", "、", "今日", "は"], pt: "Como tenho tempo, hoje" },
-    { jp: ["授業", "が", "終わった", "ので", "、", "今", "から"], pt: "Como a aula terminou, a partir de agora" },
-    { jp: ["明日", "は", "忙しい", "ため", "、", "今日", "は"], pt: "Como amanhã estarei ocupado, hoje" },
+    { jp: ["授業", "の", "後", "で", "、"], pt: "Depois da aula" },
+    { jp: ["週末", "は", "忙しい", "ので", "、"], pt: "Como o fim de semana está ocupado" },
   ],
   N2: [
-    { jp: ["仕事", "が", "忙しい", "にもかかわらず", "、", "休憩", "の", "時間", "に", "、"], pt: "Apesar de estar ocupado com o trabalho, no horário do intervalo," },
-    { jp: ["予定", "が", "変わった", "ものの", "、", "休憩", "の", "時間", "に", "、"], pt: "Embora os planos tenham mudado, no horário do intervalo," },
-    { jp: ["時間", "が", "限られている", "とはいえ", "、", "休憩", "の", "時間", "に", "、"], pt: "Embora o tempo seja limitado, no horário do intervalo," },
+    { jp: ["仕事", "が", "終わって", "から", "、"], pt: "Depois que o trabalho termina" },
+    { jp: ["時間", "が", "ある", "ので", "、"], pt: "Como tenho tempo" },
   ],
   N1: [
-    { jp: ["予定", "が", "変わった", "こと", "を", "踏まえ", "、", "家族", "と", "相談した", "上で", "、", "今日", "は"], pt: "Levando em conta a mudança de planos e depois de conversar com a família, hoje" },
-    { jp: ["仕事", "が", "忙しい", "とはいえ", "、", "生活", "の", "リズム", "を", "保つ", "べく", "、", "今日", "も"], pt: "Embora esteja ocupado com o trabalho, para manter o ritmo de vida, hoje também" },
-    { jp: ["時間", "が", "限られている", "中", "、", "予定", "を", "見直した", "上で", "、", "今日", "は"], pt: "Com o tempo limitado e depois de reavaliar os planos, hoje" },
+    { jp: ["予定", "が", "変わった", "ので", "、"], pt: "Como os planos mudaram" },
+    { jp: ["時間", "が", "限られている", "ので", "、"], pt: "Como o tempo é limitado" },
   ],
 };
 
