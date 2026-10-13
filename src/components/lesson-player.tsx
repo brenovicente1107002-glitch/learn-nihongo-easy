@@ -40,7 +40,7 @@ const getRecognition = (): SpeechRecognitionLike | null => {
 
 const limpar = (s: string) => s.replace(/[。、．，\s!?！？]/g, "");
 
-/** Sessão de exercícios estilo Duolingo: progresso, vidas, escuta, fala e montar frase. */
+/** Sessão de exercícios estilo Duolingo: progresso, escuta, fala e montar frase. */
 export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   const total = questions.length;
   const [index, setIndex] = useState(0);
@@ -126,7 +126,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* topo: sair, progresso, vidas */}
+      {/* topo: sair e progresso */}
       <div className="flex items-center gap-4">
         <button
           type="button"
