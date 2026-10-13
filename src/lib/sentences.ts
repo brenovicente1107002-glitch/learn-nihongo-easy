@@ -157,7 +157,7 @@ export function frase(v: VocabItem, variante = 0): Frase {
   const jp = tokens.join("");
   const palavras = tokens.filter((t) => !["。", "、", "「", "」"].includes(t))
     .map((t) => ({ jp: t, pt: t === w ? m : (GLOSS[t] ?? "") }));
-  return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: `${prefixo.pt} ${traducao}.`, tokens, palavras };
+  return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: [prefixo.pt, traducao].filter(Boolean).join(" ") + ".", tokens, palavras };
 }
 
 /** Complexidade crescente: tempo → sequência → motivo → concessão → ponderação. */
