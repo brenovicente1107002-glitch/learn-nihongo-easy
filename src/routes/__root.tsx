@@ -15,9 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import {
   BookOpen,
-  
   GraduationCap,
-  Home,
   Layers,
   Library,
   Menu,
