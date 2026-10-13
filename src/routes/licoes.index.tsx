@@ -14,7 +14,7 @@ import {
   unidadesPorNivel,
   type LicaoNivel,
 } from "@/data/japanese";
-import { Crown, Flower2, Sparkles, Star } from "lucide-react";
+import { Crown } from "lucide-react";
 
 export const Route = createFileRoute("/licoes/")({
   head: () => ({
@@ -144,12 +144,9 @@ function LicoesPage() {
               </div>
 
               <div className="relative isolate">
-                <div aria-hidden="true" className="trail-decor pointer-events-none absolute left-3 top-14 text-trail-blossom/70 sm:left-20"><Flower2 className="h-9 w-9" /><span className="mt-2 block text-center text-lg">春</span></div>
-                <div aria-hidden="true" className="trail-decor trail-decor-late pointer-events-none absolute right-4 top-44 text-trail-gold/70 sm:right-20"><Sparkles className="h-8 w-8" /></div>
                 <div className="flex flex-col items-center gap-7 py-8 sm:gap-10">
-                  {groups.map((group, i) => <TrailNode key={group[0]?.id ?? i} lessons={group} position={i} done={feitas} currentId={currentId} />)}
+                   {groups.map((group, i) => <TrailNode key={group[0]?.id ?? i} lessons={group} position={i} done={feitas} currentId={currentId} />)}
                 </div>
-                <div className="flex items-center justify-center gap-2 pb-3 text-trail-gold"><Star className="h-4 w-4 fill-current" /><Crown className="h-6 w-6" /><Star className="h-4 w-4 fill-current" /></div>
               </div>
             </section>
           );

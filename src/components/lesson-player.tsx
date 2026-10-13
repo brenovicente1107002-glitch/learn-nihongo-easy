@@ -8,7 +8,7 @@ import { JaText } from "@/components/furigana";
 import { AomaruAvatar, conselhos } from "@/components/mascot";
 
 import type { QuizQuestion } from "@/lib/srs";
-import { Check, Heart, Mic, Volume2, X } from "lucide-react";
+import { Check, Mic, Volume2, X } from "lucide-react";
 
 type Props = {
   questions: QuizQuestion[];
@@ -40,14 +40,13 @@ const getRecognition = (): SpeechRecognitionLike | null => {
 
 const limpar = (s: string) => s.replace(/[。、．，\s!?！？]/g, "");
 
-/** Sessão de exercícios estilo Duolingo: progresso, vidas, escuta, fala e montar frase. */
+/** Sessão de exercícios estilo Duolingo: progresso, escuta, fala e montar frase. */
 export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   const total = questions.length;
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   const [acertos, setAcertos] = useState(0);
-  const [vidas, setVidas] = useState(3);
   const [montado, setMontado] = useState<number[]>([]);
   const [ouvindo, setOuvindo] = useState(false);
   const [falado, setFalado] = useState("");
@@ -82,7 +81,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
       setCertoManual(limpar(txt) === limpar(q.target ?? ""));
       setChecked(true);
       if (limpar(txt) === limpar(q.target ?? "")) setAcertos((a) => a + 1);
-      else setVidas((v) => Math.max(0, v - 1));
     };
     rec.onerror = () => setOuvindo(false);
     rec.onend = () => setOuvindo(false);
@@ -110,11 +108,10 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
       kind === "montar" ? fraseMontada === q.target : selected !== null && selected === q.answer;
     setChecked(true);
     if (ok) setAcertos((a) => a + 1);
-    else setVidas((v) => Math.max(0, v - 1));
   };
 
-  const continuar = (pular = false) => {
-    if ((!pular && vidas === 0) || index + 1 >= total) {
+  const continuar = () => {
+    if (index + 1 >= total) {
       onFinish(acertos / total);
       return;
     }
@@ -129,7 +126,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* topo: sair, progresso, vidas */}
+      {/* topo: sair e progresso */}
       <div className="flex items-center gap-4">
         <button
           type="button"
@@ -144,10 +141,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
             className="h-full rounded-full bg-primary transition-all duration-300"
             style={{ width: `${progresso}%` }}
           />
-        </div>
-        <div className="flex items-center gap-1 text-primary">
-          <Heart key={vidas} className="heart-beat h-5 w-5 fill-current" />
-          <span className="font-display text-sm font-bold">{vidas}</span>
         </div>
       </div>
 
@@ -368,13 +361,13 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
             </div>
 
             <Button size="lg" onClick={() => continuar()}>
-              {vidas === 0 ? "Ver resultado" : index + 1 >= total ? "Finalizar" : "Continuar"}
+              {index + 1 >= total ? "Finalizar" : "Continuar"}
             </Button>
           </div>
         ) : (
           <div className="flex justify-end gap-3">
             {kind === "fala" && (
-              <Button size="lg" variant="outline" onClick={() => continuar(true)}>
+              <Button size="lg" variant="outline" onClick={() => continuar()}>
                 Pular
               </Button>
             )}
@@ -386,7 +379,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
                   onClick={() => {
                     setCertoManual(false);
                     setChecked(true);
-                    setVidas((v) => Math.max(0, v - 1));
                   }}
                 >
                   Errei
