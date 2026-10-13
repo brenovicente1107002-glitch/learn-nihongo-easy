@@ -142,10 +142,6 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
             style={{ width: `${progresso}%` }}
           />
         </div>
-        <div className="flex items-center gap-1 text-primary">
-          <Heart key={vidas} className="heart-beat h-5 w-5 fill-current" />
-          <span className="font-display text-sm font-bold">{vidas}</span>
-        </div>
       </div>
 
       <div className="flex items-center gap-2">
@@ -365,7 +361,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
             </div>
 
             <Button size="lg" onClick={() => continuar()}>
-              {vidas === 0 ? "Ver resultado" : index + 1 >= total ? "Finalizar" : "Continuar"}
+              {index + 1 >= total ? "Finalizar" : "Continuar"}
             </Button>
           </div>
         ) : (
