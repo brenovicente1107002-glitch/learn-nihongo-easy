@@ -44,8 +44,10 @@ const GLOSS: Record<string, string> = {
   ので: "porque",
   て: "",
   食べます: "como",
+  食べて: "comer (ligação)",
   飲みます: "bebo",
   行きます: "vou",
+  行って: "ir (ligação)",
   話します: "converso",
   話しました: "conversei",
   言います: "digo",
@@ -115,6 +117,22 @@ function significado(meaning: string): string {
   return primeiro.replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim();
 }
 
+/** Conjuntos de palavras com molduras verificadas (evita conjugar traduções). */
+const alimentos = new Set(["ご飯", "パン", "肉", "魚", "卵", "果物", "りんご", "リンゴ", "寿司", "すし", "ラーメン", "野菜", "ケーキ"]);
+const bebidas = new Set(["水", "お茶", "コーヒー", "牛乳", "ジュース", "ビール", "紅茶"]);
+const destinos = new Set(["学校", "駅", "病院", "公園", "図書館", "空港", "ホテル", "銀行", "会社", "大学", "レストラン"]);
+const ACOES: Record<string, { jp: string; pt: string; te: string }> = {
+  食べる: { jp: "食べます", pt: "como", te: "食べて" },
+  飲む: { jp: "飲みます", pt: "bebo", te: "飲んで" },
+  行く: { jp: "行きます", pt: "vou", te: "行って" },
+  来る: { jp: "来ます", pt: "venho", te: "来て" },
+  読む: { jp: "読みます", pt: "leio", te: "読んで" },
+  書く: { jp: "書きます", pt: "escrevo", te: "書いて" },
+  寝る: { jp: "寝ます", pt: "durmo", te: "寝て" },
+  働く: { jp: "働きます", pt: "trabalho", te: "働いて" },
+  勉強する: { jp: "勉強します", pt: "estudo", te: "勉強して" },
+};
+
 /** Frases graduadas por nível; estruturas seguras evitam conjugar traduções portuguesas. */
 export function frase(v: VocabItem, variante = 0): Frase {
   const w = v.word;
@@ -122,16 +140,6 @@ export function frase(v: VocabItem, variante = 0): Frase {
   const s = hash(w) + variante * 17;
   const contexto = contextos[v.level][s % contextos[v.level].length] ?? contextos.N5[0];
   const prefixo = contexto ?? { jp: ["今日", "は"], pt: "Hoje" };
-  const alimentos = new Set(["ご飯", "パン", "肉", "魚", "卵", "果物", "りんご", "リンゴ", "寿司", "すし", "ラーメン", "野菜", "ケーキ"]);
-  const bebidas = new Set(["水", "お茶", "コーヒー", "牛乳", "ジュース", "ビール", "紅茶"]);
-  const destinos = new Set(["学校", "駅", "病院", "公園", "図書館", "空港", "ホテル", "銀行", "会社", "大学", "レストラン"]);
-  const acoes: Record<string, { jp: string; pt: string }> = {
-    食べる: { jp: "食べます", pt: "como" }, 飲む: { jp: "飲みます", pt: "bebo" },
-    行く: { jp: "行きます", pt: "vou" }, 来る: { jp: "来ます", pt: "venho" },
-    読む: { jp: "読みます", pt: "leio" }, 書く: { jp: "書きます", pt: "escrevo" },
-    寝る: { jp: "寝ます", pt: "durmo" }, 働く: { jp: "働きます", pt: "trabalho" },
-    勉強する: { jp: "勉強します", pt: "estudo" },
-  };
   let corpo: string[];
   let traducao: string;
   let alvo = w;
@@ -144,8 +152,8 @@ export function frase(v: VocabItem, variante = 0): Frase {
   } else if (destinos.has(w)) {
     corpo = [w, "へ", "行きます"];
     traducao = `vou para ${m}`;
-  } else if (acoes[w]) {
-    const acao = acoes[w];
+  } else if (ACOES[w]) {
+    const acao = ACOES[w];
     alvo = acao.jp;
     corpo = ["私", "は", acao.jp];
     traducao = `eu ${acao.pt}`;
@@ -159,6 +167,77 @@ export function frase(v: VocabItem, variante = 0): Frase {
   const palavras = tokens.filter((t) => !["。", "、", "「", "」"].includes(t))
     .map((t) => ({ jp: t, pt: t === w ? m : (GLOSS[t] ?? "") }));
   return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: [prefixo.pt, traducao].filter(Boolean).join(" ") + ".", tokens, palavras };
+}
+
+/**
+ * Frase montada só com palavras da própria unidade: combina duas palavras
+ * aprendidas juntas (comida + bebida, ação + lugar, palavra + lugar).
+ * Retorna null quando a unidade não tem par compatível.
+ */
+function fraseComUnidade(v: VocabItem, variante: number, unidade: VocabItem[]): Frase | null {
+  const outros = unidade.filter((u) => u.word !== v.word);
+  if (!outros.length) return null;
+  const mapa = new Map<string, string>([
+    [v.word, significado(v.meaning)],
+    ...outros.map((u): [string, string] => [u.word, significado(u.meaning)]),
+  ]);
+  const gloss = (t: string) => mapa.get(t) ?? GLOSS[t] ?? "";
+  const montar = (tokens: string[], alvoTok: string, pt: string): Frase => {
+    const jp = tokens.join("");
+    return {
+      jp,
+      resposta: alvoTok,
+      lacuna: jp.replace(alvoTok, BLANK),
+      pt,
+      tokens,
+      palavras: tokens
+        .filter((t) => !["。", "、", "「", "」"].includes(t))
+        .map((t) => ({ jp: t, pt: gloss(t) })),
+    };
+  };
+  const s = hash(v.word) + variante * 31;
+  const vAlimento = alimentos.has(v.word);
+  const vBebida = bebidas.has(v.word);
+  const vAcao = ACOES[v.word];
+
+  if (vAlimento || vBebida) {
+    const parceiro = outros.find((o) => (vAlimento ? bebidas.has(o.word) : alimentos.has(o.word)));
+    if (parceiro) {
+      const comida = vAlimento ? v.word : parceiro.word;
+      const bebida = vAlimento ? parceiro.word : v.word;
+      return montar(
+        [comida, "を", "食べて", "、", bebida, "を", "飲みます", "。"],
+        v.word,
+        `Como ${gloss(comida)} e bebo ${gloss(bebida)}.`,
+      );
+    }
+  }
+  if (vAcao) {
+    const destino = outros.find((o) => destinos.has(o.word));
+    if (destino) {
+      return montar(
+        [destino.word, "へ", "行って", "、", vAcao.jp, "。"],
+        vAcao.jp,
+        `Vou a ${gloss(destino.word)} e ${vAcao.pt}.`,
+      );
+    }
+    const outra = outros.find((o) => ACOES[o.word]);
+    const a2 = outra ? ACOES[outra.word] : undefined;
+    if (a2) {
+      return montar([vAcao.te, "、", a2.jp, "。"], vAcao.te, `${vAcao.pt} e ${a2.pt}.`);
+    }
+  }
+  // Substantivo comum ou lugar: citação segura dentro de um lugar da unidade.
+  const lugar = v.word && destinos.has(v.word) ? v.word : outros.find((o) => destinos.has(o.word))?.word;
+  const parceiro = v.word === lugar ? outros[s % outros.length] : v;
+  if (lugar && parceiro && parceiro.word !== lugar) {
+    return montar(
+      ["「", parceiro.word, "」", "は", lugar, "に", "あります", "。"],
+      v.word === lugar ? lugar : v.word,
+      `${gloss(parceiro.word)} fica em ${gloss(lugar)}.`,
+    );
+  }
+  return null;
 }
 
 /** Complexidade crescente: tempo → sequência → motivo → concessão → ponderação. */
@@ -196,10 +275,10 @@ export function tokenizarJa(jp: string): string[] {
 }
 
 /** Várias frases diferentes com a mesma palavra (para revisar a unidade). */
-export function frases(v: VocabItem, n = 3): Frase[] {
+export function frases(v: VocabItem, n = 3, unidade: VocabItem[] = []): Frase[] {
   const out: Frase[] = [];
   for (let i = 0; out.length < n && i < n * 4; i++) {
-    const f = frase(v, i);
+    const f = (unidade.length ? fraseComUnidade(v, i, unidade) : null) ?? frase(v, i);
     if (!out.some((o) => o.jp === f.jp)) out.push(f);
   }
   return out;
