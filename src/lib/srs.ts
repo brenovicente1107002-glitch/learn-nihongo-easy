@@ -259,7 +259,6 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
     const wrong = pick(vocabPool, 3, i + 61, (o) => o.meaning === v.meaning).map((o) => o.meaning);
     const q = makeQuestion(`O que significa ${v.word}?`, v.meaning, wrong, i + 67, {
       audio: v.word,
-      sub: `${v.word} (${v.reading})`,
       tag: "Vocabulário",
     });
     if (q) intro.push(q);
@@ -267,7 +266,6 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
     // inverso: significado -> palavra
     const wrongW = pick(vocabPool, 3, i + 71, (o) => o.word === v.word).map((o) => o.word);
     const inv = makeQuestion(`Como se diz "${v.meaning}"?`, v.word, wrongW, i + 73, {
-      sub: `${v.word} (${v.reading})`,
       tag: "Vocabulário",
     });
     if (inv) out.push(inv);
@@ -287,7 +285,6 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
     const ew = makeQuestion("Ouça e escolha o significado", v.meaning, wrong, i + 89, {
       kind: "escuta",
       audio: v.word,
-      sub: `${v.word} (${v.reading})`,
       tag: "Vocabulário",
     });
     if (ew) out.push(ew);
@@ -336,7 +333,6 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
     const wrong = pick(kanjiPool, 3, i + 23, (o) => o.meaning === k.meaning).map((o) => o.meaning);
     const q = makeQuestion(`Qual o significado do kanji ${k.char}?`, k.meaning, wrong, i + 29, {
       audio: k.char,
-      sub: k.readings.join(" · "),
       tag: "Kanji",
     });
     if (q) out.push(q);
@@ -362,7 +358,6 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
         .filter((pt) => pt !== ex.pt);
       const q = makeQuestion(`O que significa "${ex.jp}"?`, ex.pt, wrongPt, seed, {
         audio: ex.jp,
-        sub: ex.romaji,
         tag: "Gramática",
       });
       if (q) out.push(q);
