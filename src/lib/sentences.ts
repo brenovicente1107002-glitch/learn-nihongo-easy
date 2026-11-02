@@ -44,8 +44,10 @@ const GLOSS: Record<string, string> = {
   ので: "porque",
   て: "",
   食べます: "como",
+  食べて: "comer (ligação)",
   飲みます: "bebo",
   行きます: "vou",
+  行って: "ir (ligação)",
   話します: "converso",
   話しました: "conversei",
   言います: "digo",
@@ -273,10 +275,10 @@ export function tokenizarJa(jp: string): string[] {
 }
 
 /** Várias frases diferentes com a mesma palavra (para revisar a unidade). */
-export function frases(v: VocabItem, n = 3): Frase[] {
+export function frases(v: VocabItem, n = 3, unidade: VocabItem[] = []): Frase[] {
   const out: Frase[] = [];
   for (let i = 0; out.length < n && i < n * 4; i++) {
-    const f = frase(v, i);
+    const f = (unidade.length ? fraseComUnidade(v, i, unidade) : null) ?? frase(v, i);
     if (!out.some((o) => o.jp === f.jp)) out.push(f);
   }
   return out;

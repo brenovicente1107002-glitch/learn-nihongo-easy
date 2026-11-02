@@ -295,7 +295,7 @@ export function lessonQuestions(licao: Licao): QuizQuestion[] {
 
   // 1) vocabulário dentro de frases
   content.vocab.forEach((v, i) => {
-    frases(v, porPalavra).forEach((f, n) => {
+    frases(v, porPalavra, content.vocab).forEach((f, n) => {
       const seed = i * 13 + n * 5;
       const wrong = pick(vocabPool, 3, seed + 31, (o) => o.word === v.word).map((o) => o.word);
       const q = makeQuestion(`Complete a frase: ${f.lacuna}`, f.resposta, wrong, seed + 37, {
