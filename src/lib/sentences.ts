@@ -222,8 +222,8 @@ function fraseComUnidade(v: VocabItem, variante: number, unidade: VocabItem[]): 
       );
     }
     const outra = outros.find((o) => ACOES[o.word]);
-    if (outra) {
-      const a2 = ACOES[outra.word];
+    const a2 = outra ? ACOES[outra.word] : undefined;
+    if (a2) {
       return montar([vAcao.te, "、", a2.jp, "。"], vAcao.te, `${vAcao.pt} e ${a2.pt}.`);
     }
   }
