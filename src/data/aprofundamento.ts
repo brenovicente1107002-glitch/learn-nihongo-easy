@@ -308,5 +308,70 @@ export const gramaticaAprofundamento: GrammarPoint[] = [
         "pt": "Realizamos várias discussões com especialistas para resolver o problema."
       }
     ]
+  },
+  {
+    "level": "N4",
+    "title": "Tentar com てみる",
+    "pattern": "Verbo na forma て + みる",
+    "explanation": "Experimentar fazer algo para ver o resultado.",
+    "examples": [
+      {
+        "jp": "一度やってみます。",
+        "romaji": "Ichido yatte mimasu.",
+        "pt": "Vou tentar fazer uma vez."
+      }
+    ]
+  },
+  {
+    "level": "N4",
+    "title": "Obrigação com なければならない",
+    "pattern": "Forma negativa sem い + ければならない",
+    "explanation": "Expressa dever ou obrigação.",
+    "examples": [
+      {
+        "jp": "明日までに宿題を出さなければなりません。",
+        "romaji": "Ashita made ni shukudai o dasanakereba narimasen.",
+        "pt": "Tenho que entregar a lição de casa até amanhã."
+      }
+    ]
+  },
+  {
+    "level": "N4",
+    "title": "Ações simultâneas com ながら",
+    "pattern": "Forma ます sem ます + ながら",
+    "explanation": "Duas ações feitas ao mesmo tempo pela mesma pessoa.",
+    "examples": [
+      {
+        "jp": "音楽を聞きながら勉強します。",
+        "romaji": "Ongaku o kikinagara benkyou shimasu.",
+        "pt": "Estudo enquanto ouço música."
+      }
+    ]
+  },
+  {
+    "level": "N3",
+    "title": "Impossibilidade com わけがない",
+    "pattern": "Forma simples + わけがない",
+    "explanation": "Nega com convicção que algo seja possível.",
+    "examples": [
+      {
+        "jp": "そんなことがあるわけがありません。",
+        "romaji": "Sonna koto ga aru wake ga arimasen.",
+        "pt": "Não é possível que algo assim aconteça."
+      }
+    ]
+  },
+  {
+    "level": "N3",
+    "title": "Distribuição com ずつ",
+    "pattern": "Quantidade + ずつ",
+    "explanation": "Indica quantidades iguais repetidas, uma a uma.",
+    "examples": [
+      {
+        "jp": "毎日三個ずつ単語を覚えます。",
+        "romaji": "Mainichi sanko zutsu tango o oboemasu.",
+        "pt": "Memorizo três palavras por dia."
+      }
+    ]
   }
 ];

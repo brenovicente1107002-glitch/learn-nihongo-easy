@@ -119,6 +119,18 @@ const n5 = `
 硬い|かたい|duro|adjetivo
 柔らかい|やわらかい|macio|adjetivo
 汚い|きたない|sujo|adjetivo
+昼休み|ひるやすみ|hora do almoço|substantivo
+日曜日|にちようび|domingo|substantivo
+月曜日|げつようび|segunda-feira|substantivo
+火曜日|かようび|terça-feira|substantivo
+水曜日|すいようび|quarta-feira|substantivo
+木曜日|もくようび|quinta-feira|substantivo
+金曜日|きんようび|sexta-feira|substantivo
+土曜日|どようび|sábado|substantivo
+今週|こんしゅう|esta semana|substantivo
+来週|らいしゅう|semana que vem|substantivo
+先週|せんしゅう|semana passada|substantivo
+今月|こんげつ|este mês|substantivo
 `;
 
 const n4 = `
@@ -219,6 +231,18 @@ const n4 = `
 安全|あんぜん|seguro|adjetivo
 暇|ひま|livre|adjetivo
 真面目|まじめ|sério|adjetivo
+趣味|しゅみ|hobby|substantivo
+経験|けいけん|experiência|substantivo
+予約|よやく|reserva|substantivo
+案内|あんない|informação|substantivo
+用事|ようじ|compromisso|substantivo
+都合|つごう|conveniência|substantivo
+手伝い|てつだい|ajuda|substantivo
+習慣|しゅうかん|hábito|substantivo
+気持ち|きもち|sentimento|substantivo
+具合|ぐあい|condição|substantivo
+予定|よてい|planos|substantivo
+連絡|れんらく|contato|substantivo
 `;
 
 const n3 = `
@@ -324,6 +348,18 @@ const n3 = `
 特別|とくべつ|especial|adjetivo
 珍しい|めずらしい|raro|adjetivo
 立派|りっぱ|excelente|adjetivo
+環境|かんきょう|meio ambiente|substantivo
+意見|いけん|opinião|substantivo
+原因|げんいん|causa|substantivo
+結果|けっか|resultado|substantivo
+調査|ちょうさ|pesquisa|substantivo
+平均|へいきん|média|substantivo
+増加|ぞうか|aumento|substantivo
+減少|げんしょう|diminuição|substantivo
+影響|えいきょう|influência|substantivo
+状態|じょうたい|estado|substantivo
+目的|もくてき|objetivo|substantivo
+方法|ほうほう|método|substantivo
 `;
 
 const n2 = `
@@ -406,6 +442,18 @@ const n2 = `
 主観的|しゅかんてき|subjetivo|adjetivo
 合理的|ごうりてき|racional|adjetivo
 効率的|こうりつてき|eficiente|adjetivo
+価値観|かちかん|valores|substantivo
+貢献|こうけん|contribuição|substantivo
+課題|かだい|desafio|substantivo
+対策|たいさく|medida|substantivo
+基準|きじゅん|critério|substantivo
+傾向|けいこう|tendência|substantivo
+視点|してん|ponto de vista|substantivo
+矛盾|むじゅん|contradição|substantivo
+前提|ぜんてい|pressuposto|substantivo
+柔軟|じゅうなん|flexível|adjetivo
+厳密|げんみつ|rigoroso|adjetivo
+抽象的|ちゅうしょうてき|abstrato|adjetivo
 `;
 
 const n1 = `
@@ -487,6 +535,18 @@ const n1 = `
 穏やか|おだやか|calmo|adjetivo
 和やか|なごやか|harmonioso|adjetivo
 朗らか|ほがらか|alegre|adjetivo
+曖昧|あいまい|ambíguo|adjetivo
+顕著|けんちょ|notável|adjetivo
+潜在的|せんざいてき|potencial|adjetivo
+包括的|ほうかつてき|abrangente|adjetivo
+概念|がいねん|conceito|substantivo
+本質|ほんしつ|essência|substantivo
+洞察|どうさつ|percepção|substantivo
+仮説|かせつ|hipótese|substantivo
+規範|きはん|norma|substantivo
+兆候|ちょうこう|sinal|substantivo
+迂回|うかい|desvio|substantivo
+醍醐味|だいごみ|verdadeiro encanto|substantivo
 `;
 
 const parseExtra = (level: JlptLevel, raw: string): VocabItem[] =>
