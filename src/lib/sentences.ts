@@ -98,6 +98,9 @@ const GLOSS: Record<string, string> = {
   学生: "estudante",
   "、": ",",
   "。": ".",
+  のが: "(o ato de)", 好きです: "gosto", つもりです: "pretendo", ちょっと: "um pouco",
+  ね: "né?", 本当: "verdade", について: "sobre", 話しましょう: "vamos conversar",
+  こと: "coisa / assunto", よく: "bastante / muito", 考えます: "penso",
 };
 
 /** Complementos simples (1–2 palavras) que entram em algumas frases. */
@@ -158,9 +161,22 @@ export function frase(v: VocabItem, variante = 0): Frase {
     corpo = ["私", "は", acao.jp];
     traducao = `eu ${acao.pt}`;
   } else {
-    // A citação permite praticar qualquer classe sem inventar usos ou flexões.
-    corpo = ["「", w, "」", "を", "使います"];
-    traducao = `uso “${w}”`;
+    // Molduras do dia a dia que aceitam qualquer item da mesma classe sem flexionar.
+    const t = v.type.toLowerCase();
+    const k = s % 2;
+    if (t.startsWith("verbo") && /[うくぐすつぬぶむる]$/.test(w)) {
+      corpo = k ? [w, "のが", "好きです"] : ["明日", "は", w, "つもりです"];
+      traducao = k ? `gosto de ${m}` : `amanhã pretendo ${m}`;
+    } else if (t.startsWith("adjetivo")) {
+      corpo = k ? ["ちょっと", w, "です", "ね"] : ["本当", "に", w, "です", "ね"];
+      traducao = k ? `está um pouco ${m}, né?` : `é muito ${m} mesmo, né?`;
+    } else if (t.startsWith("substantivo")) {
+      corpo = k ? [w, "について", "ちょっと", "話しましょう"] : [w, "の", "こと", "を", "よく", "考えます"];
+      traducao = k ? `vamos falar um pouco sobre ${m}` : `penso bastante em ${m}`;
+    } else {
+      corpo = ["「", w, "」", "って", "よく", "言います", "ね"];
+      traducao = `a gente diz muito “${w}”, né?`;
+    }
   }
   const tokens = [...prefixo.jp, ...corpo, "。"];
   const jp = tokens.join("");
