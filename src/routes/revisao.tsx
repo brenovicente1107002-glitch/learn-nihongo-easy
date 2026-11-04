@@ -228,52 +228,9 @@ function RevisaoPage() {
               Revisão extra
             </Button>
           </div>
-          {prioridade.slice(0, 6).map((id) => {
-            const l = licaoPorId(id);
-            if (!l) return null;
-
-            return (
-              <div
-                key={id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-border p-3"
-              >
-                <div className="min-w-0">
-                  <div className="truncate font-medium">{l.title}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {l.category} · último resultado {cards[id]?.lastScore ?? 0}%
-                  </div>
-                </div>
-                <Link
-                  to="/licoes/$id"
-                  params={{ id }}
-                  className={cn(buttonVariants({ size: "sm", variant: "outline" }), "shrink-0")}
-                >
-                  Abrir lição
-                </Link>
-              </div>
-            );
-          })}
         </CardContent>
       </Card>
 
-      {proximas.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CalendarClock className="h-5 w-5 text-primary" />
-              Próximas revisões
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            {proximas.slice(0, 6).map((c) => (
-              <div key={c.id} className="flex justify-between gap-3">
-                <span className="truncate">{licaoPorId(c.id)?.title ?? c.id}</span>
-                <span className="shrink-0 text-muted-foreground">{formatDue(c.due)}</span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
 
       <Card>
         <CardHeader>
