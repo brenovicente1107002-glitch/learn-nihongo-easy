@@ -76,7 +76,7 @@ const GLOSS: Record<string, string> = {
   かばん: "bolsa",
   日本語: "japonês",
   授業: "aula",
-  話: "assunto",
+  話: "conversa / assunto", しました: "fiz",
   毎朝: "toda manhã",
   今日: "hoje",
   明日: "amanhã",
@@ -100,7 +100,7 @@ const GLOSS: Record<string, string> = {
   "。": ".",
   のが: "(o ato de)", 好きです: "gosto", つもりです: "pretendo", ちょっと: "um pouco",
   ね: "né?", 本当: "verdade", について: "sobre", 話しましょう: "vamos conversar",
-  こと: "coisa / assunto", よく: "bastante / muito", 考えます: "penso",
+  よく: "bastante / muito", 考えます: "penso",
 };
 
 /** Complementos simples (1–2 palavras) que entram em algumas frases. */
@@ -135,6 +135,8 @@ const ACOES: Record<string, { jp: string; pt: string; te: string }> = {
   働く: { jp: "働きます", pt: "trabalho", te: "働いて" },
   勉強する: { jp: "勉強します", pt: "estudo", te: "勉強して" },
 };
+
+const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 
 /** Frases graduadas por nível; estruturas seguras evitam conjugar traduções portuguesas. */
 export function frase(v: VocabItem, variante = 0): Frase {
@@ -182,7 +184,7 @@ export function frase(v: VocabItem, variante = 0): Frase {
   const jp = tokens.join("");
   const palavras = tokens.filter((t) => !["。", "、", "「", "」"].includes(t))
     .map((t) => ({ jp: t, pt: t === w ? m : (GLOSS[t] ?? "") }));
-  return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: [prefixo.pt, traducao].filter(Boolean).join(" ") + ".", tokens, palavras };
+  return { jp, resposta: alvo, lacuna: jp.replace(alvo, BLANK), pt: cap([prefixo.pt, traducao].filter(Boolean).join(", ")) + (traducao.endsWith("?") ? "" : "."), tokens, palavras };
 }
 
 /**
@@ -248,9 +250,9 @@ function fraseComUnidade(v: VocabItem, variante: number, unidade: VocabItem[]): 
   const parceiro = v.word === lugar ? outros[s % outros.length] : v;
   if (lugar && parceiro && parceiro.word !== lugar) {
     return montar(
-      ["「", parceiro.word, "」", "は", lugar, "に", "あります", "。"],
+      [lugar, "で", parceiro.word, "の", "話", "を", "しました", "。"],
       v.word === lugar ? lugar : v.word,
-      `${gloss(parceiro.word)} fica em ${gloss(lugar)}.`,
+      `Em ${gloss(lugar)}, conversei sobre ${gloss(parceiro.word)}.`,
     );
   }
   return null;
