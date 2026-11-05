@@ -10,6 +10,7 @@ import { LessonPlayer } from "@/components/lesson-player";
 import { formatDue, lessonQuestions } from "@/lib/srs";
 import { frases } from "@/lib/sentences";
 import { JaText } from "@/components/furigana";
+import { NUANCES, nuancesPara } from "@/data/nuances";
 import { speakJa } from "@/lib/tts";
 import { licaoPorId, licoes } from "@/data/japanese";
 import { ArrowLeft, ArrowRight, CalendarClock, Play, Volume2 } from "lucide-react";
@@ -187,7 +188,7 @@ function LicaoPage() {
                 {licao.content.vocab.map((v) => {
                   const lista = frases(v, licao.modo === "revisao" ? 3 : 2);
                   return (
-                    <div key={v.word} className="rounded-xl border border-border p-4">
+                    <div key={v.word} className="slide-up rounded-xl border border-border p-4">
                       <div className="flex items-center gap-2">
                         <span className="font-display text-xl font-bold">
                           <JaText text={v.word} />
@@ -211,6 +212,43 @@ function LicaoPage() {
               </CardContent>
             </Card>
           )}
+
+          {(() => {
+            const especificas = nuancesPara(licao.content.vocab.map((v) => v.word));
+            const lista = especificas.length > 0 ? especificas : NUANCES.slice(0, 2);
+            return (
+              <Card className="slide-up">
+                <CardHeader>
+                  <CardTitle>Formal × informal e sinônimos</CardTitle>
+                  <CardDescription>
+                    Em japonês, o jeito de falar muda com quem você conversa: forma educada (です/ます) com
+                    desconhecidos e no trabalho; forma simples com amigos e família. Palavras de mesmo
+                    significado também mudam o tom.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {lista.map((n, i) => (
+                    <div
+                      key={i}
+                      className="pop-in rounded-xl border border-border p-4"
+                      style={{ animationDelay: `${i * 80}ms` }}
+                    >
+                      <div className="flex flex-wrap gap-2">
+                        {n.palavras.map((p) => (
+                          <span key={p.jp} className="flex items-center gap-1 rounded-lg bg-muted px-2 py-1">
+                            <span className="font-display font-bold"><JaText text={p.jp} /></span>
+                            <span className="text-xs text-muted-foreground">{p.uso}</span>
+                            <AudioButton text={p.jp} />
+                          </span>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-sm text-muted-foreground">{n.explicacao}</p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            );
+          })()}
 
           {licao.content.kanji.length > 0 && (
             <Card>
