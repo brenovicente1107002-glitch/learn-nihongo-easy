@@ -10,7 +10,7 @@ import { LessonPlayer } from "@/components/lesson-player";
 import { formatDue, lessonQuestions } from "@/lib/srs";
 import { frases } from "@/lib/sentences";
 import { JaText } from "@/components/furigana";
-import { NUANCES, nuancesPara } from "@/data/nuances";
+import { NUANCES, dicaFrase, nuancesPara } from "@/data/nuances";
 import { speakJa } from "@/lib/tts";
 import { licaoPorId, licoes } from "@/data/japanese";
 import { ArrowLeft, ArrowRight, CalendarClock, Play, Volume2 } from "lucide-react";
@@ -204,6 +204,11 @@ function LicaoPage() {
                             <AudioButton text={f.jp} />
                           </div>
                           <div className="text-sm text-muted-foreground">{f.pt}</div>
+                          {dicaFrase(f.jp) && (
+                            <div className="pop-in mt-2 rounded-lg bg-accent/40 px-3 py-2 text-xs text-foreground">
+                              💡 {dicaFrase(f.jp)}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
