@@ -7,6 +7,8 @@ export const NUANCES: Nuance[] = [
   { palavras: [{ jp: "行きます", uso: "formal" }, { jp: "行く", uso: "informal" }], explicacao: "行きます em situações educadas; 行く na conversa casual." },
   { palavras: [{ jp: "です", uso: "formal" }, { jp: "だ", uso: "informal" }], explicacao: "です é a cópula educada; だ é casual e soa firme." },
   { palavras: [{ jp: "ありがとうございます", uso: "formal" }, { jp: "ありがとう", uso: "informal" }], explicacao: "Use a versão longa com professores e clientes." },
+  { palavras: [{ jp: "どうもありがとうございます", uso: "muito formal" }, { jp: "ありがとうございました", uso: "formal, por algo já feito" }, { jp: "どうも", uso: "casual, rápido" }], explicacao: "Os 'obrigados': ございます agradece algo atual; ございました agradece algo que já terminou (ao sair da loja); どうも sozinho é um 'valeu' leve." },
+  { palavras: [{ jp: "こんばんは", uso: "boa noite ao chegar" }, { jp: "お休みなさい", uso: "boa noite ao ir dormir" }], explicacao: "こんばんは (konbanwa) é cumprimento ao encontrar alguém à noite. お休みなさい (oyasuminasai) é despedida antes de dormir; entre amigos basta おやすみ." },
   { palavras: [{ jp: "すみません", uso: "formal" }, { jp: "ごめん", uso: "informal" }], explicacao: "すみません pede desculpas ou chama atenção educadamente; ごめん é entre amigos." },
   { palavras: [{ jp: "私", uso: "neutro/formal" }, { jp: "僕", uso: "casual (masc.)" }, { jp: "俺", uso: "bem casual (masc.)" }], explicacao: "Todos significam 'eu'; mudam o tom e a imagem de quem fala." },
   { palavras: [{ jp: "あなた", uso: "distante" }, { jp: "君", uso: "casual" }], explicacao: "Japoneses evitam 'você': prefira o nome da pessoa + さん." },
@@ -19,6 +21,25 @@ export const NUANCES: Nuance[] = [
   { palavras: [{ jp: "始める", uso: "começar algo (transitivo)" }, { jp: "始まる", uso: "algo começa (intransitivo)" }], explicacao: "授業を始める (eu começo a aula) × 授業が始まる (a aula começa)." },
   { palavras: [{ jp: "上手", uso: "habilidoso (elogio a outros)" }, { jp: "得意", uso: "ponto forte (pode falar de si)" }], explicacao: "Dizer 'sou 上手' soa convencido; use 得意." },
 ];
+
+const DICAS: [RegExp, string][] = [
+  [/ありがとう|どうも/, "Para agradecer algo que já acabou, use ありがとうございました."],
+  [/こんばんは/, "こんばんは é para cumprimentar à noite; para ir dormir diga お休みなさい."],
+  [/お?休みなさい|おやすみ/, "お休みなさい é só para despedida antes de dormir."],
+  [/のが好き/, "動詞 + のが好きです = 'gosto de fazer…'. Entre amigos: 〜のが好き."],
+  [/つもり/, "つもり indica intenção planejada; é mais firme que 〜たい (quero)."],
+  [/ですね|ますね|ね$/, "ね no fim busca concordância, como o 'né?' do português."],
+  [/について/, "について = 'sobre, a respeito de'. Comum em conversas e e-mails."],
+  [/ましょう/, "〜ましょう é um convite educado: 'vamos…'. Casual: 〜よう."],
+  [/て、/, "A forma て liga ações em sequência: 'faço X e depois Y'."],
+  [/ので/, "ので dá motivo de forma suave e educada; から é mais direto."],
+  [/ます|です/, "です/ます = forma educada. Com amigos, use a forma simples (だ, forma de dicionário)."],
+];
+
+export function dicaFrase(jp: string): string | null {
+  for (const [re, dica] of DICAS) if (re.test(jp)) return dica;
+  return null;
+}
 
 export function nuancesPara(palavras: string[]): Nuance[] {
   return NUANCES.filter((n) =>
