@@ -1,3 +1,4 @@
+import { dicaFrase } from "@/data/nuances";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +53,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
   const [falado, setFalado] = useState("");
   const [certoManual, setCertoManual] = useState(false);
   const [desenhou, setDesenhou] = useState(false);
+  const [dicaAberta, setDicaAberta] = useState(false);
 
   const q = questions[index];
   const audio = q?.audio;
@@ -62,6 +64,8 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
     return () => pararAudio();
     // reexecuta a cada questão, mesmo que o texto do áudio se repita
   }, [index, audio, kind]);
+
+  useEffect(() => setDicaAberta(false), [index]);
 
   const progresso = useMemo(() => Math.round((index / Math.max(total, 1)) * 100), [index, total]);
 
@@ -86,6 +90,18 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
     rec.onend = () => setOuvindo(false);
     rec.start();
   }, [q]);
+
+  const pedirDica = () => {
+    setDicaAberta(true);
+    if (kind !== "montar" || !q?.target) return;
+    let atual = montado;
+    let feito = atual.map((i) => tokens[i] ?? "").join("");
+    if (!q.target.startsWith(feito)) { atual = []; feito = ""; }
+    const resto = q.target.slice(feito.length);
+    const prox = tokens.findIndex((t, i) => !atual.includes(i) && t && resto.startsWith(t));
+    if (prox >= 0) setMontado([...atual, prox]);
+  };
+  const textoDica = dicaFrase(q?.target ?? q?.audio ?? q?.prompt ?? "");
 
   if (!q) return null;
 
@@ -226,6 +242,21 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
             <p className="text-center text-sm text-muted-foreground">
               Siga o guia com o dedo e depois esconda o guia para tentar de memória.
             </p>
+          )}
+        </div>
+      )}
+
+      {!checked && (kind === "montar" || kind === "escolha" || kind === "escuta") && (
+        <div className="space-y-2">
+          <Button type="button" variant="outline" size="sm" onClick={pedirDica}>
+            💡 Dica
+          </Button>
+          {dicaAberta && (
+            <div className="pop-in rounded-xl bg-accent/40 px-3 py-2 text-sm text-foreground">
+              {kind === "montar" && <div>Coloquei a próxima palavra para você.</div>}
+              {textoDica && <div>{textoDica}</div>}
+              {!textoDica && kind !== "montar" && <div>Leia com calma e elimine as opções que não combinam.</div>}
+            </div>
           )}
         </div>
       )}
