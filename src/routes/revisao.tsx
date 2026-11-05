@@ -1,14 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { LevelTabs } from "@/components/level-tabs";
 import { LessonPlayer } from "@/components/lesson-player";
 import { licaoPorId, licoes, type JlptLevel } from "@/data/japanese";
 import { useSrs } from "@/hooks/use-srs";
 import {
   filtrarPorModo,
-  formatDue,
   lessonQuestions,
   modosRevisao,
   type ExercicioKind,
@@ -17,7 +16,7 @@ import {
 } from "@/lib/srs";
 
 import { cn } from "@/lib/utils";
-import { CalendarClock, Flame, Zap } from "lucide-react";
+import { Flame, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/revisao")({
   head: () => ({
@@ -62,7 +61,6 @@ function RevisaoPage() {
   const [resultado, setResultado] = useState<number | null>(null);
   const [SESSAO, setSessaoTam] = useState(15);
 
-  const proximas = useMemo(() => Object.values(cards).sort((a, b) => a.due - b.due), [cards]);
 
   /** Revisão inteligente: primeiro o que está mais atrasado e com pior desempenho. */
   const prioridade = useMemo(() => {
