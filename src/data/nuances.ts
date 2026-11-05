@@ -26,7 +26,7 @@ const DICAS: [RegExp, string][] = [
   [/ありがとう|どうも/, "Para agradecer algo que já acabou, use ありがとうございました."],
   [/こんばんは/, "こんばんは é para cumprimentar à noite; para ir dormir diga お休みなさい."],
   [/お?休みなさい|おやすみ/, "お休みなさい é só para despedida antes de dormir."],
-  [/のが好き/, "動詞 + のが好きです = 'gosto de fazer…'. Entre amigos: 〜のが好き."],
+  [/のが好き/, "Verbo + のが好きです = 'gosto de fazer…'. Entre amigos: 〜のが好き."],
   [/つもり/, "つもり indica intenção planejada; é mais firme que 〜たい (quero)."],
   [/ですね|ますね|ね$/, "ね no fim busca concordância, como o 'né?' do português."],
   [/について/, "について = 'sobre, a respeito de'. Comum em conversas e e-mails."],
