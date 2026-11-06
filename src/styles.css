@@ -248,3 +248,7 @@ a[aria-current="page"] .app-nav-icon { animation: nq-pop .4s ease-out; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+@keyframes nq-stroke { from { stroke-dashoffset: 200; } to { stroke-dashoffset: 0; } }
+.stroke-draw { stroke-dasharray: 200; animation: nq-stroke .6s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .stroke-draw { animation: none; stroke-dasharray: none; } }

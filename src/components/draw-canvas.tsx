@@ -19,6 +19,27 @@ export function DrawCanvas({ char, onDraw, resetKey }: Props) {
   const pontos = useRef(0);
   const [guia, setGuia] = useState(true);
   const [temTraco, setTemTraco] = useState(false);
+  const [tracos, setTracos] = useState<string[]>([]);
+
+  // ordem correta dos traços (KanjiVG)
+  useEffect(() => {
+    setTracos([]);
+    const cp = char.codePointAt(0);
+    if (!cp || char.length !== 1) return;
+    const hex = cp.toString(16).padStart(5, "0");
+    let vivo = true;
+    fetch(`https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@master/kanji/${hex}.svg`)
+      .then((r) => (r.ok ? r.text() : ""))
+      .then((txt) => {
+        if (!vivo || !txt) return;
+        const ds = [...txt.matchAll(/<path[^>]*\sd="([^"]+)"/g)].map((m) => m[1] ?? "");
+        setTracos(ds.filter(Boolean));
+      })
+      .catch(() => {});
+    return () => {
+      vivo = false;
+    };
+  }, [char]);
 
   const limpar = useCallback(() => {
     const c = canvasRef.current;
@@ -81,12 +102,46 @@ export function DrawCanvas({ char, onDraw, resetKey }: Props) {
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-1/2 h-px w-full bg-border" />
           <div className="absolute left-1/2 h-full w-px bg-border" />
+          <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full text-border">
+            <line x1="0" y1="0" x2="100" y2="100" stroke="currentColor" strokeWidth="0.4" strokeDasharray="2 2" />
+            <line x1="100" y1="0" x2="0" y2="100" stroke="currentColor" strokeWidth="0.4" strokeDasharray="2 2" />
+          </svg>
         </div>
+        {tracos.length > 0 && (
+          <svg
+            aria-hidden
+            viewBox="0 0 109 109"
+            className={cn("pointer-events-none absolute inset-0 h-full w-full transition-opacity", !guia && "opacity-0")}
+          >
+            {tracos.map((d, i) => (
+              <path
+                key={i}
+                d={d}
+                fill="none"
+                stroke="var(--muted-foreground)"
+                strokeOpacity="0.35"
+                strokeWidth="3"
+                strokeLinecap="round"
+                className="stroke-draw"
+                style={{ animationDelay: `${i * 0.45}s` }}
+              />
+            ))}
+            {tracos.map((d, i) => {
+              const m = /M\s*([\d.]+)[ ,]([\d.]+)/.exec(d);
+              if (!m) return null;
+              return (
+                <text key={`n${i}`} x={Number(m[1]) - 4} y={Number(m[2]) - 2} fontSize="7" fill="var(--primary)" fontWeight="700">
+                  {i + 1}
+                </text>
+              );
+            })}
+          </svg>
+        )}
         <div
           aria-hidden
           className={cn(
             "pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[9rem] leading-none transition-opacity select-none",
-            guia ? "text-muted-foreground/25" : "opacity-0",
+            guia && tracos.length === 0 ? "text-muted-foreground/25" : "opacity-0",
           )}
         >
           {char}
