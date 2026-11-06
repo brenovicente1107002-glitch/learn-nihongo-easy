@@ -17,6 +17,7 @@ import { Route as KanjiRouteImport } from './routes/kanji'
 import { Route as KatakanaRouteImport } from './routes/katakana'
 import { Route as LicoesRouteImport } from './routes/licoes'
 import { Route as PalavrasRouteImport } from './routes/palavras'
+import { Route as PraticaRouteImport } from './routes/pratica'
 import { Route as RevisaoRouteImport } from './routes/revisao'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as LicoesIndexRouteImport } from './routes/licoes.index'
@@ -62,6 +63,11 @@ const PalavrasRoute = PalavrasRouteImport.update({
   path: '/palavras',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PraticaRoute = PraticaRouteImport.update({
+  id: '/pratica',
+  path: '/pratica',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RevisaoRoute = RevisaoRouteImport.update({
   id: '/revisao',
   path: '/revisao',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/katakana': typeof KatakanaRoute
   '/licoes': typeof LicoesRouteWithChildren
   '/palavras': typeof PalavrasRoute
+  '/pratica': typeof PraticaRoute
   '/revisao': typeof RevisaoRoute
   '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/kanji': typeof KanjiRoute
   '/katakana': typeof KatakanaRoute
   '/palavras': typeof PalavrasRoute
+  '/pratica': typeof PraticaRoute
   '/revisao': typeof RevisaoRoute
   '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/katakana': typeof KatakanaRoute
   '/licoes': typeof LicoesRouteWithChildren
   '/palavras': typeof PalavrasRoute
+  '/pratica': typeof PraticaRoute
   '/revisao': typeof RevisaoRoute
   '/api/tts': typeof ApiTtsRoute
   '/licoes/$id': typeof LicoesIdRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/katakana'
     | '/licoes'
     | '/palavras'
+    | '/pratica'
     | '/revisao'
     | '/api/tts'
     | '/licoes/$id'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/kanji'
     | '/katakana'
     | '/palavras'
+    | '/pratica'
     | '/revisao'
     | '/api/tts'
     | '/licoes/$id'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/katakana'
     | '/licoes'
     | '/palavras'
+    | '/pratica'
     | '/revisao'
     | '/api/tts'
     | '/licoes/$id'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   KatakanaRoute: typeof KatakanaRoute
   LicoesRoute: typeof LicoesRouteWithChildren
   PalavrasRoute: typeof PalavrasRoute
+  PraticaRoute: typeof PraticaRoute
   RevisaoRoute: typeof RevisaoRoute
   ApiTtsRoute: typeof ApiTtsRoute
 }
@@ -240,6 +253,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PalavrasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pratica': {
+      id: '/pratica'
+      path: '/pratica'
+      fullPath: '/pratica'
+      preLoaderRoute: typeof PraticaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/revisao': {
       id: '/revisao'
       path: '/revisao'
@@ -293,6 +313,7 @@ const rootRouteChildren: RootRouteChildren = {
   KatakanaRoute: KatakanaRoute,
   LicoesRoute: LicoesRouteWithChildren,
   PalavrasRoute: PalavrasRoute,
+  PraticaRoute: PraticaRoute,
   RevisaoRoute: RevisaoRoute,
   ApiTtsRoute: ApiTtsRoute,
 }

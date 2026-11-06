@@ -25,6 +25,7 @@ import {
   Sparkles,
   UserRound,
   X,
+  PenLine,
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { AomaruAvatar, AomaruTip } from "../components/mascot";
