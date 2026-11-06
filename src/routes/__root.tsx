@@ -25,6 +25,7 @@ import {
   Sparkles,
   UserRound,
   X,
+  PenLine,
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { AomaruAvatar, AomaruTip } from "../components/mascot";
@@ -167,6 +168,7 @@ const navItems = [
   { to: "/palavras", label: "Palavras", icon: NotebookPen },
   { to: "/revisao", label: "Revisão", icon: RefreshCw },
   { to: "/flashcards", label: "Flashcards", icon: Layers },
+  { to: "/pratica", label: "Prática", icon: PenLine },
   { to: "/hiragana", label: "Hiragana", icon: ScrollText },
   { to: "/katakana", label: "Katakana", icon: BookOpen },
   { to: "/kanji", label: "Kanji", icon: Sparkles },
