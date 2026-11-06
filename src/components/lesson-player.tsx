@@ -101,7 +101,7 @@ export function LessonPlayer({ questions, onFinish, onExit, titulo }: Props) {
     const prox = tokens.findIndex((t, i) => !atual.includes(i) && t && resto.startsWith(t));
     if (prox >= 0) setMontado([...atual, prox]);
   };
-  const textoDica = dicaFrase(q?.target ?? q?.audio ?? q?.prompt ?? "");
+  const textoDica = dicaFrase(q?.target ?? q?.audio ?? "");
 
   if (!q) return null;
 
