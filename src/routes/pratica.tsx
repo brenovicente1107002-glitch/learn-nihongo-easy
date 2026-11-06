@@ -43,7 +43,8 @@ function Pratica() {
   }, [modo, nivel]);
 
   const item = lista[i % Math.max(lista.length, 1)];
-  const leituras = item && "readings" in item && item.readings ? separarLeituras(item.readings) : null;
+  const r = (item as { readings?: string[] } | undefined)?.readings;
+  const leituras = r ? separarLeituras(r) : null;
 
   const trocar = (m: Modo) => {
     setModo(m);
